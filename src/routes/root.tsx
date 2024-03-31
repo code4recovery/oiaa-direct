@@ -1,21 +1,24 @@
 import { useEffect } from "react"
 import {
   Form,
-  NavLink,
+  Link,
   Outlet,
   useLoaderData,
   useNavigation,
   useRouteLoaderData,
+  useSearchParams,
   useSubmit,
 } from "react-router-dom"
 
 import { Box, Grid } from "@chakra-ui/react"
 
+import { Filter } from "../components/Filter"
 import { Meeting } from "../components/Meeting"
 import { getMeetings } from "../meetings"
 
 import type { Meeting as MeetingEntry } from "../types"
 import type { LoaderFunctionArgs } from "react-router-dom"
+
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url)
   const q = url.searchParams.get("q")
@@ -33,11 +36,29 @@ export default function Root() {
     q: string
   }
   const navigation = useNavigation()
+  const [searchParams, setSearchParams] = useSearchParams({ test: "shit" })
   const submit = useSubmit()
 
   const searching =
     navigation.location &&
     new URLSearchParams(navigation.location.search).has("q")
+
+  const searchHandler = (event) => {
+    let search
+    if (event.target.value) {
+      search = {
+        keyword: event.target.value,
+      }
+    } else {
+      search = undefined
+    }
+
+    setSearchParams(search, { replace: false })
+    for (const entry of searchParams.entries()) {
+      const [param, value] = entry
+      console.log(param, value)
+    }
+  }
 
   useEffect(() => {
     document.getElementById("q").value = q
@@ -62,16 +83,11 @@ export default function Root() {
                   id="q"
                   className={searching ? "loading" : ""}
                   aria-label="Search meetings"
-                  placeholder="Search"
+                  placeholder="Search..."
                   type="search"
                   name="q"
-                  defaultValue={q}
-                  onChange={(event) => {
-                    const isFirstSearch = q == null
-                    submit(event.currentTarget.form, {
-                      replace: !isFirstSearch,
-                    })
-                  }}
+                  // defaultValue={q}
+                  onChange={searchHandler}
                 />
                 <div id="search-spinner" aria-hidden hidden={!searching} />
                 <div className="sr-only" aria-live="polite"></div>
@@ -84,7 +100,7 @@ export default function Root() {
                 <ul>
                   {meetings.map((meeting, index: number) => (
                     <li key={meeting.slug}>
-                      <NavLink
+                      <Link
                         to={`meetings/${meeting.slug}`}
                         className={({ isActive, isPending }) =>
                           isActive ? "active" : isPending ? "pending" : ""
@@ -96,7 +112,7 @@ export default function Root() {
                           link={`/${meeting.slug}`}
                           meeting={meeting}
                         />
-                      </NavLink>
+                      </Link>
                     </li>
                   ))}
                 </ul>

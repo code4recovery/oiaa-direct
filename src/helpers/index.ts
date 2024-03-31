@@ -1,6 +1,6 @@
 // export * from './analytics';
 // export * from './calendar';
-// export * from './config';
+export * from "./config"
 // export * from './data';
 // export * from './filter';
 export * from "./format"
