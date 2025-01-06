@@ -1,6 +1,23 @@
 import { Box, Heading, Text, VStack, Button, HStack, Badge, Link } from "@chakra-ui/react"
 import type { MeetingCardProps } from "./types"
 import { FaExternalLinkAlt } from 'react-icons/fa'
+import { Tooltip } from "@/components/ui/tooltip"
+
+const BADGE_DESCRIPTIONS: Record<string, string> = {
+  POA: "Proof of Attendance",
+  ST: "Step Meeting",
+  TR: "Tradition Meeting",
+  SP: "Speaker Meeting",
+  BE: "Beginner Meeting",
+  O: "Open Meeting - Anyone may attend",
+  D: "Discussion Meeting",
+  C: "Closed Meeting - AA Members Only",
+  EN: "English Speaking",
+  ABSI: "Absolutely Sober",
+  LS: "Living Sober",
+  Y: "Young People",
+  B: "Big Book Study"
+}
 
 export const MeetingCard = ({ meeting }: MeetingCardProps) => {
   return (
@@ -72,28 +89,30 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         {/* Tags */}
         <HStack wrap="wrap" gap={2}>
           {meeting.types.map(type => (
-            <Badge 
-              key={type} 
-              colorScheme="blue" 
-              variant="subtle"
-              px={2}
-              py={1}
-              borderRadius="full"
-            >
-              {type}
-            </Badge>
+            <Tooltip key={type} content={BADGE_DESCRIPTIONS[type] || type}>
+              <Badge 
+                colorScheme="blue" 
+                variant="subtle"
+                px={2}
+                py={1}
+                borderRadius="full"
+              >
+                {type}
+              </Badge>
+            </Tooltip>
           ))}
           {meeting.languages.map(lang => (
-            <Badge 
-              key={lang} 
-              colorScheme="green" 
-              variant="subtle"
-              px={2}
-              py={1}
-              borderRadius="full"
-            >
-              {lang}
-            </Badge>
+            <Tooltip key={lang} content={BADGE_DESCRIPTIONS[lang] || lang}>
+              <Badge 
+                colorScheme="green" 
+                variant="subtle"
+                px={2}
+                py={1}
+                borderRadius="full"
+              >
+                {lang}
+              </Badge>
+            </Tooltip>
           ))}
         </HStack>
       </VStack>
