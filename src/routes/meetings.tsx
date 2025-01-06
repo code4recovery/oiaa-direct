@@ -110,21 +110,32 @@ export default function Meetings() {
         </Box>
       }
     >
-      <VStack gap={8} align="stretch">
-        <Heading size="lg">
-          Meetings
-          {hasActiveFilters && (
-            <Text as="span" fontSize="md" color="gray.500" ml={2}>
-              ({filteredMeetings.length} results)
-            </Text>
-          )}
-        </Heading>
-        <VStack gap={6} align="stretch">
-          {filteredMeetings.map(meeting => (
-            <MeetingCard key={meeting.slug} meeting={meeting} />
-          ))}
+      <Box 
+        minH="calc(100vh - 200px)"
+        minW={{ base: "100%", md: "600px" }}
+        flex="1"
+      >
+        <VStack gap={4} align="stretch">
+          <Heading size="lg">
+            Meetings
+            {hasActiveFilters && (
+              <Text as="span" fontSize="md" color="gray.500" ml={2}>
+                ({filteredMeetings.length} results)
+              </Text>
+            )}
+          </Heading>
+          <VStack gap={6} align="stretch">
+            {filteredMeetings.map(meeting => (
+              <MeetingCard key={meeting.slug} meeting={meeting} />
+            ))}
+            {filteredMeetings.length === 0 && (
+              <Text color="gray.500" textAlign="center" py={8}>
+                No meetings found matching your criteria
+              </Text>
+            )}
+          </VStack>
         </VStack>
-      </VStack>
+      </Box>
     </Layout>
   )
 }
