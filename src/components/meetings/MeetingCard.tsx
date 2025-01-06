@@ -49,12 +49,12 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
               _hover={{ textDecoration: 'none' }}
             >
               <Button 
-                bg="blue.500"
+                bg="blue.700"
                 color="white"
                 size="md"
                 width="full"
                 _hover={{
-                  bg: 'blue.600'
+                  bg: 'blue.800'
                 }}
               >
                 <FaExternalLinkAlt style={{ marginRight: '8px' }} />

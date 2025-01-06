@@ -1,4 +1,5 @@
-import { Button, Flex } from "@chakra-ui/react"
+import { Button, Flex, Box } from "@chakra-ui/react"
+import { Tooltip } from "@/components/ui/tooltip"
 import type { MeetingType } from "../meetings/meetingTypes"
 
 interface TypeFilterProps {
@@ -13,24 +14,35 @@ export const TypeFilter = ({ types, selectedTypes, onToggleType }: TypeFilterPro
       {types.map((type) => {
         const isSelected = selectedTypes.includes(type.code)
         return (
-          <Button
-            key={type.code}
-            size="sm"
-            variant={isSelected ? "solid" : "outline"}
-            colorScheme="blue"
-            onClick={() => onToggleType(type.code)}
-            color={isSelected ? 'white' : 'inherit'}
-            _dark={{
-              color: isSelected ? 'white' : 'gray.200',
-              borderColor: isSelected ? 'transparent' : 'gray.600',
-              bg: isSelected ? 'blue.500' : 'transparent',
-              _hover: {
-                bg: isSelected ? 'blue.600' : 'whiteAlpha.200'
-              }
-            }}
-          >
-            {type.name}
-          </Button>
+          <Box key={type.code}>
+            <Tooltip content={type.description || type.name}>
+              <Button
+                size="xs"
+                variant="outline"
+                colorScheme={isSelected ? "blue" : "gray"}
+                onClick={() => onToggleType(type.code)}
+                fontWeight="normal"
+                px={3}
+                height="24px"
+                borderRadius="full"
+                borderWidth="1px"
+                color="inherit"
+                _dark={{
+                  borderColor: isSelected ? 'blue.200' : 'whiteAlpha.400',
+                  _hover: {
+                    bg: 'whiteAlpha.100',
+                    borderColor: isSelected ? 'blue.300' : 'whiteAlpha.500'
+                  }
+                }}
+                _hover={{
+                  bg: 'blackAlpha.50',
+                  borderColor: isSelected ? 'blue.500' : 'gray.400'
+                }}
+              >
+                {type.name}
+              </Button>
+            </Tooltip>
+          </Box>
         )
       })}
     </Flex>

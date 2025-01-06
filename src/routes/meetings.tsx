@@ -58,22 +58,15 @@ export default function Meetings() {
       sidebar={
         <Box 
           p={4} 
-          borderWidth="1px" 
           borderRadius="lg"
-          bg="white"
-          mt={14}
           _dark={{
-            bg: 'gray.800',
-            borderColor: 'whiteAlpha.300'
+            borderColor: 'whiteAlpha.200'
           }}
         >
           <VStack gap={4} align="stretch">
             <Heading 
               size="md"
               color="inherit"
-              _dark={{
-                color: 'inherit'
-              }}
             >
               Filters
             </Heading>
@@ -86,9 +79,6 @@ export default function Meetings() {
                 size="sm" 
                 mb={2}
                 color="inherit"
-                _dark={{
-                  color: 'inherit'
-                }}
               >
                 Meeting Types
               </Heading>
