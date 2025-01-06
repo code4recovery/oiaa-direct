@@ -56,15 +56,42 @@ export default function Meetings() {
   return (
     <Layout
       sidebar={
-        <Box p={4} borderWidth="1px" borderRadius="lg">
+        <Box 
+          p={4} 
+          borderWidth="1px" 
+          borderRadius="lg"
+          bg="white"
+          mt={14}
+          _dark={{
+            bg: 'gray.800',
+            borderColor: 'whiteAlpha.300'
+          }}
+        >
           <VStack gap={4} align="stretch">
-            <Heading size="md">Filters</Heading>
+            <Heading 
+              size="md"
+              color="inherit"
+              _dark={{
+                color: 'inherit'
+              }}
+            >
+              Filters
+            </Heading>
             <SearchInput 
               value={searchQuery}
               onChange={setSearchQuery}
             />
             <Box>
-              <Heading size="sm" mb={2}>Meeting Types</Heading>
+              <Heading 
+                size="sm" 
+                mb={2}
+                color="inherit"
+                _dark={{
+                  color: 'inherit'
+                }}
+              >
+                Meeting Types
+              </Heading>
               <TypeFilter
                 types={MEETING_TYPES}
                 selectedTypes={selectedTypes}
@@ -73,16 +100,21 @@ export default function Meetings() {
             </Box>
             {hasActiveFilters && (
               <Button
-              size="sm"
-              variant="ghost"
-              colorScheme="gray"
-              onClick={clearFilters}
-            >
-              <Flex align="center" gap={2}>
-                <FaTimesCircle />
-                <Text>Clear Filters</Text>
-              </Flex>
-            </Button>
+                size="sm"
+                variant="ghost"
+                colorScheme="gray"
+                onClick={clearFilters}
+                color="gray.600"
+                _dark={{
+                  color: 'gray.200',
+                  _hover: { bg: 'whiteAlpha.200' }
+                }}
+              >
+                <Flex align="center" gap={2}>
+                  <FaTimesCircle />
+                  <Text>Clear Filters</Text>
+                </Flex>
+              </Button>
             )}
           </VStack>
         </Box>

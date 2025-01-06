@@ -11,11 +11,15 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
       _hover={{ shadow: "md" }}
       transition="all 0.2s"
       bg="white"
+      _dark={{
+        bg: 'gray.800',
+        borderColor: 'whiteAlpha.300'
+      }}
     >
       <VStack align="stretch" gap={4}>
         {/* Header */}
         <Box>
-          <Heading size="md" color="blue.600">{meeting.name}</Heading>
+          <Heading size="md" color="blue.600" _dark={{ color: 'blue.300' }}>{meeting.name}</Heading>
           <Heading size="sm" color="gray.600" fontWeight="medium" mt={1}>
             {new Date(meeting.startDateUTC).toLocaleString(undefined, {
               weekday: 'long',
@@ -30,7 +34,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         {meeting.notes && (
           <VStack align="stretch" gap={2}>
             {meeting.notes.split('\n').map((note, index) => (
-              <Text key={index} color="gray.700">{note}</Text>
+              <Text key={index} color="gray.700" _dark={{ color: 'gray.300' }}>{note}</Text>
             ))}
           </VStack>
         )}
@@ -45,9 +49,13 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
               _hover={{ textDecoration: 'none' }}
             >
               <Button 
-                colorScheme="blue" 
+                bg="blue.500"
+                color="white"
                 size="md"
                 width="full"
+                _hover={{
+                  bg: 'blue.600'
+                }}
               >
                 <FaExternalLinkAlt style={{ marginRight: '8px' }} />
                 Join Meeting

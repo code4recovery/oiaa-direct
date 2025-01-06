@@ -30,13 +30,18 @@ export const SearchInput = ({
         placeholder={placeholder}
         pl={10}
         variant="outline"
-        bg="gray.50"
-        _hover={{
-          bg: "gray.100"
-        }}
-        _focus={{
-          bg: "white",
-          borderColor: "blue.500"
+        bg="white"
+        _dark={{
+          bg: 'whiteAlpha.100',
+          borderColor: 'whiteAlpha.300',
+          color: 'white',
+          _hover: {
+            bg: 'whiteAlpha.200'
+          },
+          _focus: {
+            bg: 'whiteAlpha.300',
+            borderColor: 'blue.300'
+          }
         }}
       />
     </Box>
