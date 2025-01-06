@@ -1,0 +1,94 @@
+import { Box, Heading, Text, VStack, Button, HStack, Badge, Link } from "@chakra-ui/react"
+import type { MeetingCardProps } from "./types"
+import { FaExternalLinkAlt } from 'react-icons/fa'
+
+export const MeetingCard = ({ meeting }: MeetingCardProps) => {
+  return (
+    <Box
+      borderWidth="1px"
+      borderRadius="lg"
+      p={6}
+      _hover={{ shadow: "md" }}
+      transition="all 0.2s"
+      bg="white"
+    >
+      <VStack align="stretch" gap={4}>
+        {/* Header */}
+        <Box>
+          <Heading size="md" color="blue.600">{meeting.name}</Heading>
+          <Heading size="sm" color="gray.600" fontWeight="medium" mt={1}>
+            {new Date(meeting.startDateUTC).toLocaleString(undefined, {
+              weekday: 'long',
+              hour: 'numeric',
+              minute: 'numeric',
+              timeZoneName: 'short'
+            })}
+          </Heading>
+        </Box>
+
+        {/* Meeting Info */}
+        {meeting.notes && (
+          <VStack align="stretch" gap={2}>
+            {meeting.notes.split('\n').map((note, index) => (
+              <Text key={index} color="gray.700">{note}</Text>
+            ))}
+          </VStack>
+        )}
+
+        {/* Join Button */}
+        {meeting.conference_url && (
+          <Box>
+            <Link 
+              href={meeting.conference_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              _hover={{ textDecoration: 'none' }}
+            >
+              <Button 
+                colorScheme="blue" 
+                size="md"
+                width="full"
+              >
+                <FaExternalLinkAlt style={{ marginRight: '8px' }} />
+                Join Meeting
+              </Button>
+            </Link>
+            {meeting.conference_url_notes && (
+              <Text fontSize="sm" color="gray.500" mt={2}>
+                {meeting.conference_url_notes}
+              </Text>
+            )}
+          </Box>
+        )}
+
+        {/* Tags */}
+        <HStack wrap="wrap" gap={2}>
+          {meeting.types.map(type => (
+            <Badge 
+              key={type} 
+              colorScheme="blue" 
+              variant="subtle"
+              px={2}
+              py={1}
+              borderRadius="full"
+            >
+              {type}
+            </Badge>
+          ))}
+          {meeting.languages.map(lang => (
+            <Badge 
+              key={lang} 
+              colorScheme="green" 
+              variant="subtle"
+              px={2}
+              py={1}
+              borderRadius="full"
+            >
+              {lang}
+            </Badge>
+          ))}
+        </HStack>
+      </VStack>
+    </Box>
+  )
+}

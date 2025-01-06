@@ -1,12 +1,7 @@
-import { VStack, Text, Box, Heading } from "@chakra-ui/react"
+import { VStack, Grid, Heading } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
-
-interface Meeting {
-  id: string
-  name: string
-  startDateUTC: string
-  conference_url?: string
-}
+import type { Meeting } from "../components/meetings/types"
+import { MeetingCard } from "../components/meetings/MeetingCard"
 
 export default function Meetings() {
   const [meetings, setMeetings] = useState<Meeting[]>([])
@@ -17,9 +12,7 @@ export default function Meetings() {
 
     fetch(proxyUrl)
       .then(async res => {
-        console.log('Response status:', res.status)
         const text = await res.text()
-        console.log('Response body:', text)
         if (!text) throw new Error('Empty response')
         return JSON.parse(text)
       })
@@ -31,16 +24,20 @@ export default function Meetings() {
   }, [])
 
   return (
-    <VStack as="main" gap={4} align="stretch" p={4}>
+    <VStack as="main" gap={8} align="stretch" p={4}>
       <Heading size="lg">Meetings</Heading>
-      <VStack as="section" gap={4} align="stretch">
+      <Grid
+        templateColumns={{
+          base: "1fr",
+          md: "repeat(2, 1fr)",
+          lg: "repeat(3, 1fr)"
+        }}
+        gap={6}
+      >
         {meetings.map(meeting => (
-          <Box key={meeting.id} p={4} borderWidth="1px" borderRadius="lg">
-            <Heading size="md">{meeting.name}</Heading>
-            <Text>{new Date(meeting.startDateUTC).toLocaleString()}</Text>
-          </Box>
+          <MeetingCard key={meeting.slug} meeting={meeting} />
         ))}
-      </VStack>
+      </Grid>
     </VStack>
   )
 }
