@@ -1,47 +1,31 @@
-import type { WeekdayNumbers } from "luxon"
+import { useEffect } from 'react'
 
-import type { Route } from "./+types/meetings"
+import {
+  useLoaderData,
+  useSearchParams,
+} from 'react-router'
 
-export interface Meeting {
-  slug: string
-  name: string
-  timezone: string
-  day: WeekdayNumbers
-  time: string
-  duration: number
-  conference_url?: string
-  conference_url_notes?: string
-  conference_phone?: string
-  conference_phone_notes?: string
-  groupID: unknown
-  languages: string[]
-  adjustedUTC: string
-  notes?: string | null
-  rtc: string
-  sortRTCDay: number
-  sortRTCTime: string
-  startDateUTC: string
-  types: string[]
-}
+import type { Meeting } from '../meetings-utils'
+import { getMeetings } from '../meetings-utils'
+import type { Route } from './+types/meetings'
 
-async function getMeetings(): Promise<Meeting[] | null> {
-  console.log("Pre-fetch...")
-  if (!import.meta.env.VITE_CQ_URL) throw Error("App not configured correctly")
-  const url = import.meta.env.VITE_CQ_URL as string
-  const meetings = (await (await fetch(url)).json()) as Meeting[]
-  console.log("Fetched, supposedly...")
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  const { searchParams } = new URL(request.url)
+  console.log("Filter entries: ", searchParams.entries())
+  const meetings = (await getMeetings()) ?? []
   return meetings
 }
 
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  const meetings = (await getMeetings("Men")) ?? [] // q === null ? "Men" : q)
-  console.log("In Client Loader", meetings)
-  return meetings
-}
+export default function Meetings() {
+  const [filterParams, setFilterParams] = useSearchParams()
 
-export default function Meetings({ loaderData }: Route.ComponentProps) {
-  const meetings = loaderData as Meeting[]
+  useEffect(() => {
+    setFilterParams({ languages: ["EN", "ES"], types: ["W"] })
+  }, [filterParams, setFilterParams])
+
+  const meetings = useLoaderData<Meeting[]>()
   console.log(meetings)
+
   return (
     <div>
       <h1>Loaded. Check console for details</h1>
