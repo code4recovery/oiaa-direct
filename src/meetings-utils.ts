@@ -76,3 +76,14 @@ export async function getMeetings(
   }
   return meetings
 }
+
+export function buildFilter(searchParams: URLSearchParams) {
+  let filter = {}
+  if (searchParams.has("nameQuery"))
+    filter = { ...filter, nameQuery: searchParams.getAll("nameQuery") }
+  if (searchParams.has("languages"))
+    filter = { ...filter, languages: searchParams.getAll("languages") }
+  if (searchParams.has("types"))
+    filter = { ...filter, types: searchParams.getAll("types") }
+  return filter
+}

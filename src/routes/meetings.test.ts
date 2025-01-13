@@ -1,6 +1,6 @@
 import { expect, test } from "vitest"
 
-import { getMeetings } from "../meetings-utils"
+import { buildFilter, getMeetings } from "../meetings-utils"
 
 test("Retrieves an array of meetings", async () => {
   const result = await getMeetings()
@@ -59,4 +59,15 @@ test("Retrieves discussion meetings in Spanish", async () => {
 
   expect(foundTypes.every((el) => el)).toStrictEqual(true)
   expect(foundLangs.every((el) => el)).toStrictEqual(true)
+})
+
+test("Filter is correctly built", () => {
+  const { searchParams } = new URL(
+    new Request("http://localhost:5173/?languages=EN&languages=ES&types=W").url
+  )
+
+  expect(buildFilter(searchParams)).toStrictEqual({
+    languages: ["EN", "ES"],
+    types: ["W"],
+  })
 })
