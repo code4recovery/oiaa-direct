@@ -10,7 +10,7 @@ Currently, the `.env` file is included showing the end point for fetching the ne
 
 Please follow the [Udacity Guide](https://udacity.github.io/git-styleguide/) for commit messages. If committing code for a feature that is not complete (i.e., initial work in progress), please add `(wip)` to the title. For example, `feat: (wip) Add React Router to fetch meeting data.`
 
-I use the Typescript Import Sorter extension with VS Code to standardize imports.
+I use the ~~Typescript Import Sorter~~ _JS/TS Import/Export Sorter_ extension with VS Code to standardize imports. Please use this with the included `import-sorter.json` file.
 
 ## React + TypeScript + Vite
 
