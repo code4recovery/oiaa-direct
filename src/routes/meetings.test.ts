@@ -1,9 +1,6 @@
-import {
-  expect,
-  test,
-} from 'vitest'
+import { expect, test } from "vitest"
 
-import { getMeetings } from '../meetings-utils'
+import { getMeetings } from "../meetings-utils"
 
 test("Retrieves an array of meetings", async () => {
   const result = await getMeetings()
@@ -32,4 +29,34 @@ test("Retrieves meetings with multiple meeting types", async () => {
   }
   // console.log(found, results)
   expect(found.every((el) => el)).toStrictEqual(true)
+})
+
+test("Retrieves discussion meetings in Spanish", async () => {
+  const checkSubset = (parentArray: string[], subsetArray: string[]) => {
+    return subsetArray.every((el) => {
+      return parentArray.includes(el)
+    })
+  }
+  const testTypes = ["D"]
+  const testLangs = ["ES"]
+
+  const results = await getMeetings({
+    types: testTypes,
+    languages: testLangs,
+  })
+
+  let foundTypes = [false]
+  if (results !== null) {
+    foundTypes = results.map((result) => checkSubset(result.types, testTypes))
+  }
+
+  let foundLangs = [false]
+  if (results !== null) {
+    foundLangs = results.map((result) =>
+      checkSubset(result.languages, testLangs)
+    )
+  }
+
+  expect(foundTypes.every((el) => el)).toStrictEqual(true)
+  expect(foundLangs.every((el) => el)).toStrictEqual(true)
 })
