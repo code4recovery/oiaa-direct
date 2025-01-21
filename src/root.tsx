@@ -1,6 +1,7 @@
 import "./index.css"
 
 import { StrictMode } from "react"
+
 import { Outlet, Scripts, ScrollRestoration } from "react-router"
 
 import { Provider } from "@/components/ui/provider"
@@ -12,7 +13,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="UTF-8" />
         <link rel="icon" type="image/svg+xml" href="/vite.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Vite + React + TS</title>
+        <title>Online Intergroup Meetings</title>
       </head>
       <body>
         {children}
