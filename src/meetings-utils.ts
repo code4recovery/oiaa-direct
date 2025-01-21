@@ -61,12 +61,10 @@ function filteredData<T extends object>(
   )
 }
 
-export async function getMeetings(
-  filter?: FilterParams
-): Promise<Meeting[] | null> {
+export async function getMeetings(filter?: FilterParams): Promise<Meeting[]> {
   if (!import.meta.env.VITE_CQ_URL) throw Error("App not configured correctly")
   const url = import.meta.env.VITE_CQ_URL as string
-  let meetings = (await (await fetch(url)).json()) as Meeting[]
+  let meetings = ((await (await fetch(url)).json()) ?? []) as Meeting[]
   if (filter) {
     const { nameQuery, types, languages } = filter
     if (types) meetings = filteredData(meetings, types, "types")
