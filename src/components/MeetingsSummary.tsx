@@ -1,29 +1,14 @@
-import { useEffect } from "react"
-
-import { useLoaderData, useSearchParams } from "react-router"
-
+import type { Meeting } from "@/meetings-utils"
 import { Box, Heading, Text, VStack } from "@chakra-ui/react"
 
-import { MeetingCard } from "../components/MeetingCard"
-import type { Meeting } from "../meetings-utils"
-import { buildFilter, getMeetings } from "../meetings-utils"
-import type { Route } from "./+types/meetings"
+import { MeetingCard } from "./MeetingCard"
 
-export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  const { searchParams } = new URL(request.url)
-  const meetings = (await getMeetings(buildFilter(searchParams))) ?? []
-  return meetings
+interface MeetingsSummaryProps {
+  meetings: Meeting[]
 }
 
-export default function Meetings() {
-  const [filterParams, setFilterParams] = useSearchParams()
-
-  useEffect(() => {
-    setFilterParams({})
-  }, [filterParams, setFilterParams])
-
-  const meetings = useLoaderData<Meeting[]>()
-
+export function MeetingsSummary({ meetings }: MeetingsSummaryProps) {
+  console.log(meetings)
   return (
     <Box
       minH="calc(100vh - 200px)"
