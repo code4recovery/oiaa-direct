@@ -1,3 +1,4 @@
 {
-  "hasSemicolon": false
+  "hasSemicolon": false,
+  "quoteMark": "double"
 }
