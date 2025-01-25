@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react"
+import { useSearchParams } from "react-router"
 
-import { Outlet, useSearchParams } from "react-router"
-
+import { Filter } from "@/components/Filter"
+import { Layout } from "@/components/Layout"
 import { MeetingsSummary } from "@/components/MeetingsSummary"
-import { SearchInput } from "@/components/SearchInput"
-import { buildFilter, getMeetings } from "@/meetings-utils"
-import { Box, Heading, VStack } from "@chakra-ui/react"
+import {
+  buildFilter,
+  getMeetings,
+} from "@/meetings-utils"
 
 import type { Route } from "./+types/meetings-filtered"
 
@@ -16,33 +17,28 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
 }
 
 export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
-  const [searchQuery, setSearchQuery] = useState("")
   const [filterParams, setFilterParams] = useSearchParams()
 
-  useEffect(() => {
-    setFilterParams({ types: ["D"] })
-  }, [filterParams, setFilterParams])
+  const handleQuery = (query: string) => {
+    setFilterParams((prev) => {
+      prev.set("nameQuery", query)
+      return prev
+    })
+  }
 
   return (
     <>
-      <Box
-        p={4}
-        borderRadius="lg"
-        _dark={{
-          borderColor: "whiteAlpha.200",
-        }}
+      <Layout
+        sidebar={
+          <Filter
+            filterParams={filterParams}
+            sendFilterSelectionsToParent={setFilterParams}
+            sendQueryToParent={handleQuery}
+          />
+        }
       >
-        <VStack gap={4} align="stretch">
-          <Heading size="md" color="inherit">
-            Filters
-          </Heading>
-          <SearchInput value={searchQuery} onChange={setSearchQuery} />
-        </VStack>
-      </Box>
-      <MeetingsSummary meetings={loaderData.meetings} />
-      <div>
-        <Outlet />
-      </div>
+        <MeetingsSummary meetings={loaderData.meetings} />
+      </Layout>
     </>
   )
 }
