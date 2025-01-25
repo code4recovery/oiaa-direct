@@ -85,3 +85,11 @@ export function buildFilter(searchParams: URLSearchParams) {
     filter = { ...filter, types: searchParams.getAll("types") }
   return filter
 }
+
+export function toggleArrayElement<T>(array: T[], value: T): T[] {
+  const newArray = array.filter((x) => x !== value)
+  if (newArray.length === array.length) {
+    return [...newArray, value]
+  }
+  return newArray
+}
