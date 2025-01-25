@@ -27,7 +27,6 @@ test("Retrieves meetings with multiple meeting types", async () => {
   if (results !== null) {
     found = results.map((result) => checkSubset(result.types, testTypes))
   }
-  // console.log(found, results)
   expect(found.every((el) => el)).toStrictEqual(true)
 })
 
