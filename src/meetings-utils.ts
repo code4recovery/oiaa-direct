@@ -66,7 +66,6 @@ export async function getMeetings(filter?: FilterParams): Promise<Meeting[]> {
   const url = import.meta.env.VITE_CQ_URL as string
   let meetings = ((await (await fetch(url)).json()) ?? []) as Meeting[]
   if (filter) {
-    console.log(filter)
     const { nameQuery, types, languages } = filter
     if (types) meetings = filteredData(meetings, types, "types")
     if (languages) meetings = filteredData(meetings, languages, "languages")
