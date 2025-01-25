@@ -1,5 +1,10 @@
 import type { Meeting } from "@/meetings-utils"
-import { Box, Heading, Text, VStack } from "@chakra-ui/react"
+import {
+  Box,
+  Heading,
+  Text,
+  VStack,
+} from "@chakra-ui/react"
 
 import { MeetingCard } from "./MeetingCard"
 
@@ -8,7 +13,6 @@ interface MeetingsSummaryProps {
 }
 
 export function MeetingsSummary({ meetings }: MeetingsSummaryProps) {
-  console.log(meetings)
   return (
     <Box
       minH="calc(100vh - 200px)"
