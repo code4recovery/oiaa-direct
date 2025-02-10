@@ -2,6 +2,7 @@ import { FaExternalLinkAlt } from "react-icons/fa"
 
 import { Tooltip } from "@/components/ui/tooltip"
 import type { Meeting } from "@/meetings-utils"
+import { TYPE, FORMATS, FEATURES, COMMUNITIES } from "@/meetingTypes"
 import {
   Badge,
   Box,
@@ -13,20 +14,27 @@ import {
   VStack,
 } from "@chakra-ui/react"
 
-const BADGE_DESCRIPTIONS: Record<string, string> = {
-  POA: "Proof of Attendance",
-  ST: "Step Meeting",
-  TR: "Tradition Meeting",
-  SP: "Speaker Meeting",
-  BE: "Beginner Meeting",
-  O: "Open Meeting - Anyone may attend",
-  D: "Discussion Meeting",
-  C: "Closed Meeting - AA Members Only",
-  EN: "English Speaking",
-  ABSI: "Absolutely Sober",
-  LS: "Living Sober",
-  Y: "Young People",
-  B: "Big Book Study",
+const DESCRIPTIONS: Record<string, string> = {
+  ...TYPE,
+  ...FORMATS,
+  ...FEATURES,
+  ...COMMUNITIES,
+}
+
+interface CategoryColors {
+  features: string
+  formats: string
+  languages: string
+  communities: string
+  type: string
+}
+
+const CATEGORY_COLORS: CategoryColors = {
+  features: "purple",
+  formats: "blue",
+  languages: "green",
+  communities: "orange",
+  type: "cyan"
 }
 
 interface MeetingCardProps {
@@ -34,6 +42,9 @@ interface MeetingCardProps {
 }
 
 export const MeetingCard = ({ meeting }: MeetingCardProps) => {
+  // Create arrays of categories that exist in the meeting
+  const categories = ['features', 'formats', 'languages', 'communities', 'type'] as const
+  
   return (
     <Box
       borderWidth="1px"
@@ -104,34 +115,25 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
           </Box>
         )}
 
-        {/* Tags */}
+        {/* Categories */}
         <HStack wrap="wrap" gap={2}>
-          {/* {meeting.types.map((type) => (
-            <Tooltip key={type} content={BADGE_DESCRIPTIONS[type] || type}>
-              <Badge
-                colorScheme="blue"
-                variant="subtle"
-                px={2}
-                py={1}
-                borderRadius="full"
-              >
-                {type}
-              </Badge>
-            </Tooltip>
-          ))} */}
-          {meeting.languages.map((lang) => (
-            <Tooltip key={lang} content={BADGE_DESCRIPTIONS[lang] || lang}>
-              <Badge
-                colorScheme="green"
-                variant="subtle"
-                px={2}
-                py={1}
-                borderRadius="full"
-              >
-                {lang}
-              </Badge>
-            </Tooltip>
-          ))}
+          {categories.map(category => 
+            meeting[category]?.length > 0 && (
+              meeting[category].map((item: string) => (
+                <Tooltip key={`${category}-${item}`} content={DESCRIPTIONS[item] || item}>
+                  <Badge
+                    colorScheme={CATEGORY_COLORS[category]}
+                    variant="subtle"
+                    px={2}
+                    py={1}
+                    borderRadius="full"
+                  >
+                    {item}
+                  </Badge>
+                </Tooltip>
+              ))
+            )
+          )}
         </HStack>
       </VStack>
     </Box>
