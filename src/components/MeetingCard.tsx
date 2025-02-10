@@ -34,6 +34,14 @@ interface MeetingCardProps {
 }
 
 export const MeetingCard = ({ meeting }: MeetingCardProps) => {
+  if (!meeting) {
+    return <div>Loading...</div>;
+  }
+
+    // Ensure types and languages are arrays with a default empty array
+    const types = Array.isArray(meeting.types) ? meeting.types : [];
+    const languages = Array.isArray(meeting.languages) ? meeting.languages : [];
+
   return (
     <Box
       borderWidth="1px"
@@ -106,7 +114,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
 
         {/* Tags */}
         <HStack wrap="wrap" gap={2}>
-          {meeting.types.map((type) => (
+          {types.map((type) => (
             <Tooltip key={type} content={BADGE_DESCRIPTIONS[type] || type}>
               <Badge
                 colorScheme="blue"
@@ -119,7 +127,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
               </Badge>
             </Tooltip>
           ))}
-          {meeting.languages.map((lang) => (
+          {languages.map((lang) => (
             <Tooltip key={lang} content={BADGE_DESCRIPTIONS[lang] || lang}>
               <Badge
                 colorScheme="green"
