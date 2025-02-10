@@ -106,7 +106,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
 
         {/* Tags */}
         <HStack wrap="wrap" gap={2}>
-          {meeting.types.map((type) => (
+          {/* {meeting.types.map((type) => (
             <Tooltip key={type} content={BADGE_DESCRIPTIONS[type] || type}>
               <Badge
                 colorScheme="blue"
@@ -118,7 +118,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
                 {type}
               </Badge>
             </Tooltip>
-          ))}
+          ))} */}
           {meeting.languages.map((lang) => (
             <Tooltip key={lang} content={BADGE_DESCRIPTIONS[lang] || lang}>
               <Badge

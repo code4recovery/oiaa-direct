@@ -3,10 +3,7 @@ import { useSearchParams } from "react-router"
 import { Filter } from "@/components/Filter"
 import { Layout } from "@/components/Layout"
 import { MeetingsSummary } from "@/components/MeetingsSummary"
-import {
-  buildFilter,
-  getMeetings,
-} from "@/meetings-utils"
+import { buildFilter, getMeetings } from "@/meetings-utils"
 
 import type { Route } from "./+types/meetings-filtered"
 
