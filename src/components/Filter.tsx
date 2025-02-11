@@ -4,18 +4,11 @@ import { FaTimesCircle } from "react-icons/fa"
 import type { SetURLSearchParams } from "react-router"
 
 import { toggleArrayElement } from "@/meetings-utils"
-import { MEETING_TYPES } from "@/meetingTypes"
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Text,
-  VStack,
-} from "@chakra-ui/react"
+import { COMMUNITIES, FEATURES, FORMATS, TYPE } from "@/meetingTypes"
+import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react"
 
+import { CategoryFilter } from "./categoryFilter"
 import { SearchInput } from "./SearchInput"
-import { TypeFilter } from "./TypeFilter"
 
 interface FilterProps {
   filterParams: URLSearchParams
@@ -73,9 +66,27 @@ export function Filter({
               Languages
             </Heading>
           </Box>
-          <TypeFilter
-            categoryName={"Meeting Types"}
-            types={MEETING_TYPES}
+          <CategoryFilter
+            categoryName={"Meeting Type"}
+            categoryData={TYPE}
+            selectedTypes={filterParams.getAll("types")}
+            onToggleType={handleToggleType}
+          />
+          <CategoryFilter
+            categoryName={"Formats"}
+            categoryData={FORMATS}
+            selectedTypes={filterParams.getAll("types")}
+            onToggleType={handleToggleType}
+          />
+          <CategoryFilter
+            categoryName={"Features"}
+            categoryData={FEATURES}
+            selectedTypes={filterParams.getAll("types")}
+            onToggleType={handleToggleType}
+          />
+          <CategoryFilter
+            categoryName={"Communities"}
+            categoryData={COMMUNITIES}
             selectedTypes={filterParams.getAll("types")}
             onToggleType={handleToggleType}
           />

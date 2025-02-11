@@ -21,6 +21,10 @@ export interface Meeting {
   sortRTCTime: string
   startDateUTC: string
   types: string[]
+  features: string[]
+  formats: string[]
+  communities: string[]
+  type: string[]
 }
 
 export interface FilterParams {
