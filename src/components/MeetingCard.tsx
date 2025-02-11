@@ -42,6 +42,7 @@ interface MeetingCardProps {
 }
 
 export const MeetingCard = ({ meeting }: MeetingCardProps) => {
+
   // Create arrays of categories that exist in the meeting
   const categories = ['features', 'formats', 'languages', 'communities', 'type'] as const
   
