@@ -4,14 +4,14 @@ import { buildFilter, getMeetings } from "../meetings-utils"
 
 test("Retrieves an array of meetings", async () => {
   const result = await getMeetings()
-  expect(result).not.toHaveLength(0)
+  expect(result).toHaveLength(3)
 })
 
 test("Retrieves meetings with specific name", async () => {
   const result = await getMeetings({
-    nameQuery: "It Works It Really Does 6pm Men's Open AA Meeting",
+    nameQuery: "Test Meeting 2",
   })
-  expect(result).toHaveLength(7)
+  expect(result).toHaveLength(1)
 })
 
 test("Retrieves meetings with multiple meeting types", async () => {
@@ -23,6 +23,7 @@ test("Retrieves meetings with multiple meeting types", async () => {
   const testTypes = ["M", "B", "C"]
 
   const results = await getMeetings({ types: testTypes })
+  console.log(results)
   let found = [false]
   if (results !== null) {
     found = results.map((result) => checkSubset(result.types, testTypes))
@@ -72,10 +73,8 @@ test("Filter is correctly built", () => {
 })
 
 test("Empty search params returns empty filter", () => {
-  const { searchParams } = new URL(
-    new Request("http://localhost:5173/").url
-  )
-  
+  const { searchParams } = new URL(new Request("http://localhost:5173/").url)
+
   expect(buildFilter(searchParams)).toStrictEqual({})
 })
 
@@ -83,9 +82,9 @@ test("Single value params are returned as arrays", () => {
   const { searchParams } = new URL(
     new Request("http://localhost:5173/?types=W").url
   )
-  
+
   expect(buildFilter(searchParams)).toStrictEqual({
-    types: ["W"]
+    types: ["W"],
   })
 })
 
@@ -93,10 +92,10 @@ test("Unknown params are handled correctly", () => {
   const { searchParams } = new URL(
     new Request("http://localhost:5173/?unknown=test&types=W").url
   )
-  
+
   expect(buildFilter(searchParams)).toStrictEqual({
     unknown: ["test"],
-    types: ["W"]
+    types: ["W"],
   })
 })
 
@@ -104,9 +103,8 @@ test("Multiple instances of same param are grouped", () => {
   const { searchParams } = new URL(
     new Request("http://localhost:5173/?types=W&types=X&types=Y").url
   )
-  
+
   expect(buildFilter(searchParams)).toStrictEqual({
-    types: ["W", "X", "Y"]
+    types: ["W", "X", "Y"],
   })
 })
-

@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "test-meeting-1",
+    "name": "Test Meeting 1",
+    "timezone": "America/Los_Angeles",
+    "day": 1,
+    "time": "19:00",
+    "duration": 60,
+    "conference_url": "https://us02web.zoom.us",
+    "conference_notes": "Not a real Zoom link",
+    "notes": "Nothing to add, really",
+    "languages": ["EN"],
+    "features": [],
+    "formats": [],
+    "communities": [],
+    "type": "C"
+  },
+  {
+    "slug": "test-meeting-2",
+    "name": "Test Meeting 2",
+    "timezone": "America/New_York",
+    "day": 3,
+    "time": "19:00",
+    "duration": 60,
+    "conference_url": "https://us02web.zoom.us",
+    "conference_notes": "Not a real Zoom link",
+    "notes": "Nothing to add, really",
+    "languages": ["EN"],
+    "features": ["AL-AN"],
+    "formats": ["B"],
+    "communities": [],
+    "type": "C"
+  },
+  {
+    "slug": "test-meeting-3",
+    "name": "Test Meeting 3",
+    "timezone": "America/Denver",
+    "day": 2,
+    "time": "19:00",
+    "duration": 60,
+    "conference_url": "https://us02web.zoom.us",
+    "conference_notes": "Not a real Zoom link",
+    "notes": "Nothing to add, really",
+    "languages": ["EN"],
+    "features": ["DB"],
+    "formats": ["BE"],
+    "communities": ["M"],
+    "type": "C"
+  }
+]
