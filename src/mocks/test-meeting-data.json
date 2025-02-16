@@ -25,9 +25,9 @@
     "conference_url": "https://us02web.zoom.us",
     "conference_notes": "Not a real Zoom link",
     "notes": "Nothing to add, really",
-    "languages": ["EN"],
+    "languages": ["ES"],
     "features": ["AL-AN"],
-    "formats": ["B"],
+    "formats": ["D"],
     "communities": [],
     "type": "C"
   },
@@ -42,7 +42,7 @@
     "conference_notes": "Not a real Zoom link",
     "notes": "Nothing to add, really",
     "languages": ["EN"],
-    "features": ["DB"],
+    "features": ["OUT", "DB"],
     "formats": ["BE"],
     "communities": ["M"],
     "type": "C"
