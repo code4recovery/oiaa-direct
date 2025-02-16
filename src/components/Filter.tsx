@@ -4,7 +4,16 @@ import { FaTimesCircle } from "react-icons/fa"
 import type { SetURLSearchParams } from "react-router"
 
 import { toggleArrayElement } from "@/meetings-utils"
-import { COMMUNITIES, FEATURES, FORMATS, TYPE } from "@/meetingTypes"
+import {
+  COMMUNITIES,
+  type Community,
+  type Feature,
+  FEATURES,
+  type Format,
+  FORMATS,
+  type Type,
+  TYPE,
+} from "@/meetingTypes"
 import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react"
 
 import { CategoryFilter } from "./categoryFilter"
@@ -12,7 +21,7 @@ import { SearchInput } from "./SearchInput"
 
 interface FilterProps {
   filterParams: URLSearchParams
-  sendFilterSelectionsToParent: SetURLSearchParams
+  sendFilterSelectionsToParent: ReturnType<() => SetURLSearchParams>
   sendQueryToParent: (x: string) => void
 }
 
@@ -22,7 +31,11 @@ export function Filter({
   sendQueryToParent,
 }: FilterProps) {
   const [searchQueryEntry, setSearchQueryEntry] = useState<string>("")
-  const activeTypes = filterParams.getAll("types").length > 0
+  const activeTypes =
+    filterParams.getAll("features").length > 0 ||
+    filterParams.getAll("formats").length > 0 ||
+    filterParams.getAll("type").length > 0 ||
+    filterParams.getAll("communities").length > 0
 
   const hasActiveFilters = searchQueryEntry || activeTypes
 
@@ -31,15 +44,34 @@ export function Filter({
     sendFilterSelectionsToParent({})
   }
 
-  const handleToggleType = (type: string) => {
-    sendFilterSelectionsToParent((prev) => {
-      const newTypes = toggleArrayElement(filterParams.getAll("types"), type)
-      prev.delete("types")
-      newTypes.forEach((option) => {
-        prev.append("types", option)
+  const handleToggle = (category: string) => (chosen: string) => {
+    sendFilterSelectionsToParent((prev: URLSearchParams) => {
+      const newOptions = toggleArrayElement(
+        filterParams.getAll(category),
+        chosen
+      )
+      prev.delete(category)
+      newOptions.forEach((option) => {
+        prev.append(category, option)
       })
       return prev
     })
+  }
+
+  const handleFormatToggle = (formatOption: string) => {
+    handleToggle("formats")(formatOption)
+  }
+
+  const handleFeatureToggle = (featureOption: string) => {
+    handleToggle("features")(featureOption)
+  }
+
+  const handleTypeToggle = (typeOption: string) => {
+    handleToggle("type")(typeOption)
+  }
+
+  const handleCommunityToggle = (communityOption: string) => {
+    handleToggle("communities")(communityOption)
   }
 
   const handleInputChange = (value: string) => {
@@ -66,29 +98,29 @@ export function Filter({
               Languages
             </Heading>
           </Box>
-          <CategoryFilter
-            categoryName={"Meeting Type"}
-            categoryData={TYPE}
-            selectedTypes={filterParams.getAll("types")}
-            onToggleType={handleToggleType}
+          <CategoryFilter<Type>
+            displayName={"Meeting Type"}
+            options={TYPE}
+            selected={filterParams.getAll("type") as Type[]}
+            onToggle={handleTypeToggle}
           />
-          <CategoryFilter
-            categoryName={"Formats"}
-            categoryData={FORMATS}
-            selectedTypes={filterParams.getAll("types")}
-            onToggleType={handleToggleType}
+          <CategoryFilter<Format>
+            displayName={"Formats"}
+            options={FORMATS}
+            selected={filterParams.getAll("formats") as Format[]}
+            onToggle={handleFormatToggle}
           />
-          <CategoryFilter
-            categoryName={"Features"}
-            categoryData={FEATURES}
-            selectedTypes={filterParams.getAll("types")}
-            onToggleType={handleToggleType}
+          <CategoryFilter<Feature>
+            displayName={"Features"}
+            options={FEATURES}
+            selected={filterParams.getAll("features") as Feature[]}
+            onToggle={handleFeatureToggle}
           />
-          <CategoryFilter
-            categoryName={"Communities"}
-            categoryData={COMMUNITIES}
-            selectedTypes={filterParams.getAll("types")}
-            onToggleType={handleToggleType}
+          <CategoryFilter<Community>
+            displayName={"Communities"}
+            options={COMMUNITIES}
+            selected={filterParams.getAll("communities") as Community[]}
+            onToggle={handleCommunityToggle}
           />
           {hasActiveFilters && (
             <Button
