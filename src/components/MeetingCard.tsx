@@ -42,10 +42,6 @@ interface MeetingCardProps {
 }
 
 export const MeetingCard = ({ meeting }: MeetingCardProps) => {
-
-export function MeetingCard({ meeting }: MeetingCardProps) {
-  const hasJoinLink = meeting.conference_url || meeting.conference_phone
-
   const renderJoinButton = () => {
     // If there's a direct conference URL (Zoom/Meet)
     if (meeting.conference_url) {
