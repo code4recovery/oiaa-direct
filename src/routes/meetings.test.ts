@@ -70,3 +70,43 @@ test("Filter is correctly built", () => {
     types: ["W"],
   })
 })
+
+test("Empty search params returns empty filter", () => {
+  const { searchParams } = new URL(
+    new Request("http://localhost:5173/").url
+  )
+  
+  expect(buildFilter(searchParams)).toStrictEqual({})
+})
+
+test("Single value params are returned as arrays", () => {
+  const { searchParams } = new URL(
+    new Request("http://localhost:5173/?types=W").url
+  )
+  
+  expect(buildFilter(searchParams)).toStrictEqual({
+    types: ["W"]
+  })
+})
+
+test("Unknown params are handled correctly", () => {
+  const { searchParams } = new URL(
+    new Request("http://localhost:5173/?unknown=test&types=W").url
+  )
+  
+  expect(buildFilter(searchParams)).toStrictEqual({
+    unknown: ["test"],
+    types: ["W"]
+  })
+})
+
+test("Multiple instances of same param are grouped", () => {
+  const { searchParams } = new URL(
+    new Request("http://localhost:5173/?types=W&types=X&types=Y").url
+  )
+  
+  expect(buildFilter(searchParams)).toStrictEqual({
+    types: ["W", "X", "Y"]
+  })
+})
+

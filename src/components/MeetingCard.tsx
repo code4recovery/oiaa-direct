@@ -41,6 +41,8 @@ interface MeetingCardProps {
   meeting: Meeting
 }
 
+export const MeetingCard = ({ meeting }: MeetingCardProps) => {
+
 export function MeetingCard({ meeting }: MeetingCardProps) {
   const hasJoinLink = meeting.conference_url || meeting.conference_phone
 

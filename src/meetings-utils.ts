@@ -85,13 +85,14 @@ export async function getMeetings(filter?: FilterParams): Promise<Meeting[]> {
 }
 
 export function buildFilter(searchParams: URLSearchParams) {
-  let filter = {}
-  if (searchParams.has("nameQuery"))
-    filter = { ...filter, nameQuery: searchParams.getAll("nameQuery") }
-  if (searchParams.has("languages"))
-    filter = { ...filter, languages: searchParams.getAll("languages") }
-  if (searchParams.has("types"))
-    filter = { ...filter, types: searchParams.getAll("types") }
+  const filter: Record<string, string[]> = {}
+  
+  for (const [key] of searchParams.entries()) {
+    if (!filter[key]) {
+      filter[key] = searchParams.getAll(key)
+    }
+  }
+  
   return filter
 }
 
