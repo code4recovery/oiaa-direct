@@ -41,7 +41,71 @@ interface MeetingCardProps {
   meeting: Meeting
 }
 
-export const MeetingCard = ({ meeting }: MeetingCardProps) => {
+export function MeetingCard({ meeting }: MeetingCardProps) {
+  const hasJoinLink = meeting.conference_url || meeting.conference_phone
+
+  const renderJoinButton = () => {
+    // If there's a direct conference URL (Zoom/Meet)
+    if (meeting.conference_url) {
+      return (
+        <Link
+          href={meeting.conference_url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button
+            colorScheme="blue"
+            size="sm"
+            variant="solid"
+            color="white"
+            _hover={{ bg: 'blue.600' }}
+          >
+            <FaExternalLinkAlt style={{ marginRight: '8px' }} />
+            Join Meeting
+          </Button>
+        </Link>
+      )
+    }
+
+    // If there's a website link
+    if (meeting.website) {
+      return (
+        <Link
+          href={meeting.website}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button
+            colorScheme="gray"
+            size="sm"
+            variant="solid"
+            _hover={{ bg: 'gray.600' }}
+          >
+            <FaExternalLinkAlt style={{ marginRight: '8px' }} />
+            Website
+          </Button>
+        </Link>
+      )
+    }
+
+    return null
+  }
+
+  const renderMeetingInfo = () => {
+    if (meeting.conference_url_notes) {
+      return <Text color="gray.500">ID: {meeting.conference_url_notes}</Text>
+    }
+    if (meeting.conference_phone) {
+      return (
+        <Text color="gray.500">
+          Dial in: {meeting.conference_phone}
+          {meeting.conference_phone_notes && ` (${meeting.conference_phone_notes})`}
+        </Text>
+      )
+    }
+    return null
+  }
+
   // Create arrays of categories that exist in the meeting
   const categories = ['features', 'formats', 'languages', 'communities', 'type'] as const
   
@@ -85,35 +149,11 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
           </VStack>
         )}
 
-        {/* Join Button */}
-        {meeting.conference_url && (
-          <Box>
-            <Link
-              href={meeting.conference_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              _hover={{ textDecoration: "none" }}
-            >
-              <Button
-                bg="blue.700"
-                color="white"
-                size="md"
-                width="full"
-                _hover={{
-                  bg: "blue.800",
-                }}
-              >
-                <FaExternalLinkAlt style={{ marginRight: "8px" }} />
-                Join Meeting
-              </Button>
-            </Link>
-            {meeting.conference_url_notes && (
-              <Text fontSize="sm" color="gray.500" mt={2}>
-                {meeting.conference_url_notes}
-              </Text>
-            )}
-          </Box>
-        )}
+        {/* Meeting Access Section */}
+        <VStack align="start" gap={2} mt={4}>
+          {renderJoinButton()}
+          {renderMeetingInfo()}
+        </VStack>
 
         {/* Categories */}
         <HStack wrap="wrap" gap={2}>
