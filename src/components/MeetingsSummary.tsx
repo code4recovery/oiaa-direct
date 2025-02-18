@@ -1,6 +1,5 @@
 import type { Meeting } from "@/meetings-utils"
 import {
-  Box,
   Heading,
   Text,
   VStack,

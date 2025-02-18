@@ -16,9 +16,7 @@ export default function MeetingsFiltered() {
     const fetchMeetings = async () => {
       setLoading(true)
       try {
-        console.log('Current search params:', Object.fromEntries(searchParams.entries()))
         const data = await getMeetings(searchParams)
-        console.log('Fetched meetings:', data.length)
         setMeetings(data)
       } catch (error) {
         console.error('Failed to fetch meetings:', error)
