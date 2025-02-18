@@ -1,147 +1,102 @@
-import { useState } from "react"
-
-import { FaTimesCircle } from "react-icons/fa"
-import type { SetURLSearchParams } from "react-router"
-
-import { toggleArrayElement } from "@/meetings-utils"
-import {
-  COMMUNITIES,
-  type Community,
-  type Feature,
-  FEATURES,
-  type Format,
-  FORMATS,
-  type Type,
-  TYPE,
-} from "@/meetingTypes"
 import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react"
-
-import { CategoryFilter } from "./categoryFilter"
+import { FaTimesCircle } from "react-icons/fa"
+import { useSearchParams } from "react-router-dom"
 import { SearchInput } from "./SearchInput"
+import { CategoryFilter } from "./categoryFilter"
+import { 
+  TYPE, FORMATS, FEATURES, COMMUNITIES,
+  type Type, type Format, type Feature, type Community,
+  type CategoryMap 
+} from "@/meetingTypes"
+import { toggleArrayElement } from "@/meetings-utils"
 
 interface FilterProps {
-  filterParams: URLSearchParams
-  sendFilterSelectionsToParent: ReturnType<() => SetURLSearchParams>
-  sendQueryToParent: (x: string) => void
+  onFilterChange: (filters: URLSearchParams) => void
 }
 
-export function Filter({
-  filterParams,
-  sendFilterSelectionsToParent,
-  sendQueryToParent,
-}: FilterProps) {
-  const [searchQueryEntry, setSearchQueryEntry] = useState<string>("")
-  const activeTypes =
-    filterParams.getAll("features").length > 0 ||
-    filterParams.getAll("formats").length > 0 ||
-    filterParams.getAll("type").length > 0 ||
-    filterParams.getAll("communities").length > 0
+export function Filter({ onFilterChange }: FilterProps) {
+  const [searchParams] = useSearchParams()
 
-  const hasActiveFilters = searchQueryEntry || activeTypes
+  const handleCategoryToggle = <K extends keyof CategoryMap>(
+    category: K,
+    value: CategoryMap[K][number]
+  ) => {
+    const newParams = new URLSearchParams(searchParams)
+    const current = newParams.getAll(category)
+    const updated = toggleArrayElement(current, value)
+    newParams.delete(category)
+    updated.forEach(v => newParams.append(category, v))
+    onFilterChange(newParams)
+  }
+
+  const handleSearch = (query: string) => {
+    const newParams = new URLSearchParams(searchParams)
+    if (query) {
+      newParams.set("nameQuery", query)
+    } else {
+      newParams.delete("nameQuery")
+    }
+    onFilterChange(newParams)
+  }
 
   const clearFilters = () => {
-    setSearchQueryEntry("")
-    sendFilterSelectionsToParent({})
+    onFilterChange(new URLSearchParams())
   }
 
-  const handleToggle = (category: string) => (chosen: string) => {
-    sendFilterSelectionsToParent((prev: URLSearchParams) => {
-      const newOptions = toggleArrayElement(
-        filterParams.getAll(category),
-        chosen
-      )
-      prev.delete(category)
-      newOptions.forEach((option) => {
-        prev.append(category, option)
-      })
-      return prev
-    })
-  }
-
-  const handleFormatToggle = (formatOption: string) => {
-    handleToggle("formats")(formatOption)
-  }
-
-  const handleFeatureToggle = (featureOption: string) => {
-    handleToggle("features")(featureOption)
-  }
-
-  const handleTypeToggle = (typeOption: string) => {
-    handleToggle("type")(typeOption)
-  }
-
-  const handleCommunityToggle = (communityOption: string) => {
-    handleToggle("communities")(communityOption)
-  }
-
-  const handleInputChange = (value: string) => {
-    setSearchQueryEntry(value)
-    if (value.length > 2) sendQueryToParent(value)
-  }
+  const hasActiveFilters = searchParams.toString().length > 0
 
   return (
-    <>
-      <Box
-        p={4}
-        borderRadius="lg"
-        _dark={{
-          borderColor: "whiteAlpha.200",
-        }}
-      >
-        <VStack gap={4} align="stretch">
-          <Heading size="md" color="inherit">
-            Filters
-          </Heading>
-          <SearchInput value={searchQueryEntry} onChange={handleInputChange} />
-          <Box>
-            <Heading size="sm" mb={2} color="inherit">
-              Languages
-            </Heading>
-          </Box>
-          <CategoryFilter<Type>
-            displayName={"Meeting Type"}
-            options={TYPE}
-            selected={filterParams.getAll("type") as Type[]}
-            onToggle={handleTypeToggle}
-          />
-          <CategoryFilter<Format>
-            displayName={"Formats"}
-            options={FORMATS}
-            selected={filterParams.getAll("formats") as Format[]}
-            onToggle={handleFormatToggle}
-          />
-          <CategoryFilter<Feature>
-            displayName={"Features"}
-            options={FEATURES}
-            selected={filterParams.getAll("features") as Feature[]}
-            onToggle={handleFeatureToggle}
-          />
-          <CategoryFilter<Community>
-            displayName={"Communities"}
-            options={COMMUNITIES}
-            selected={filterParams.getAll("communities") as Community[]}
-            onToggle={handleCommunityToggle}
-          />
-          {hasActiveFilters && (
-            <Button
-              size="sm"
-              variant="ghost"
-              colorScheme="gray"
-              onClick={clearFilters}
-              color="gray.600"
-              _dark={{
-                color: "gray.200",
-                _hover: { bg: "whiteAlpha.200" },
-              }}
-            >
-              <Flex align="center" gap={2}>
-                <FaTimesCircle />
-                <Text>Clear Filters</Text>
-              </Flex>
-            </Button>
-          )}
-        </VStack>
-      </Box>
-    </>
+    <Box p={4} borderRadius="lg">
+      <VStack gap={4} align="stretch">
+        <Heading size="md">Filters</Heading>
+        
+        <SearchInput 
+          value={searchParams.get("nameQuery") || ""} 
+          onChange={handleSearch} 
+        />
+
+        <CategoryFilter<Type>
+          displayName="Meeting Type"
+          options={TYPE}
+          selected={searchParams.getAll("type").filter((t): t is Type => t in TYPE)}
+          onToggle={(value: Type) => handleCategoryToggle("type", value)}
+        />
+
+        <CategoryFilter<Format>
+          displayName="Formats"
+          options={FORMATS}
+          selected={searchParams.getAll("formats").filter((f): f is Format => f in FORMATS)}
+          onToggle={(value: Format) => handleCategoryToggle("formats", value)}
+        />
+
+        <CategoryFilter<Feature>
+          displayName="Features"
+          options={FEATURES}
+          selected={searchParams.getAll("features").filter((f): f is Feature => f in FEATURES)}
+          onToggle={(value: Feature) => handleCategoryToggle("features", value)}
+        />
+
+        <CategoryFilter<Community>
+          displayName="Communities"
+          options={COMMUNITIES}
+          selected={searchParams.getAll("communities").filter((c): c is Community => c in COMMUNITIES)}
+          onToggle={(value: Community) => handleCategoryToggle("communities", value)}
+        />
+
+        {hasActiveFilters && (
+          <Button
+            size="sm"
+            variant="ghost"
+            colorScheme="gray"
+            onClick={clearFilters}
+          >
+            <Flex align="center" gap={2}>
+              <FaTimesCircle />
+              <Text>Clear Filters</Text>
+            </Flex>
+          </Button>
+        )}
+      </VStack>
+    </Box>
   )
 }

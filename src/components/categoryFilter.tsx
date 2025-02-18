@@ -3,9 +3,9 @@ import { Box, Button, Flex, Heading } from "@chakra-ui/react"
 
 interface CategoryFilterProps<T extends string> {
   displayName: string
-  options: Record<T, string | string[]>
+  options: Record<T, string>
   selected: T[]
-  onToggle: (x: string) => void
+  onToggle: (x: T) => void
 }
 
 export function CategoryFilter<T extends string>({

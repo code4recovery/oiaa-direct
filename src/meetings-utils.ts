@@ -1,39 +1,31 @@
-import type { WeekdayNumbers } from "luxon"
 import { matchSorter } from "match-sorter"
 
-import type { Community, Feature, Format, Type } from "./meetingTypes"
+import type { Community, Feature, Format, Type, CategoryMap } from "./meetingTypes"
 
-type Minutes = number
 
 // TODO: Figure out why I included `start` and `end`. Appears to be from the `type Meeting` in online-meeting-list, but they are not in the original data source.
 // TODO: Figure out how we can can `conference_url` but not a defined `conference_provider`
 // TODO: Discuss role of `tags`, `search` and `edit_url`. The fields exist in `online-meeting-list`, but not the original data source.
 // TODO: Discuss alternative to `conference_*` fields
-export interface Meeting {
+export interface Meeting extends CategoryMap {
   slug: string
   name: string
   timezone: string
-  day: WeekdayNumbers
+  day: number
   time: string
-  duration: Minutes
-  languages: string[]
-  features: Feature[]
-  formats: Format[]
-  communities: Community[]
-  type?: Type
-  conference_provider?: string
+  duration: number
+  notes?: string
   conference_url?: string
   conference_url_notes?: string
   conference_phone?: string
   conference_phone_notes?: string
-  group_id?: string
-  notes?: string[]
-  // tags: string[]
-  // search: string
-  // edit_url?: string
-  // start?: DateTime
-  // end?: DateTime
-
+  website?: string
+  languages: string[]
+  startDateUTC: string
+  adjustedUTC: string
+  sortRTCDay: number
+  sortRTCTime: string
+  rtc: string
 }
 
 export interface FilterParams {
@@ -61,19 +53,26 @@ function fuzzyGlobalTextFilter<T extends object>(
   ) as Meeting[]
 }
 
-function filteredData<T extends object>(
-  data: T[],
-  filterValues: string[],
-  key: "type" | "formats" | "features" | "communities" | "languages"
+// Type guard for checking if a meeting has a specific category
+export function hasCategoryValue(
+  meeting: Meeting,
+  category: keyof CategoryMap,
+  value: string
+): boolean {
+  const values = meeting[category] as unknown as string[]
+  return values?.includes(value) ?? false
+}
+
+// Type-safe filter function
+export function filteredData<K extends keyof CategoryMap>(
+  data: Meeting[],
+  filterValues: CategoryMap[K][number][],
+  key: K
 ) {
   if (filterValues.length === 0) return data
 
-  return filterValues.reduceRight(
-    (results, filterValue) =>
-      matchSorter(results, filterValue, {
-        keys: [{ threshold: matchSorter.rankings.EQUAL, key }],
-      }),
-    data
+  return data.filter(meeting => 
+    filterValues.every(value => hasCategoryValue(meeting, key, value))
   )
 }
 
