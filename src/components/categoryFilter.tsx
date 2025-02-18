@@ -1,38 +1,38 @@
 import { Tooltip } from "@/components/ui/tooltip"
 import { Box, Button, Flex, Heading } from "@chakra-ui/react"
 
-interface CategoryFilterProps {
-  categoryName: string
-  categoryData: Record<string, string>
-  selectedTypes: string[]
-  onToggleType: (type: string) => void
+interface CategoryFilterProps<T extends string> {
+  displayName: string
+  options: Record<T, string | string[]>
+  selected: T[]
+  onToggle: (x: string) => void
 }
 
-export function CategoryFilter({
-  categoryName,
-  categoryData,
-  selectedTypes,
-  onToggleType,
-}: CategoryFilterProps) {
-  const codes = Object.keys(categoryData)
+export function CategoryFilter<T extends string>({
+  displayName,
+  options,
+  selected,
+  onToggle,
+}: CategoryFilterProps<T>) {
+  const codes = Object.keys(options) as T[]
   return (
     <Box>
       <Heading size="sm" mb={2} color="inherit">
-        {categoryName}
+        {displayName}
       </Heading>
 
       <Flex gap={2} flexWrap="wrap">
         {codes.map((code) => {
-          const isSelected = selectedTypes.includes(code)
+          const isSelected = selected.includes(code)
           return (
             <Box key={code}>
-              <Tooltip content={categoryData[code]}>
+              <Tooltip content={options[code]}>
                 <Button
                   size="xs"
                   variant="outline"
                   colorScheme={isSelected ? "blue" : "gray"}
                   onClick={() => {
-                    onToggleType(code)
+                    onToggle(code)
                   }}
                   fontWeight="normal"
                   px={3}
@@ -52,7 +52,7 @@ export function CategoryFilter({
                     borderColor: isSelected ? "blue.500" : "gray.400",
                   }}
                 >
-                  {categoryData[code].valueOf()}
+                  {options[code]}
                 </Button>
               </Tooltip>
             </Box>

@@ -64,3 +64,10 @@ export const COMMUNITIES = {
   "LO-I": "Loners / Isolationists",
   P: "Professionals",
 } // 17
+
+export type Community = keyof typeof COMMUNITIES
+export type Feature = keyof typeof FEATURES
+export type Format = keyof typeof FORMATS
+export type Type = keyof typeof TYPE
+
+export type Category = Community | Feature | Format | Type
