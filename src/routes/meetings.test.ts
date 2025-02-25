@@ -1,8 +1,14 @@
-import { expect, test } from "vitest"
+import {
+  expect,
+  test,
+} from "vitest"
 
 import type { Format } from "@/meetingTypes"
 
-import { buildFilter, getMeetings } from "../meetings-utils"
+import {
+  buildFilter,
+  getMeetings,
+} from "../meetings-utils"
 
 test("Retrieves an array of meetings", async () => {
   const result = await getMeetings()
@@ -69,13 +75,11 @@ test("Single value params are returned as arrays", () => {
   })
 })
 
-test("Unknown params are handled correctly", () => {
+test("Unknown params are not included in the filter", () => {
   const { searchParams } = new URL(
     new Request("http://localhost:5173/?unknown=test&communities=W").url
   )
-
-  expect(buildFilter(searchParams)).toStrictEqual({
-    unknown: ["test"],
+  expect(buildFilter(searchParams)).toEqual({
     communities: ["W"],
   })
 })
