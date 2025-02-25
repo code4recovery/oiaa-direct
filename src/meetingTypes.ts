@@ -1,10 +1,13 @@
+import type { WeekdayNumbers } from "luxon"
+
+type Minutes = number
 export interface MeetingType {
   code: string
   name: string
   description?: string
 }
 
-export const TYPE = { O: "Open", C: "Closed" } // 2
+export const TYPE = { O: "Open", C: "Closed" } as const // 2
 
 export const FORMATS = {
   "11": "11th Step Meditation",
@@ -23,7 +26,7 @@ export const FORMATS = {
   SP: "Speaker",
   ST: "Step Study",
   TR: "Tradition Study",
-} // 16
+} as const // 16
 
 export const FEATURES = {
   "AL-AN": "Concurrent with Al-Anon",
@@ -43,7 +46,7 @@ export const FEATURES = {
   X: "Wheelchair Access",
   XB: "Wheelchair-Accessible Bathroom",
   XT: "Cross Talk Permitted",
-} // 17
+} as const // 17
 
 export const COMMUNITIES = {
   M: "Men",
@@ -63,7 +66,7 @@ export const COMMUNITIES = {
   "D-HOH": "Deaf / Hard of Hearing",
   "LO-I": "Loners / Isolationists",
   P: "Professionals",
-} // 17
+} as const // 17
 
 export type Community = keyof typeof COMMUNITIES
 export type Feature = keyof typeof FEATURES
@@ -71,3 +74,27 @@ export type Format = keyof typeof FORMATS
 export type Type = keyof typeof TYPE
 
 export type Category = Community | Feature | Format | Type
+
+export interface CategoryMap {
+  type: Type
+  formats: Format[]
+  features: Feature[]
+  communities: Community[]
+  languages: string[] // TODO: Implement object with set of languages.
+}
+
+export interface Meeting extends CategoryMap {
+  slug: string
+  name: string
+  timezone: string
+  day: WeekdayNumbers
+  time: string
+  duration: Minutes
+  conference_provider?: string
+  conference_url?: string
+  conference_url_notes?: string
+  conference_phone?: string
+  conference_phone_notes?: string
+  group_id?: string
+  notes?: string[]
+}
