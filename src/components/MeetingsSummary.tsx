@@ -1,4 +1,4 @@
-import type { Meeting } from "@/meetings-utils"
+import type { Meeting } from "@/meetingTypes"
 import {
   Box,
   Heading,

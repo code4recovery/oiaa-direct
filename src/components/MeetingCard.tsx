@@ -1,8 +1,13 @@
 import { FaExternalLinkAlt } from "react-icons/fa"
 
 import { Tooltip } from "@/components/ui/tooltip"
-import type { Meeting } from "@/meetings-utils"
-import { TYPE, FORMATS, FEATURES, COMMUNITIES } from "@/meetingTypes"
+import type { Meeting } from "@/meetingTypes"
+import {
+  COMMUNITIES,
+  FEATURES,
+  FORMATS,
+  TYPE,
+} from "@/meetingTypes"
 import {
   Badge,
   Box,
@@ -34,7 +39,7 @@ const CATEGORY_COLORS: CategoryColors = {
   formats: "blue",
   languages: "green",
   communities: "orange",
-  type: "cyan"
+  type: "cyan",
 }
 
 interface MeetingCardProps {
@@ -42,10 +47,15 @@ interface MeetingCardProps {
 }
 
 export const MeetingCard = ({ meeting }: MeetingCardProps) => {
-
   // Create arrays of categories that exist in the meeting
-  const categories = ['features', 'formats', 'languages', 'communities', 'type'] as const
-  
+  const categories = [
+    "features",
+    "formats",
+    "languages",
+    "communities",
+    "type",
+  ] as const
+
   return (
     <Box
       borderWidth="1px"
@@ -118,10 +128,14 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
 
         {/* Categories */}
         <HStack wrap="wrap" gap={2}>
-          {categories.map(category => 
-            meeting[category]?.length > 0 && (
+          {categories.map(
+            (category) =>
+              meeting[category].length > 0 &&
               meeting[category].map((item: string) => (
-                <Tooltip key={`${category}-${item}`} content={DESCRIPTIONS[item] || item}>
+                <Tooltip
+                  key={`${category}-${item}`}
+                  content={DESCRIPTIONS[item] || item}
+                >
                   <Badge
                     colorScheme={CATEGORY_COLORS[category]}
                     variant="subtle"
@@ -133,7 +147,6 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
                   </Badge>
                 </Tooltip>
               ))
-            )
           )}
         </HStack>
       </VStack>
