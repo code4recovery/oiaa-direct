@@ -1,9 +1,12 @@
 import fs from "fs"
-import { http, HttpResponse } from "msw"
+import {
+  http,
+  HttpResponse,
+} from "msw"
 
-import type { Meeting } from "@/meetings-utils"
+import type { Meeting } from "@/meetingTypes"
 
-const data = fs.readFileSync("src/mocks/test-meeting-data.json")
+const data = fs.readFileSync("src/mocks/test-meeting-data.json", "utf-8")
 const meetings = JSON.parse(data) as Meeting[]
 
 export const handlers = [
