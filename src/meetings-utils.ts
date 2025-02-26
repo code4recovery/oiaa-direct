@@ -25,6 +25,7 @@ export interface Meeting {
   formats: string[]
   communities: string[]
   type: string[]
+  website?: string
 }
 
 export interface FilterParams {
