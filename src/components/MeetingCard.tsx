@@ -1,4 +1,5 @@
-import { FaExternalLinkAlt } from "react-icons/fa"
+import { FaExternalLinkAlt, FaInfoCircle } from "react-icons/fa"
+import { Link as RouterLink } from "react-router"
 
 import { Tooltip } from "@/components/ui/tooltip"
 import type { Meeting } from "@/meetingTypes"
@@ -96,8 +97,8 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
           </VStack>
         )}
 
-        {/* Join Button */}
-        {meeting.conference_url && (
+        {/* Join Button or View Details */}
+        {meeting.conference_url ? (
           <Box>
             <Link
               href={meeting.conference_url}
@@ -123,6 +124,23 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
                 {meeting.conference_url_notes}
               </Text>
             )}
+          </Box>
+        ) : (
+          <Box>
+            <RouterLink to={`/meetings/${meeting.slug}`}>
+              <Button
+                bg="gray.600"
+                color="white"
+                size="md"
+                width="full"
+                _hover={{
+                  bg: "gray.700",
+                }}
+              >
+                <FaInfoCircle style={{ marginRight: "8px" }} />
+                View Meeting Details
+              </Button>
+            </RouterLink>
           </Box>
         )}
 
