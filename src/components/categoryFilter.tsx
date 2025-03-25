@@ -50,7 +50,8 @@ export function CategoryFilter<T extends string>({
                   borderRadius="full"
                   borderWidth="1px"
                   color="inherit"
-                  bg={isSelected ? `${colorScheme}.50` : "transparent"}
+                  bg={isSelected ? `${colorScheme}.100` : "transparent"}
+                  borderColor={isSelected ? `${colorScheme}.200` : "gray.200"}
                   _dark={{
                     borderColor: isSelected ? `${colorScheme}.800` : "gray.400",
                     bg: isSelected ? `${colorScheme}.900` : "transparent",
@@ -60,8 +61,8 @@ export function CategoryFilter<T extends string>({
                     },
                   }}
                   _hover={{
-                    bg: isSelected ? `${colorScheme}.100` : "blackAlpha.50",
-                    borderColor: isSelected ? `${colorScheme}.500` : "gray.400",
+                    bg: isSelected ? `${colorScheme}.200` : "gray.50",
+                    borderColor: isSelected ? `${colorScheme}.300` : "gray.300",
                   }}
                 >
                   {options[code]}
