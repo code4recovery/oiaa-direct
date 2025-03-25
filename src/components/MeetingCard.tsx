@@ -76,7 +76,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
             {meeting.name}
           </Heading>
           <Heading size="sm" color="gray.600" fontWeight="medium" mt={1}>
-            {new Date(meeting.startDateUTC).toLocaleString(undefined, {
+            {new Date(`2000-01-01T${meeting.time}`).toLocaleString(undefined, {
               weekday: "long",
               hour: "numeric",
               minute: "numeric",
@@ -88,7 +88,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         {/* Meeting Info */}
         {meeting.notes && (
           <VStack align="stretch" gap={2}>
-            {meeting.notes.split("\n").map((note, index) => (
+            {(Array.isArray(meeting.notes) ? meeting.notes : (meeting.notes as string).split('\n')).map((note: string, index: number) => (
               <Text key={index} color="gray.700" _dark={{ color: "gray.300" }}>
                 {note}
               </Text>
@@ -129,9 +129,10 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         {/* Categories */}
         <HStack wrap="wrap" gap={2}>
           {categories.map(
-            (category) =>
-              meeting[category].length > 0 &&
-              meeting[category].map((item: string) => (
+            (category) => {
+              const value = meeting[category];
+              const items = Array.isArray(value) ? value : [value];
+              return items.length > 0 && items.map((item: string) => (
                 <Tooltip
                   key={`${category}-${item}`}
                   content={DESCRIPTIONS[item] || item}
@@ -147,6 +148,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
                   </Badge>
                 </Tooltip>
               ))
+            }
           )}
         </HStack>
       </VStack>

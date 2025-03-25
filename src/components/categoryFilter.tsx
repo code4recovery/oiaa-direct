@@ -1,6 +1,14 @@
 import { Tooltip } from "@/components/ui/tooltip"
 import { Box, Button, Flex, Heading } from "@chakra-ui/react"
 
+const CATEGORY_COLORS = {
+  features: "purple",
+  formats: "blue",
+  languages: "green",
+  communities: "orange",
+  type: "cyan",
+} as const
+
 interface CategoryFilterProps<T extends string> {
   displayName: string
   options: Record<T, string | string[]>
@@ -15,6 +23,8 @@ export function CategoryFilter<T extends string>({
   onToggle,
 }: CategoryFilterProps<T>) {
   const codes = Object.keys(options) as T[]
+  const colorScheme = CATEGORY_COLORS[displayName.toLowerCase().split(" ")[0] as keyof typeof CATEGORY_COLORS] || "blue"
+  
   return (
     <Box>
       <Heading size="sm" mb={2} color="inherit">
@@ -30,7 +40,7 @@ export function CategoryFilter<T extends string>({
                 <Button
                   size="xs"
                   variant="outline"
-                  colorScheme={isSelected ? "blue" : "gray"}
+                  colorScheme={isSelected ? colorScheme : "gray"}
                   onClick={() => {
                     onToggle(code)
                   }}
@@ -40,16 +50,19 @@ export function CategoryFilter<T extends string>({
                   borderRadius="full"
                   borderWidth="1px"
                   color="inherit"
+                  bg={isSelected ? `${colorScheme}.100` : "transparent"}
+                  borderColor={isSelected ? `${colorScheme}.200` : "gray.200"}
                   _dark={{
-                    borderColor: isSelected ? "blue.800" : "gray.400",
+                    borderColor: isSelected ? `${colorScheme}.800` : "gray.400",
+                    bg: isSelected ? `${colorScheme}.900` : "transparent",
                     _hover: {
-                      bg: "whiteAlpha.100",
-                      borderColor: isSelected ? "blue.300" : "whiteAlpha.500",
+                      bg: isSelected ? `${colorScheme}.800` : "whiteAlpha.100",
+                      borderColor: isSelected ? `${colorScheme}.300` : "whiteAlpha.500",
                     },
                   }}
                   _hover={{
-                    bg: "blackAlpha.50",
-                    borderColor: isSelected ? "blue.500" : "gray.400",
+                    bg: isSelected ? `${colorScheme}.200` : "gray.50",
+                    borderColor: isSelected ? `${colorScheme}.300` : "gray.300",
                   }}
                 >
                   {options[code]}
