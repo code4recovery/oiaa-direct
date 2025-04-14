@@ -97,4 +97,6 @@ export interface Meeting extends CategoryMap {
   conference_phone_notes?: string
   group_id?: string
   notes?: string[]
+  groupEmail?: string
+  groupWebsite?: string
 }

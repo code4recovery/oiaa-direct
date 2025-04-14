@@ -1,4 +1,4 @@
-import { FaExternalLinkAlt, FaInfoCircle } from "react-icons/fa"
+import { FaExternalLinkAlt, FaEnvelope, FaLink } from "react-icons/fa"
 import { Link as RouterLink } from "react-router"
 
 import { Tooltip } from "@/components/ui/tooltip"
@@ -102,6 +102,45 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
               </Text>
             ))}
           </VStack>
+        )}
+        
+        {/* Contact Buttons */}
+        {(meeting.groupEmail || meeting.groupWebsite) && (
+          <HStack gap={2} wrap="wrap">
+            {meeting.groupEmail && (
+              <Link
+                href={`mailto:${meeting.groupEmail}`}
+                _hover={{ textDecoration: "none" }}
+              >
+                <Button
+                  size="sm"
+                  variant="outline"
+                  colorScheme="blue"
+                >
+                  <FaEnvelope style={{ marginRight: "8px" }} />
+                  Email
+                </Button>
+              </Link>
+            )}
+            
+            {meeting.groupWebsite && (
+              <Link
+                href={meeting.groupWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+                _hover={{ textDecoration: "none" }}
+              >
+                <Button
+                  size="sm"
+                  variant="outline"
+                  colorScheme="blue"
+                >
+                  <FaLink style={{ marginRight: "8px" }} />
+                  Website
+                </Button>
+              </Link>
+            )}
+          </HStack>
         )}
 
         {/* Join Button */}
