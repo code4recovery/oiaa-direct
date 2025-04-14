@@ -73,9 +73,16 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
       <VStack align="stretch" gap={4}>
         {/* Header */}
         <Box>
-          <Heading size="md" color="blue.600" _dark={{ color: "blue.300" }}>
-            {meeting.name}
-          </Heading>
+          <RouterLink to={`/group-info/${meeting.slug}`}>
+            <Heading 
+              size="md" 
+              color="blue.600" 
+              _dark={{ color: "blue.300" }}
+              _hover={{ textDecoration: "underline" }}
+            >
+              {meeting.name}
+            </Heading>
+          </RouterLink>
           <Heading size="sm" color="gray.600" fontWeight="medium" mt={1}>
             {new Date(`2000-01-01T${meeting.time}`).toLocaleString(undefined, {
               weekday: "long",
@@ -97,8 +104,8 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
           </VStack>
         )}
 
-        {/* Join Button or View Details */}
-        {meeting.conference_url ? (
+        {/* Join Button */}
+        {meeting.conference_url && (
           <Box>
             <Link
               href={meeting.conference_url}
@@ -124,23 +131,6 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
                 {meeting.conference_url_notes}
               </Text>
             )}
-          </Box>
-        ) : (
-          <Box>
-            <RouterLink to={`/meetings/${meeting.slug}`}>
-              <Button
-                bg="gray.600"
-                color="white"
-                size="md"
-                width="full"
-                _hover={{
-                  bg: "gray.700",
-                }}
-              >
-                <FaInfoCircle style={{ marginRight: "8px" }} />
-                View Meeting Details
-              </Button>
-            </RouterLink>
           </Box>
         )}
 
