@@ -1,4 +1,5 @@
-import { FaExternalLinkAlt } from "react-icons/fa"
+import { FaExternalLinkAlt, FaEnvelope, FaLink } from "react-icons/fa"
+import { Link as RouterLink } from "react-router"
 
 import { Tooltip } from "@/components/ui/tooltip"
 import type { Meeting } from "@/meetingTypes"
@@ -72,9 +73,16 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
       <VStack align="stretch" gap={4}>
         {/* Header */}
         <Box>
-          <Heading size="md" color="blue.600" _dark={{ color: "blue.300" }}>
-            {meeting.name}
-          </Heading>
+          <RouterLink to={`/group-info/${meeting.slug}`}>
+            <Heading 
+              size="md" 
+              color="blue.600" 
+              _dark={{ color: "blue.300" }}
+              _hover={{ textDecoration: "underline" }}
+            >
+              {meeting.name}
+            </Heading>
+          </RouterLink>
           <Heading size="sm" color="gray.600" fontWeight="medium" mt={1}>
             {new Date(`2000-01-01T${meeting.time}`).toLocaleString(undefined, {
               weekday: "long",
@@ -94,6 +102,45 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
               </Text>
             ))}
           </VStack>
+        )}
+        
+        {/* Contact Buttons */}
+        {(meeting.groupEmail || meeting.groupWebsite) && (
+          <HStack gap={2} wrap="wrap">
+            {meeting.groupEmail && (
+              <Link
+                href={`mailto:${meeting.groupEmail}`}
+                _hover={{ textDecoration: "none" }}
+              >
+                <Button
+                  size="sm"
+                  variant="outline"
+                  colorScheme="blue"
+                >
+                  <FaEnvelope style={{ marginRight: "8px" }} />
+                  Email
+                </Button>
+              </Link>
+            )}
+            
+            {meeting.groupWebsite && (
+              <Link
+                href={meeting.groupWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+                _hover={{ textDecoration: "none" }}
+              >
+                <Button
+                  size="sm"
+                  variant="outline"
+                  colorScheme="blue"
+                >
+                  <FaLink style={{ marginRight: "8px" }} />
+                  Website
+                </Button>
+              </Link>
+            )}
+          </HStack>
         )}
 
         {/* Join Button */}
