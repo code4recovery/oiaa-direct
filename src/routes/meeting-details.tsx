@@ -1,15 +1,15 @@
-import { useSearchParams } from "react-router"
 import { FaExternalLinkAlt } from "react-icons/fa"
+import { useOutletContext, useParams, useSearchParams } from "react-router"
 
 import { Filter } from "@/components/Filter"
 import { Layout } from "@/components/Layout"
 import { Tooltip } from "@/components/ui/tooltip"
-import { getMeetings } from "@/meetings-utils"
-import type { Meeting } from "@/meetingTypes"
+import { createMeetingFetcher } from "@/getMeetings"
 import {
   COMMUNITIES,
   FEATURES,
   FORMATS,
+  type Meeting,
   TYPE,
 } from "@/meetingTypes"
 import {
@@ -22,6 +22,8 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
+
+import type { Route } from "./+types/meeting-details"
 
 const DESCRIPTIONS: Record<string, string> = {
   ...TYPE,
@@ -38,44 +40,20 @@ const CATEGORY_COLORS = {
   type: "cyan",
 }
 
-interface RouteParams {
-  slug: string
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  const getMeetingDetails = createMeetingFetcher(params.slug)
+  const group = await getMeetingDetails()
+  console.log(group)
+  return { group }
 }
 
-export type Route = {
-  ClientLoaderArgs: {
-    request: Request
-    params: RouteParams
-  }
-  ComponentProps: {
-    loaderData: {
-      meeting: Meeting
-    }
-  }
-}
+export default function MeetingDetails({ loaderData }: Route.ComponentProps) {
+  const { slug } = useParams()
+  const { group } = loaderData
+  const { meetings } = useOutletContext<{ meetings: Meeting[] }>()
+  const selectedMeeting = meetings.find((m: Meeting) => m.slug === slug)
 
-export async function clientLoader({ params }: Route["ClientLoaderArgs"]) {
-  const baseUrl = import.meta.env.VITE_CQ_URL
-  if (!baseUrl) throw new Error("App not configured correctly")
-  
-  // Use the main meetings endpoint with slug filter
-  const apiBase = baseUrl.replace('/meetings/next', '/meetings')
-  const url = `${apiBase}?slug=${params.slug}`
-  
-  // For now, fetch all meetings and filter by slug
-  // TODO: Update getMeetings to accept slug parameter
-  const meetings = await getMeetings()
-  const meeting = meetings.find(m => m.slug === params.slug)
-  
-  if (!meeting) {
-    throw new Error(`Meeting with slug ${params.slug} not found`)
-  }
-  
-  return { meeting }
-}
-
-export default function MeetingDetails({ loaderData }: Route["ComponentProps"]) {
-  const { meeting } = loaderData
+  console.log(selectedMeeting, group)
   const [filterParams, setFilterParams] = useSearchParams()
 
   const handleQuery = (query: string) => {
@@ -93,7 +71,7 @@ export default function MeetingDetails({ loaderData }: Route["ComponentProps"]) 
     "communities",
     "type",
   ] as const
-  
+
   return (
     <Layout
       sidebar={
@@ -123,20 +101,30 @@ export default function MeetingDetails({ loaderData }: Route["ComponentProps"]) 
               {meeting.name}
             </Heading>
             <Heading size="sm" color="gray.600" fontWeight="medium" mt={1}>
-              {new Date(`2000-01-01T${meeting.time}`).toLocaleString(undefined, {
-                weekday: "long",
-                hour: "numeric",
-                minute: "numeric",
-                timeZoneName: "short",
-              })}
+              {new Date(`2000-01-01T${meeting.time}`).toLocaleString(
+                undefined,
+                {
+                  weekday: "long",
+                  hour: "numeric",
+                  minute: "numeric",
+                  timeZoneName: "short",
+                }
+              )}
             </Heading>
           </Box>
 
           {/* Meeting Info */}
           {meeting.notes && (
             <VStack align="stretch" gap={2}>
-              {(Array.isArray(meeting.notes) ? meeting.notes : (meeting.notes as string).split('\n')).map((note: string, index: number) => (
-                <Text key={index} color="gray.700" _dark={{ color: "gray.300" }}>
+              {(Array.isArray(meeting.notes)
+                ? meeting.notes
+                : (meeting.notes as string).split("\n")
+              ).map((note: string, index: number) => (
+                <Text
+                  key={index}
+                  color="gray.700"
+                  _dark={{ color: "gray.300" }}
+                >
                   {note}
                 </Text>
               ))}
@@ -175,11 +163,12 @@ export default function MeetingDetails({ loaderData }: Route["ComponentProps"]) 
 
           {/* Categories */}
           <HStack wrap="wrap" gap={2}>
-            {categories.map(
-              (category) => {
-                const value = meeting[category];
-                const items = Array.isArray(value) ? value : [value];
-                return items.length > 0 && items.map((item: string) => (
+            {categories.map((category) => {
+              const value = meeting[category]
+              const items = Array.isArray(value) ? value : [value]
+              return (
+                items.length > 0 &&
+                items.map((item: string) => (
                   <Tooltip
                     key={`${category}-${item}`}
                     content={DESCRIPTIONS[item] || item}
@@ -195,13 +184,15 @@ export default function MeetingDetails({ loaderData }: Route["ComponentProps"]) 
                     </Badge>
                   </Tooltip>
                 ))
-              }
-            )}
+              )
+            })}
           </HStack>
 
           {/* Additional Meeting Details */}
           <Box>
-            <Heading size="sm" mb={2}>Additional Details</Heading>
+            <Heading size="sm" mb={2}>
+              Additional Details
+            </Heading>
             <VStack align="stretch" gap={2}>
               {/* Add any additional meeting details you want to display */}
               {/* You can add more fields here as needed */}
@@ -214,4 +205,4 @@ export default function MeetingDetails({ loaderData }: Route["ComponentProps"]) 
       </Box>
     </Layout>
   )
-} 
+}
