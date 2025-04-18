@@ -1,6 +1,6 @@
 import { matchSorter } from "match-sorter"
 
-import type { Community, Feature, Format, Meeting, Type } from "./meetingTypes"
+import type { Community, Feature, Format, Type } from "./meetingTypes"
 
 // TODO This can extend CategoryMap?
 export interface FilterParams {
@@ -48,13 +48,13 @@ export const filteredData = <T extends object>(
   )
 }
 
-export const fetchMeetings = async (url: string): Promise<Meeting[]> => {
+export const fetchData = async <T>(url: string): Promise<T[]> => {
   try {
     const response = await fetch(url)
     if (!response.ok) {
-      throw new Error(`Failed to fetch meetings: ${response.statusText}`)
+      throw new Error(`Failed to fetch data: ${response.statusText}`)
     }
-    return (await response.json()) as Meeting[]
+    return (await response.json()) as T[]
   } catch (error) {
     console.error(error)
     return []

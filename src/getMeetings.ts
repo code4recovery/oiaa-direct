@@ -1,18 +1,24 @@
 import type { FilterParams } from "./meetings-utils"
 import {
-  fetchMeetings,
+  fetchData,
   filteredData,
   fuzzyGlobalTextFilter,
 } from "./meetings-utils"
 import type { Meeting } from "./meetingTypes"
 
+/**
+ * Fetches meetings from a given URL and applies filters if provided.
+ * @param urlAddendum - The URL path to fetch meetings from.
+ * @param filter - Optional filter parameters to apply to the fetched meetings.
+ * @returns A promise that resolves to an array of filtered meetings.
+ */
 export const createMeetingFetcher =
   (urlAddendum: string) =>
   async (filter?: FilterParams): Promise<Meeting[]> => {
     if (!import.meta.env.VITE_CQ_URL)
       throw new Error("App not configured correctly")
     const url = import.meta.env.VITE_CQ_URL as string
-    let meetings = await fetchMeetings(`${url}/${urlAddendum}`)
+    let meetings = await fetchData<Meeting>(`${url}/${urlAddendum}`)
 
     if (filter) {
       const { nameQuery, features, formats, type, communities, languages } =
