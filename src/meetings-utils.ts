@@ -1,6 +1,6 @@
 import { matchSorter } from "match-sorter"
 
-import type { Community, Feature, Format, Type } from "./meetingTypes"
+import type { Community, Feature, Format, Meeting, Type } from "./meetingTypes"
 
 // TODO This can extend CategoryMap?
 export interface FilterParams {
@@ -75,4 +75,38 @@ export const buildFilter = (
 export const toggleArrayElement = <T>(array: T[], value: T): T[] => {
   const newArray = array.filter((x) => x !== value)
   return newArray.length === array.length ? [...newArray, value] : newArray
+}
+
+/**
+ * Applies filters to a list of meetings based on the provided filter parameters.
+ * @param meetings - The list of meetings to filter.
+ * @param filter - The filter parameters to apply.
+ * @returns The filtered list of meetings.
+ */
+export const applyMeetingFilters = (
+  meetings: Meeting[],
+  filter: FilterParams
+): Meeting[] => {
+  const { nameQuery, features, formats, type, communities, languages } = filter
+  const applyFilters = [
+    type ? (data: Meeting[]) => filteredData(data, [type], "type") : undefined,
+    formats
+      ? (data: Meeting[]) => filteredData(data, formats, "formats")
+      : undefined,
+    features
+      ? (data: Meeting[]) => filteredData(data, features, "features")
+      : undefined,
+    communities
+      ? (data: Meeting[]) => filteredData(data, communities, "communities")
+      : undefined,
+    languages
+      ? (data: Meeting[]) => filteredData(data, languages, "languages")
+      : undefined,
+    nameQuery
+      ? (data: Meeting[]) =>
+          fuzzyGlobalTextFilter(data, ["name", "slug"], nameQuery)
+      : undefined,
+  ].filter(Boolean) as ((data: Meeting[]) => Meeting[])[]
+
+  return applyFilters.reduce((data, filterFn) => filterFn(data), meetings)
 }
