@@ -16,4 +16,4 @@ export const createMeetingFetcher = (urlAddendum: string) => async () => {
   return meetings
 }
 
-export const getNextMeetings = createMeetingFetcher("next")
+export const getNextMeetings = createMeetingFetcher("")

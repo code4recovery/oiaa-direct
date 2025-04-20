@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router"
+import { Outlet, useSearchParams } from "react-router"
 
 import { Filter } from "@/components/Filter"
 import { Layout } from "@/components/Layout"
@@ -42,7 +42,7 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
       >
         <MeetingsSummary meetings={loaderData.meetings} />
       </Layout>
-      {/* <Outlet context={loaderData.meetings} /> */}
+      <Outlet />
     </>
   )
 }

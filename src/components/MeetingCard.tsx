@@ -1,14 +1,9 @@
-import { FaExternalLinkAlt, FaEnvelope, FaLink } from "react-icons/fa"
-import { Link as RouterLink } from "react-router"
+import { FaEnvelope, FaExternalLinkAlt, FaLink } from "react-icons/fa"
+import { Link as RRLink } from "react-router"
 
 import { Tooltip } from "@/components/ui/tooltip"
 import type { Meeting } from "@/meetingTypes"
-import {
-  COMMUNITIES,
-  FEATURES,
-  FORMATS,
-  TYPE,
-} from "@/meetingTypes"
+import { COMMUNITIES, FEATURES, FORMATS, TYPE } from "@/meetingTypes"
 import {
   Badge,
   Box,
@@ -73,16 +68,16 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
       <VStack align="stretch" gap={4}>
         {/* Header */}
         <Box>
-          <RouterLink to={`/group-info/${meeting.slug}`}>
-            <Heading 
-              size="md" 
-              color="blue.600" 
+          <RRLink to={`/group-info/${meeting.slug}`}>
+            <Heading
+              size="md"
+              color="blue.600"
               _dark={{ color: "blue.300" }}
               _hover={{ textDecoration: "underline" }}
             >
               {meeting.name}
             </Heading>
-          </RouterLink>
+          </RRLink>
           <Heading size="sm" color="gray.600" fontWeight="medium" mt={1}>
             {new Date(`2000-01-01T${meeting.time}`).toLocaleString(undefined, {
               weekday: "long",
@@ -96,14 +91,17 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         {/* Meeting Info */}
         {meeting.notes && (
           <VStack align="stretch" gap={2}>
-            {(Array.isArray(meeting.notes) ? meeting.notes : (meeting.notes as string).split('\n')).map((note: string, index: number) => (
+            {(Array.isArray(meeting.notes)
+              ? meeting.notes
+              : (meeting.notes as string).split("\n")
+            ).map((note: string, index: number) => (
               <Text key={index} color="gray.700" _dark={{ color: "gray.300" }}>
                 {note}
               </Text>
             ))}
           </VStack>
         )}
-        
+
         {/* Contact Buttons */}
         {(meeting.groupEmail || meeting.groupWebsite) && (
           <HStack gap={2} wrap="wrap">
@@ -112,17 +110,13 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
                 href={`mailto:${meeting.groupEmail}`}
                 _hover={{ textDecoration: "none" }}
               >
-                <Button
-                  size="sm"
-                  variant="outline"
-                  colorScheme="blue"
-                >
+                <Button size="sm" variant="outline" colorScheme="blue">
                   <FaEnvelope style={{ marginRight: "8px" }} />
                   Email
                 </Button>
               </Link>
             )}
-            
+
             {meeting.groupWebsite && (
               <Link
                 href={meeting.groupWebsite}
@@ -130,11 +124,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
                 rel="noopener noreferrer"
                 _hover={{ textDecoration: "none" }}
               >
-                <Button
-                  size="sm"
-                  variant="outline"
-                  colorScheme="blue"
-                >
+                <Button size="sm" variant="outline" colorScheme="blue">
                   <FaLink style={{ marginRight: "8px" }} />
                   Website
                 </Button>
@@ -175,11 +165,12 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
 
         {/* Categories */}
         <HStack wrap="wrap" gap={2}>
-          {categories.map(
-            (category) => {
-              const value = meeting[category];
-              const items = Array.isArray(value) ? value : [value];
-              return items.length > 0 && items.map((item: string) => (
+          {categories.map((category) => {
+            const value = meeting[category]
+            const items = Array.isArray(value) ? value : [value]
+            return (
+              items.length > 0 &&
+              items.map((item: string) => (
                 <Tooltip
                   key={`${category}-${item}`}
                   content={DESCRIPTIONS[item] || item}
@@ -195,8 +186,8 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
                   </Badge>
                 </Tooltip>
               ))
-            }
-          )}
+            )
+          })}
         </HStack>
       </VStack>
     </Box>
