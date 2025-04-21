@@ -79,7 +79,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
             </Heading>
           </RRLink>
           <Heading size="sm" color="gray.600" fontWeight="medium" mt={1}>
-            {new Date(`2000-01-01T${meeting.time}`).toLocaleString(undefined, {
+            {new Date(`${meeting.timeUTC}`).toLocaleString(undefined, {
               weekday: "long",
               hour: "numeric",
               minute: "numeric",

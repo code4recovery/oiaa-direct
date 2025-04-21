@@ -88,7 +88,7 @@ export interface Meeting extends CategoryMap {
   name: string
   timezone: string
   day: WeekdayNumbers
-  time: string
+  timeUTC: string
   duration: Minutes
   conference_provider?: string
   conference_url?: string
