@@ -1,10 +1,21 @@
-import { FaArrowLeft, FaExternalLinkAlt } from "react-icons/fa"
+import {
+  FaArrowLeft,
+  FaExternalLinkAlt,
+} from "react-icons/fa"
 import { Link as RouterLink } from "react-router"
 
 import { Layout } from "@/components/Layout"
 import { Tooltip } from "@/components/ui/tooltip"
-import { createMeetingFetcher } from "@/getMeetings"
-import { COMMUNITIES, FEATURES, FORMATS, TYPE } from "@/meetingTypes"
+import {
+  getMeeting,
+  getRelatedDetails,
+} from "@/getData"
+import {
+  COMMUNITIES,
+  FEATURES,
+  FORMATS,
+  TYPE,
+} from "@/meetingTypes"
 import {
   Badge,
   Box,
@@ -35,14 +46,38 @@ const CATEGORY_COLORS = {
   type: "cyan",
 }
 
+const localTime = (timeStamp: string) => (
+  <>
+    {new Date(timeStamp).toLocaleString(undefined, {
+      weekday: "long",
+      hour: "numeric",
+      minute: "numeric",
+      timeZoneName: "short",
+    })}
+  </>
+)
+
+const localTimeShort = (timeStamp: string) => (
+  <>
+    {new Date(timeStamp).toLocaleString(undefined, {
+      hour: "numeric",
+      minute: "numeric",
+    })}
+  </>
+)
+
+const localDay = (timeStamp: string) => (
+  <>
+    {new Date(timeStamp).toLocaleString(undefined, {
+      weekday: "long",
+    })}
+  </>
+)
+
 // This function isn't ready yet, but it will be used to fetch the other group meetings byGroupId.
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  const getSelectedMeeting = createMeetingFetcher(params.slug)
-  const getRelatedDetails = createMeetingFetcher(
-    `${params.slug}/related-group-info`
-  )
-  const meeting = await getSelectedMeeting()
-  const group = await getRelatedDetails()
+  const meeting = await getMeeting(params.slug)
+  const group = await getRelatedDetails(`${params.slug}/related-group-info`)
   console.log("meeting", meeting)
   console.log("group", group)
   return { meeting, group }
@@ -90,15 +125,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
               {meeting.name}
             </Heading>
             <Heading size="md" color="gray.600" fontWeight="medium" mt={1}>
-              {new Date(`2000-01-01T${meeting.time}`).toLocaleString(
-                undefined,
-                {
-                  weekday: "long",
-                  hour: "numeric",
-                  minute: "numeric",
-                  timeZoneName: "short",
-                }
-              )}
+              {localTime(meeting.timeUTC)}
             </Heading>
           </Box>
 
@@ -223,27 +250,12 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
 
               <GridItem>
                 <Text fontWeight="bold">Day</Text>
-                <Text>
-                  {new Date(`2000-01-01T${meeting.time}`).toLocaleString(
-                    undefined,
-                    {
-                      weekday: "long",
-                    }
-                  )}
-                </Text>
+                <Text>{localDay(meeting.timeUTC)}</Text>
               </GridItem>
 
               <GridItem>
                 <Text fontWeight="bold">Time</Text>
-                <Text>
-                  {new Date(`2000-01-01T${meeting.time}`).toLocaleString(
-                    undefined,
-                    {
-                      hour: "numeric",
-                      minute: "numeric",
-                    }
-                  )}
-                </Text>
+                <Text>{localTimeShort(meeting.timeUTC)}</Text>
               </GridItem>
 
               <GridItem>
