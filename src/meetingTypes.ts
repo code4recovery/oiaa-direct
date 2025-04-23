@@ -100,3 +100,16 @@ export interface Meeting extends CategoryMap {
   groupEmail?: string
   groupWebsite?: string
 }
+
+interface Group {
+  name: string
+  email?: string
+  website?: string
+  phone?: string
+  notes?: string
+}
+
+export interface RelatedGroupInfo {
+  groupInfo: Group
+  groupMeetings: Meeting[]
+}
