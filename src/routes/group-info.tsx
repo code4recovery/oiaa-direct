@@ -6,7 +6,6 @@ import {
   FaEnvelope,
   FaExternalLinkAlt,
   FaInfoCircle,
-  FaMapMarkerAlt,
   FaChevronDown,
   FaChevronUp,
   FaGlobeAmericas
@@ -15,7 +14,6 @@ import { Link as RouterLink } from "react-router"
 import { useState } from "react"
 
 import { Layout } from "@/components/Layout"
-import { Tooltip } from "@/components/ui/tooltip"
 import {
   getMeeting,
   getRelatedDetails,
@@ -31,10 +29,7 @@ import {
   Box,
   Button,
   Flex,
-  Grid,
-  GridItem,
   Heading,
-  HStack,
   Link,
   SimpleGrid,
   Text,
@@ -62,7 +57,8 @@ interface GroupMeeting {
   groupNotes?: string
 }
 
-interface GroupData {
+// Using type assertion instead of interface for local use
+type GroupData = {
   groupInfo: {
     _id: string
     name: string
@@ -123,22 +119,6 @@ const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
     userTimezone
   };
 }
-
-const localTime = (timeStamp: string) => (
-  new Date(timeStamp).toLocaleString(undefined, {
-    weekday: "long",
-    hour: "numeric",
-    minute: "numeric",
-    timeZoneName: "short",
-  })
-)
-
-const localTimeShort = (timeStamp: string) => (
-  new Date(timeStamp).toLocaleString(undefined, {
-    hour: "numeric",
-    minute: "numeric",
-  })
-)
 
 const localDay = (timeStamp: string) => (
   new Date(timeStamp).toLocaleString(undefined, {
@@ -257,8 +237,8 @@ function MeetingAccordion({ meeting }: { meeting: GroupMeeting }) {
 
 export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   const { meeting, group } = loaderData
-  // Convert group to GroupData or use a safe default
-  const groupData = group ? (group as any) : null
+  // Convert group to GroupData or use a safe default using double assertion for safety
+  const groupData = group ? (group as unknown as GroupData) : null
   const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone);
 
   // Create arrays of categories that exist in the meeting
