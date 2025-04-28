@@ -48,6 +48,7 @@ interface GroupMeeting {
   groupID?: string
   languages?: string[]
   groupEmail?: string
+  groupWebsite?: string
   timeUTC: string
   rtc: string
   communities?: string[]
@@ -64,6 +65,7 @@ type GroupData = {
     name: string
     email: string
     notes?: string
+    website?: string
   }
   groupMeetings: GroupMeeting[]
 }
@@ -235,6 +237,72 @@ function MeetingAccordion({ meeting }: { meeting: GroupMeeting }) {
   );
 }
 
+// Simple meeting display component for group meeting list
+function MeetingDisplay({ meeting }: { meeting: GroupMeeting }) {
+  const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone);
+  
+  return (
+    <Box>
+      <Flex 
+        justifyContent="space-between" 
+        alignItems="flex-start"
+        flexWrap="wrap"
+        mb={2}
+      >
+        <Box>
+          <Heading size="sm" color="gray.700" _dark={{ color: "gray.300" }}>
+            {meeting.name}
+          </Heading>
+          <Flex align="center" mt={1}>
+            <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
+              <FaCalendarAlt />
+            </Box>
+            <Text color="gray.600" _dark={{ color: "gray.400" }}>
+              {localDay(meeting.timeUTC)} at {timeInfo.originalTime} ({timeInfo.originalTimezone.replace("_", " ")})
+            </Text>
+          </Flex>
+          <Flex align="center" mt={1}>
+            <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
+              <FaGlobeAmericas />
+            </Box>
+            <Text color="gray.600" _dark={{ color: "gray.400" }}>
+              Your local time: {timeInfo.userTime} ({timeInfo.userTimezone})
+            </Text>
+          </Flex>
+        </Box>
+        
+        <Button
+          colorScheme="green"
+          variant="outline"
+          size="sm"
+          mt={{ base: 2, md: 0 }}
+        >
+          <FaCalendarPlus style={{ marginRight: "8px" }} /> Add to Calendar
+        </Button>
+      </Flex>
+      
+      {meeting.formats && meeting.formats.length > 0 && (
+        <Flex flexWrap="wrap" gap={1} mt={2}>
+          {meeting.formats.map((format: string) => (
+            <Badge 
+              key={format} 
+              colorScheme="blue" 
+              variant="subtle"
+              px={2}
+              py={1}
+              borderRadius="full"
+              mr={1}
+              mb={1}
+            >
+              {getCategoryFullName(format, "formats")}
+            </Badge>
+          ))}
+        </Flex>
+      )}
+    </Box>
+  );
+}
+
 export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   const { meeting, group } = loaderData
   // Convert group to GroupData or use a safe default using double assertion for safety
@@ -249,6 +317,11 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
     "communities",
     "type",
   ] as const
+
+  // Check for website (could be in different properties)
+  const websiteUrl = (meeting as any).groupWebsite || 
+                     (meeting as any).website || 
+                     groupData?.groupInfo?.website;
 
   return (
     <Layout>
@@ -338,6 +411,35 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                 </Link>
               )}
               
+              {websiteUrl && (
+                <Link
+                  href={websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  _hover={{ textDecoration: "none" }}
+                  display="inline-block"
+                  mr={2}
+                >
+                  <Button
+                    bg="purple.600"
+                    color="white"
+                    _hover={{
+                      bg: "purple.700",
+                    }}
+                    _dark={{
+                      bg: "purple.600",
+                      _hover: {
+                        bg: "purple.700",
+                      }
+                    }}
+                    size="md"
+                  >
+                    <FaGlobeAmericas style={{ marginRight: "8px" }} />
+                    Website
+                  </Button>
+                </Link>
+              )}
+              
               {meeting.groupEmail && (
                 <Link
                   href={`mailto:${meeting.groupEmail}`}
@@ -359,7 +461,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                     size="md"
                   >
                     <FaEnvelope style={{ marginRight: "8px" }} />
-                    Contact
+                    Email
                   </Button>
                 </Link>
               )}
@@ -559,7 +661,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                   _dark={{ borderColor: "gray.700" }}
                   _hover={{ boxShadow: "sm" }}
                 >
-                  <MeetingAccordion meeting={groupMeeting} />
+                  <MeetingDisplay meeting={groupMeeting} />
                   {index < groupData.groupMeetings.length - 1 && <Box borderBottom="1px" borderColor="gray.200" _dark={{ borderColor: "gray.700" }} mt={4} />}
                 </Box>
               ))}
