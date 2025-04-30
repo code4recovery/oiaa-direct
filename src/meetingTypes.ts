@@ -1,5 +1,3 @@
-import type { WeekdayNumbers } from "luxon"
-
 type Minutes = number
 export interface MeetingType {
   code: string
@@ -87,8 +85,8 @@ export interface Meeting extends CategoryMap {
   slug: string
   name: string
   timezone: string
-  day: WeekdayNumbers
   timeUTC: string
+  rtc: string
   duration: Minutes
   conference_provider?: string
   conference_url?: string
@@ -99,9 +97,11 @@ export interface Meeting extends CategoryMap {
   notes?: string[]
   groupEmail?: string
   groupWebsite?: string
+  groupNotes?: string
 }
 
 interface Group {
+  _id: string
   name: string
   email?: string
   website?: string
