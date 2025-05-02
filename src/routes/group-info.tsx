@@ -5,13 +5,10 @@ import {
   FaClock,
   FaEnvelope,
   FaExternalLinkAlt,
+  FaGlobeAmericas,
   FaInfoCircle,
-  FaChevronDown,
-  FaChevronUp,
-  FaGlobeAmericas
 } from "react-icons/fa"
 import { Link as RouterLink } from "react-router"
-import { useState } from "react"
 
 import { Layout } from "@/components/Layout"
 import {
@@ -22,6 +19,7 @@ import {
   COMMUNITIES,
   FEATURES,
   FORMATS,
+  type Meeting,
   TYPE,
 } from "@/meetingTypes"
 import {
@@ -36,39 +34,6 @@ import {
 } from "@chakra-ui/react"
 
 import type { Route } from "./+types/group-info"
-
-// Type definitions for our data
-interface GroupMeeting {
-  slug: string
-  name: string
-  timezone: string
-  duration: number
-  notes?: string
-  conference_url?: string
-  groupID?: string
-  languages?: string[]
-  groupEmail?: string
-  groupWebsite?: string
-  timeUTC: string
-  rtc: string
-  communities?: string[]
-  features?: string[]
-  formats?: string[]
-  type?: string[]
-  groupNotes?: string
-}
-
-// Using type assertion instead of interface for local use
-type GroupData = {
-  groupInfo: {
-    _id: string
-    name: string
-    email: string
-    notes?: string
-    website?: string
-  }
-  groupMeetings: GroupMeeting[]
-}
 
 const DESCRIPTIONS: Record<string, string> = {
   ...TYPE,
@@ -90,50 +55,52 @@ const CATEGORY_COLORS = {
  */
 const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
   // Create a date object from the UTC time
-  const date = new Date(timeUTC);
-  
+  const date = new Date(timeUTC)
+
   // Get user's local timezone
-  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
   // Format date for the meeting's original timezone
-  const originalTimeFormatter = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
+  const originalTimeFormatter = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
     timeZone: meetingTimezone,
-    hour12: true
-  });
-  
+    hour12: true,
+  })
+
   // Format date for user's local timezone
-  const userTimeFormatter = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
+  const userTimeFormatter = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
     timeZone: userTimezone,
-    hour12: true
-  });
-  
-  const originalTime = originalTimeFormatter.format(date);
-  const userTime = userTimeFormatter.format(date);
-  
+    hour12: true,
+  })
+
+  const originalTime = originalTimeFormatter.format(date)
+  const userTime = userTimeFormatter.format(date)
+
   return {
     originalTime,
     userTime,
     originalTimezone: meetingTimezone,
-    userTimezone
-  };
+    userTimezone,
+  }
 }
 
-const localDay = (timeStamp: string) => (
+const localDay = (timeStamp: string) =>
   new Date(timeStamp).toLocaleString(undefined, {
     weekday: "long",
   })
-)
 
 // Function to get full name of category
-const getCategoryFullName = (category: string, categoryType: string): string => {
+const getCategoryFullName = (
+  category: string,
+  categoryType: string
+): string => {
   if (categoryType === "languages") {
     return category // Languages are already full names
   }
-  
+
   return DESCRIPTIONS[category] || category
 }
 
@@ -146,105 +113,14 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { meeting, group }
 }
 
-// Meeting accordion component
-function MeetingAccordion({ meeting }: { meeting: GroupMeeting }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone);
-  
-  return (
-    <Box>
-      <Flex 
-        justifyContent="space-between" 
-        alignItems="flex-start"
-        flexWrap="wrap"
-        mb={isOpen ? 3 : 2}
-      >
-        <Box>
-          <Heading size="sm" color="gray.700" _dark={{ color: "gray.300" }}>
-            {meeting.name}
-          </Heading>
-          <Flex align="center" mt={1}>
-            <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-              <FaCalendarAlt />
-            </Box>
-            <Text color="gray.600" _dark={{ color: "gray.400" }}>
-              {localDay(meeting.timeUTC)} at {timeInfo.originalTime} ({timeInfo.originalTimezone.replace("_", " ")})
-            </Text>
-          </Flex>
-          <Flex align="center" mt={1}>
-            <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-              <FaGlobeAmericas />
-            </Box>
-            <Text color="gray.600" _dark={{ color: "gray.400" }}>
-              Your local time: {timeInfo.userTime} ({timeInfo.userTimezone})
-            </Text>
-          </Flex>
-        </Box>
-        
-        <Button 
-          variant="ghost"
-          size="sm"
-          mt={{ base: 2, md: 0 }}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? "Hide Details" : "View Details"} {isOpen ? <FaChevronUp style={{ marginLeft: "8px" }} /> : <FaChevronDown style={{ marginLeft: "8px" }} />}
-        </Button>
-      </Flex>
-      
-      {meeting.formats && meeting.formats.length > 0 && (
-        <Flex flexWrap="wrap" gap={1} mt={2}>
-          {meeting.formats.map((format: string) => (
-            <Badge 
-              key={format} 
-              colorScheme="blue" 
-              variant="subtle"
-              px={2}
-              py={1}
-              borderRadius="full"
-              mr={1}
-              mb={1}
-            >
-              {getCategoryFullName(format, "formats")}
-            </Badge>
-          ))}
-        </Flex>
-      )}
-      
-      {isOpen && (
-        <Box
-          mt={3}
-          p={3}
-          bg="gray.50"
-          _dark={{ bg: "gray.700" }}
-          borderRadius="md"
-        >
-          {meeting.notes || (meeting as any).groupNotes ? (
-            <Text mb={3}>{meeting.notes || (meeting as any).groupNotes}</Text>
-          ) : (
-            <Text fontStyle="italic" color="gray.500" mb={3}>No meeting notes available</Text>
-          )}
-          
-          <Button
-            colorScheme="green"
-            variant="outline"
-            size="sm"
-          >
-            <FaCalendarPlus style={{ marginRight: "8px" }} /> Add to Calendar
-          </Button>
-        </Box>
-      )}
-    </Box>
-  );
-}
-
 // Simple meeting display component for group meeting list
-function MeetingDisplay({ meeting }: { meeting: GroupMeeting }) {
-  const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone);
-  
+function MeetingDisplay({ meeting }: { meeting: Meeting }) {
+  const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone)
+
   return (
     <Box>
-      <Flex 
-        justifyContent="space-between" 
+      <Flex
+        justifyContent="space-between"
         alignItems="flex-start"
         flexWrap="wrap"
         mb={2}
@@ -258,7 +134,8 @@ function MeetingDisplay({ meeting }: { meeting: GroupMeeting }) {
               <FaCalendarAlt />
             </Box>
             <Text color="gray.600" _dark={{ color: "gray.400" }}>
-              {localDay(meeting.timeUTC)} at {timeInfo.originalTime} ({timeInfo.originalTimezone.replace("_", " ")})
+              {localDay(meeting.timeUTC)} at {timeInfo.originalTime} (
+              {timeInfo.originalTimezone.replace("_", " ")})
             </Text>
           </Flex>
           <Flex align="center" mt={1}>
@@ -270,7 +147,7 @@ function MeetingDisplay({ meeting }: { meeting: GroupMeeting }) {
             </Text>
           </Flex>
         </Box>
-        
+
         <Button
           colorScheme="green"
           variant="outline"
@@ -280,13 +157,13 @@ function MeetingDisplay({ meeting }: { meeting: GroupMeeting }) {
           <FaCalendarPlus style={{ marginRight: "8px" }} /> Add to Calendar
         </Button>
       </Flex>
-      
-      {meeting.formats && meeting.formats.length > 0 && (
+
+      {meeting.formats.length > 0 && (
         <Flex flexWrap="wrap" gap={1} mt={2}>
           {meeting.formats.map((format: string) => (
-            <Badge 
-              key={format} 
-              colorScheme="blue" 
+            <Badge
+              key={format}
+              colorScheme="blue"
               variant="subtle"
               px={2}
               py={1}
@@ -300,14 +177,15 @@ function MeetingDisplay({ meeting }: { meeting: GroupMeeting }) {
         </Flex>
       )}
     </Box>
-  );
+  )
 }
 
 export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   const { meeting, group } = loaderData
+  const { groupMeetings, groupInfo } = group
   // Convert group to GroupData or use a safe default using double assertion for safety
-  const groupData = group ? (group as unknown as GroupData) : null
-  const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone);
+  // const group = group ? (group as unknown as GroupData) : null
+  const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone)
 
   // Create arrays of categories that exist in the meeting
   const categories = [
@@ -318,10 +196,9 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
     "type",
   ] as const
 
-  // Check for website (could be in different properties)
-  const websiteUrl = (meeting as any).groupWebsite || 
-                     (meeting as any).website || 
-                     groupData?.groupInfo?.website;
+  // Check for website (could be in different properties) --- Tim: Not really. The backend code brings the
+  // website from the group info into the meeting, so we can just use that if it exists.
+  const websiteUrl = meeting.groupWebsite
 
   return (
     <Layout>
@@ -333,7 +210,6 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
           </Button>
         </RouterLink>
       </Box>
-
       {/* Current Meeting Section - Essential Join Info */}
       <Box
         borderWidth="1px"
@@ -347,12 +223,12 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
         }}
         boxShadow="md"
       >
-        <Box 
-          bg="blue.50" 
-          _dark={{ bg: "blue.900" }}
-          p={4}
-        >
-          <Flex justifyContent="space-between" alignItems="flex-start" flexWrap="wrap">
+        <Box bg="blue.50" _dark={{ bg: "blue.900" }} p={4}>
+          <Flex
+            justifyContent="space-between"
+            alignItems="flex-start"
+            flexWrap="wrap"
+          >
             <Box>
               <Heading size="lg" color="blue.600" _dark={{ color: "blue.300" }}>
                 {meeting.name}
@@ -361,8 +237,13 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                 <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
                   <FaCalendarAlt />
                 </Box>
-                <Text color="gray.600" _dark={{ color: "gray.400" }} fontWeight="medium">
-                  {localDay(meeting.timeUTC)} at {timeInfo.originalTime} ({timeInfo.originalTimezone.replace("_", " ")})
+                <Text
+                  color="gray.600"
+                  _dark={{ color: "gray.400" }}
+                  fontWeight="medium"
+                >
+                  {localDay(meeting.timeUTC)} at {timeInfo.originalTime} (
+                  {timeInfo.originalTimezone.replace("_", " ")})
                 </Text>
               </Flex>
               <Flex align="center" mt={1}>
@@ -377,10 +258,12 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                 <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
                   <FaClock />
                 </Box>
-                <Text color="gray.600" _dark={{ color: "gray.400" }}>{meeting.duration} minutes</Text>
+                <Text color="gray.600" _dark={{ color: "gray.400" }}>
+                  {meeting.duration} minutes
+                </Text>
               </Flex>
             </Box>
-            
+
             <Box mt={{ base: 4, md: 0 }}>
               {meeting.conference_url && (
                 <Link
@@ -401,7 +284,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                       bg: "blue.600",
                       _hover: {
                         bg: "blue.700",
-                      }
+                      },
                     }}
                     size="md"
                   >
@@ -410,7 +293,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                   </Button>
                 </Link>
               )}
-              
+
               {websiteUrl && (
                 <Link
                   href={websiteUrl}
@@ -430,7 +313,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                       bg: "purple.600",
                       _hover: {
                         bg: "purple.700",
-                      }
+                      },
                     }}
                     size="md"
                   >
@@ -439,7 +322,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                   </Button>
                 </Link>
               )}
-              
+
               {meeting.groupEmail && (
                 <Link
                   href={`mailto:${meeting.groupEmail}`}
@@ -456,7 +339,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                       bg: "teal.600",
                       _hover: {
                         bg: "teal.700",
-                      }
+                      },
                     }}
                     size="md"
                   >
@@ -469,7 +352,6 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
           </Flex>
         </Box>
       </Box>
-
       {/* Meeting Details */}
       <Box
         borderWidth="1px"
@@ -501,10 +383,10 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
             <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
               {categories.map((categoryType) => {
                 const value = meeting[categoryType]
-                const items = Array.isArray(value) ? value : value ? [value] : []
-                
+                const items = Array.isArray(value) ? value : [value]
+
                 if (items.length === 0) return null
-                
+
                 return (
                   <Box key={categoryType}>
                     <Text fontWeight="bold" mb={2} textTransform="capitalize">
@@ -551,12 +433,17 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
 
             <Box>
               <Text fontWeight="bold">Meeting Time</Text>
-              <Text>{timeInfo.originalTime} ({timeInfo.originalTimezone.replace("_", " ")})</Text>
+              <Text>
+                {timeInfo.originalTime} (
+                {timeInfo.originalTimezone.replace("_", " ")})
+              </Text>
             </Box>
-            
+
             <Box>
               <Text fontWeight="bold">Your Local Time</Text>
-              <Text>{timeInfo.userTime} ({timeInfo.userTimezone})</Text>
+              <Text>
+                {timeInfo.userTime} ({timeInfo.userTimezone})
+              </Text>
             </Box>
 
             {meeting.conference_provider && (
@@ -566,16 +453,16 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
               </Box>
             )}
           </SimpleGrid>
-          
+
           {/* About This Group */}
           {meeting.notes && (
             <Box mb={6}>
               <Heading size="sm" mb={3}>
                 About This Group
               </Heading>
-              <Box 
-                p={4} 
-                bg="gray.50" 
+              <Box
+                p={4}
+                bg="gray.50"
                 _dark={{ bg: "gray.700" }}
                 borderRadius="md"
               >
@@ -595,80 +482,88 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
               </Box>
             </Box>
           )}
-          
+
           {/* Group Notes */}
-          {(groupData?.groupInfo?.notes || (meeting as any).groupNotes) && (
+          {groupInfo.notes && (
             <Box mt={4}>
-              <Text fontWeight="bold" mb={2}>Group Notes</Text>
-              <Box 
-                p={4} 
-                bg="gray.50" 
+              <Text fontWeight="bold" mb={2}>
+                Group Notes
+              </Text>
+              <Box
+                p={4}
+                bg="gray.50"
                 _dark={{ bg: "gray.700" }}
                 borderRadius="md"
               >
-                {((groupData?.groupInfo?.notes || (meeting as any).groupNotes) as string).split("\n").map((note, index) => (
-                  <Text key={index} mb={2}>{note}</Text>
+                {groupInfo.notes.split("\n").map((note, index) => (
+                  <Text key={index} mb={2}>
+                    {note}
+                  </Text>
                 ))}
               </Box>
             </Box>
           )}
         </Box>
       </Box>
-
       {/* Group Information and Meetings */}
-      {groupData && (
-        <Box
-          borderWidth="1px"
-          borderRadius="lg"
-          overflow="hidden"
-          mb={6}
-          bg="white"
-          _dark={{
-            bg: "gray.800",
-            borderColor: "whiteAlpha.300",
-          }}
-          boxShadow="md"
-        >
-          <Box 
-            bg="blue.50" 
-            _dark={{ bg: "blue.900" }}
-            p={4}
-          >
-            <Heading size="md" color="blue.600" _dark={{ color: "blue.300" }}>
-              {groupData.groupInfo.name} - All Meetings
-            </Heading>
-            {groupData.groupInfo.email && (
-              <Flex align="center" mt={2}>
-                <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-                  <FaEnvelope />
-                </Box>
-                <Link href={`mailto:${groupData.groupInfo.email}`} color="gray.600" _dark={{ color: "gray.400" }}>
-                  {groupData.groupInfo.email}
-                </Link>
-              </Flex>
-            )}
-          </Box>
-
-          <Box p={6}>
-            <Flex direction="column" gap={4}>
-              {groupData.groupMeetings.map((groupMeeting: GroupMeeting, index: number) => (
-                <Box 
-                  key={groupMeeting.slug} 
-                  p={4} 
-                  borderWidth="1px" 
-                  borderRadius="md"
-                  borderColor="gray.200"
-                  _dark={{ borderColor: "gray.700" }}
-                  _hover={{ boxShadow: "sm" }}
-                >
-                  <MeetingDisplay meeting={groupMeeting} />
-                  {index < groupData.groupMeetings.length - 1 && <Box borderBottom="1px" borderColor="gray.200" _dark={{ borderColor: "gray.700" }} mt={4} />}
-                </Box>
-              ))}
+      <Box
+        borderWidth="1px"
+        borderRadius="lg"
+        overflow="hidden"
+        mb={6}
+        bg="white"
+        _dark={{
+          bg: "gray.800",
+          borderColor: "whiteAlpha.300",
+        }}
+        boxShadow="md"
+      >
+        <Box bg="blue.50" _dark={{ bg: "blue.900" }} p={4}>
+          <Heading size="md" color="blue.600" _dark={{ color: "blue.300" }}>
+            {groupInfo.name} - All Meetings
+          </Heading>
+          {groupInfo.email && (
+            <Flex align="center" mt={2}>
+              <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
+                <FaEnvelope />
+              </Box>
+              <Link
+                href={`mailto:${groupInfo.email}`}
+                color="gray.600"
+                _dark={{ color: "gray.400" }}
+              >
+                {groupInfo.email}
+              </Link>
             </Flex>
-          </Box>
+          )}
         </Box>
-      )}
+
+        <Box p={6}>
+          <Flex direction="column" gap={4}>
+            {groupMeetings.map((groupMeeting, index: number) => (
+              <Box
+                key={groupMeeting.slug}
+                p={4}
+                borderWidth="1px"
+                borderRadius="md"
+                borderColor="gray.200"
+                _dark={{ borderColor: "gray.700" }}
+                _hover={{ boxShadow: "sm" }}
+              >
+                <MeetingDisplay meeting={groupMeeting} />
+                {index < groupMeetings.length - 1 && (
+                  <Box
+                    borderBottom="1px"
+                    borderColor="gray.200"
+                    _dark={{ borderColor: "gray.700" }}
+                    mt={4}
+                  />
+                )}
+              </Box>
+            ))}
+          </Flex>
+        </Box>
+      </Box>
     </Layout>
   )
 }
