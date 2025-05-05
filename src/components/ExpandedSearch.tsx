@@ -20,7 +20,7 @@ interface FullSearchProps {
   sendFilterSelectionsToParent: ReturnType<() => SetURLSearchParams>
 }
 
-export function FullSearch({
+export function ExpandedSearch({
   filterParams,
   sendFilterSelectionsToParent,
 }: FullSearchProps) {
@@ -126,4 +126,4 @@ export function FullSearch({
   )
 }
 
-export default FullSearch
+export default ExpandedSearch

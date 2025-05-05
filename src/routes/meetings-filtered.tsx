@@ -3,7 +3,7 @@ import {
   useSearchParams,
 } from "react-router"
 
-import FullSearch from "@/components/ExpandedSearch"
+import ExpandedSearch from "@/components/ExpandedSearch"
 import { Filter } from "@/components/Filter"
 import { Layout } from "@/components/Layout"
 import { MeetingsSummary } from "@/components/MeetingsSummary"
@@ -45,7 +45,7 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
         sidebar={
           <>
             {meetings.length === 0 && (
-              <FullSearch
+              <ExpandedSearch
                 filterParams={filterParams}
                 sendFilterSelectionsToParent={setFilterParams}
               />
