@@ -3,8 +3,8 @@ import {
   useSearchParams,
 } from "react-router"
 
+import FullSearch from "@/components/ExpandedSearch"
 import { Filter } from "@/components/Filter"
-import FullSearch from "@/components/FullSearch"
 import { Layout } from "@/components/Layout"
 import { MeetingsSummary } from "@/components/MeetingsSummary"
 import { getMeetings } from "@/getData"
