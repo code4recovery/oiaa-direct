@@ -1,8 +1,8 @@
-import { fetchData } from "./meetings-utils"
 import type {
   Meeting,
   RelatedGroupInfo,
 } from "./meetingTypes"
+import { fetchData } from "./utils/meetings-utils"
 
 /**
  * Fetches meetings from a given URL and applies filters if provided.

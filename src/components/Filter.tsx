@@ -3,7 +3,6 @@ import { useState } from "react"
 import { FaTimesCircle } from "react-icons/fa"
 import type { SetURLSearchParams } from "react-router"
 
-import { toggleArrayElement } from "@/meetings-utils"
 import {
   COMMUNITIES,
   type Community,
@@ -14,6 +13,7 @@ import {
   type Type,
   TYPE,
 } from "@/meetingTypes"
+import { toggleArrayElement } from "@/utils/meetings-utils"
 import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react"
 
 import { CategoryFilter } from "./categoryFilter"
