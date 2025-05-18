@@ -16,14 +16,7 @@ import {
   TYPE,
 } from "@/meetingTypes"
 import { toggleArrayElement } from "@/utils/meetings-utils"
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Text,
-  VStack,
-} from "@chakra-ui/react"
+import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react"
 
 import { CategoryFilter } from "./categoryFilter"
 import { SearchInput } from "./SearchInput"
@@ -62,6 +55,9 @@ export function Filter({
       ? "evening"
       : "night"
 
+  // Store default values for day and time frame
+  const defaultDay = DateTime.local().toFormat("cccc").toLowerCase()
+  const [selectedDay, setSelectedDay] = useState<string>(defaultDay)
   const [selectedTimeFrame, setSelectedTimeFrame] =
     useState<string>(defaultTimeFrame)
 
@@ -71,7 +67,11 @@ export function Filter({
     filterParams.getAll("type").length > 0 ||
     filterParams.getAll("communities").length > 0
 
-  const hasActiveFilters = searchQueryEntry || activeTypes
+  const hasActiveFilters =
+    searchQueryEntry ||
+    activeTypes ||
+    selectedDay !== defaultDay ||
+    selectedTimeFrame !== defaultTimeFrame
 
   const clearFilters = () => {
     setSearchQueryEntry("")
@@ -108,18 +108,21 @@ export function Filter({
     handleToggle("communities")(communityOption)
   }
 
-  const handleTimeFrameChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const value = event.target.value as keyof typeof timeFrames
+  // Update handleDayOrTimeFrameChange to track changes
+  const handleDayOrTimeFrameChange = () => {
+    const timeFrameSelect = document.getElementById(
+      "timeFrame"
+    ) as HTMLSelectElement
+    const daySelect = document.getElementById("day") as HTMLSelectElement
+    const value = timeFrameSelect.value as keyof typeof timeFrames
+    const dayValue = daySelect.value
+
     setSelectedTimeFrame(value)
+    setSelectedDay(dayValue)
 
     if (value in timeFrames) {
       const { start, hours } = timeFrames[value]
-
-      // Get the selected day from the "day" dropdown
-      const selectedDay = document.getElementById("day") as HTMLSelectElement
-      const selectedWeekday = selectedDay.value
+      const selectedWeekday = dayValue
 
       // Map weekdays to Luxon's weekday numbers (1 = Monday, 7 = Sunday)
       const weekdayMap: Record<string, number> = {
@@ -191,7 +194,8 @@ export function Filter({
             <select
               id="day"
               name="day"
-              defaultValue={DateTime.local().toFormat("cccc").toLowerCase()}
+              value={selectedDay}
+              onChange={handleDayOrTimeFrameChange}
             >
               <option value="monday">Monday</option>
               <option value="tuesday">Tuesday</option>
@@ -210,7 +214,7 @@ export function Filter({
               id="timeFrame"
               name="timeFrame"
               value={selectedTimeFrame}
-              onChange={handleTimeFrameChange}
+              onChange={handleDayOrTimeFrameChange}
             >
               <option value="morning">Morning</option>
               <option value="midday">Midday</option>
