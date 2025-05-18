@@ -42,7 +42,6 @@ export function Filter({
     night: { start: "21:00", end: "03:59", hours: 7 },
   }
 
-  // Determine the default time frame based on the current local time
   const currentHour = DateTime.local().hour
   const defaultTimeFrame =
     currentHour >= 4 && currentHour < 11
@@ -55,7 +54,6 @@ export function Filter({
       ? "evening"
       : "night"
 
-  // Store default values for day and time frame
   const defaultDay = DateTime.local().toFormat("cccc").toLowerCase()
   const [selectedDay, setSelectedDay] = useState<string>(defaultDay)
   const [selectedTimeFrame, setSelectedTimeFrame] =
@@ -75,6 +73,8 @@ export function Filter({
 
   const clearFilters = () => {
     setSearchQueryEntry("")
+    setSelectedDay(defaultDay)
+    setSelectedTimeFrame(defaultTimeFrame)
     sendFilterSelectionsToParent({})
   }
 
@@ -108,62 +108,80 @@ export function Filter({
     handleToggle("communities")(communityOption)
   }
 
-  // Update handleDayOrTimeFrameChange to track changes
   const handleDayOrTimeFrameChange = () => {
     const timeFrameSelect = document.getElementById(
       "timeFrame"
     ) as HTMLSelectElement
     const daySelect = document.getElementById("day") as HTMLSelectElement
-    const value = timeFrameSelect.value as keyof typeof timeFrames
+    const value = timeFrameSelect.value
     const dayValue = daySelect.value
 
     setSelectedTimeFrame(value)
     setSelectedDay(dayValue)
 
+    const weekdayMap: Record<string, number> = {
+      monday: 1,
+      tuesday: 2,
+      wednesday: 3,
+      thursday: 4,
+      friday: 5,
+      saturday: 6,
+      sunday: 7,
+    }
+
+    const targetWeekday = weekdayMap[dayValue.toLowerCase()]
+    const now = DateTime.local()
+
+    let selectedHour = 0
+    let selectedMinute = 0
     if (value in timeFrames) {
-      const { start, hours } = timeFrames[value]
-      const selectedWeekday = dayValue
+      const { start } = timeFrames[value as keyof typeof timeFrames]
+      selectedHour = parseInt(start.split(":")[0], 10)
+      selectedMinute = parseInt(start.split(":")[1], 10)
+    } else {
+      const [hour, minute] = value.split(":").map(Number)
+      selectedHour = hour
+      selectedMinute = minute
+    }
 
-      // Map weekdays to Luxon's weekday numbers (1 = Monday, 7 = Sunday)
-      const weekdayMap: Record<string, number> = {
-        monday: 1,
-        tuesday: 2,
-        wednesday: 3,
-        thursday: 4,
-        friday: 5,
-        saturday: 6,
-        sunday: 7,
-      }
+    let targetDate = now.set({
+      weekday: targetWeekday as WeekdayNumbers,
+      hour: selectedHour,
+      minute: selectedMinute,
+      second: 0,
+      millisecond: 0,
+    })
 
-      const targetWeekday = weekdayMap[selectedWeekday.toLowerCase()]
-      const now = DateTime.local()
+    // Only advance to next week if today and the local time is later than the selected time
+    if (
+      now.weekday === targetWeekday &&
+      (now.hour > selectedHour ||
+        (now.hour === selectedHour && now.minute >= selectedMinute))
+    ) {
+      targetDate = targetDate.plus({ weeks: 1 })
+    } else if (now.weekday > targetWeekday) {
+      targetDate = targetDate.plus({ weeks: 1 })
+    }
 
-      // Calculate the next occurrence of the selected weekday
-      let targetDate = now.set({
-        weekday: targetWeekday as WeekdayNumbers,
-        hour: 0,
-        minute: 0,
-        second: 0,
-        millisecond: 0,
-      })
-      if (targetDate <= now) {
-        targetDate = targetDate.plus({ weeks: 1 })
-      }
-
-      // Combine the target date with the "start" time
-      const utcStart = targetDate
-        .set({
-          hour: parseInt(start.split(":")[0], 10),
-          minute: parseInt(start.split(":")[1], 10),
-        })
-        .toUTC()
-        .toISO()
+    if (value in timeFrames) {
+      const { hours } = timeFrames[value as keyof typeof timeFrames]
+      const utcStart = targetDate.toUTC().toISO()
 
       sendFilterSelectionsToParent((prev: URLSearchParams) => {
         if (utcStart) {
-          prev.set("start", utcStart) // Set the UTC timestamp
+          prev.set("start", utcStart)
         }
         prev.set("hours", hours.toString())
+        return prev
+      })
+    } else {
+      const utcStart = targetDate.toUTC().toISO()
+
+      sendFilterSelectionsToParent((prev: URLSearchParams) => {
+        if (utcStart) {
+          prev.set("start", utcStart)
+        }
+        prev.set("hours", "1")
         return prev
       })
     }
@@ -221,6 +239,17 @@ export function Filter({
               <option value="afternoon">Afternoon</option>
               <option value="evening">Evening</option>
               <option value="night">Night</option>
+              <option disabled>──────────</option>
+              {Array.from({ length: 24 }).map((_, hour) => {
+                const dt = DateTime.fromObject({ hour, minute: 0 })
+                const label = dt.toLocaleString(DateTime.TIME_SIMPLE)
+                const value = dt.toFormat("HH:mm")
+                return (
+                  <option value={value} key={value}>
+                    {label}
+                  </option>
+                )
+              })}
             </select>
           </Box>
           <SearchInput value={searchQueryEntry} onChange={handleInputChange} />
