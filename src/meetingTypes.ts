@@ -66,19 +66,46 @@ export const COMMUNITIES = {
   P: "Professionals",
 } as const // 17
 
-export type Community = keyof typeof COMMUNITIES
-export type Feature = keyof typeof FEATURES
-export type Format = keyof typeof FORMATS
-export type Type = keyof typeof TYPE
+export const LANGUAGES = {
+  am: "Amharic",
+  bg: "Bulgarian",
+  de: "German",
+  el: "Greek",
+  en: "English",
+  es: "Spanish",
+  fa: "Persian",
+  fr: "French",
+  hi: "Hindi",
+  hu: "Hungarian",
+  it: "Italian",
+  ja: "Japanese",
+  ko: "Korean",
+  lt: "Lithuanian",
+  ml: "Malayalam",
+  mt: "Maltese",
+  pa: "Punjabi",
+  pl: "Polish",
+  pt: "Portuguese",
+  ru: "Russian",
+  sv: "Swedish",
+} as const; //21
 
-export type Category = Community | Feature | Format | Type
+
+
+export type Type = keyof typeof TYPE
+export type Format = keyof typeof FORMATS
+export type Feature = keyof typeof FEATURES
+export type Community = keyof typeof COMMUNITIES
+export type Language = keyof typeof LANGUAGES
+
+export type Category = Type | Format | Feature | Community | Language
 
 export interface CategoryMap {
   type: Type
   formats: Format[]
   features: Feature[]
   communities: Community[]
-  languages: string[] // TODO: Implement object with set of languages.
+  languages: Language[]
 }
 
 export interface Meeting extends CategoryMap {

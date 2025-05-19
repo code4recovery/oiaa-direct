@@ -13,6 +13,8 @@ import {
   FORMATS,
   type Type,
   TYPE,
+  type Language,
+  LANGUAGES
 } from "@/meetingTypes"
 import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react"
 
@@ -35,7 +37,8 @@ export function Filter({
     filterParams.getAll("features").length > 0 ||
     filterParams.getAll("formats").length > 0 ||
     filterParams.getAll("type").length > 0 ||
-    filterParams.getAll("communities").length > 0
+    filterParams.getAll("communities").length > 0 ||
+    filterParams.getAll("languages").length > 0 
 
   const hasActiveFilters = searchQueryEntry || activeTypes
 
@@ -74,6 +77,10 @@ export function Filter({
     handleToggle("communities")(communityOption)
   }
 
+ const handleLanguageToggle = (languageOption: string) => {
+    handleToggle("languages")(languageOption)
+  }
+
   const handleInputChange = (value: string) => {
     setSearchQueryEntry(value)
     if (value.length > 2) sendQueryToParent(value)
@@ -93,11 +100,6 @@ export function Filter({
             Filters
           </Heading>
           <SearchInput value={searchQueryEntry} onChange={handleInputChange} />
-          <Box>
-            <Heading size="sm" mb={2} color="inherit">
-              Languages
-            </Heading>
-          </Box>
           <CategoryFilter<Type>
             displayName={"Meeting Type"}
             options={TYPE}
@@ -121,6 +123,12 @@ export function Filter({
             options={COMMUNITIES}
             selected={filterParams.getAll("communities") as Community[]}
             onToggle={handleCommunityToggle}
+          />
+          <CategoryFilter<Language>
+            displayName={"Languages"}
+            options={LANGUAGES}
+            selected={filterParams.getAll("languages") as Community[]}
+            onToggle={handleLanguageToggle}
           />
           {hasActiveFilters && (
             <Button
