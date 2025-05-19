@@ -1,15 +1,24 @@
 import { Outlet } from "react-router"
 
 import type { Meeting } from "@/meetingTypes"
-import { Box, Heading, Text, VStack } from "@chakra-ui/react"
+import {
+  Box,
+  Heading,
+  Text,
+  VStack,
+} from "@chakra-ui/react"
 
 import { MeetingCard } from "./MeetingCard"
 
 interface MeetingsSummaryProps {
   meetings: Meeting[]
+  totalMeetings: number
 }
 
-export function MeetingsSummary({ meetings }: MeetingsSummaryProps) {
+export function MeetingsSummary({
+  meetings,
+  totalMeetings,
+}: MeetingsSummaryProps) {
   return (
     <>
       <Box
@@ -22,7 +31,7 @@ export function MeetingsSummary({ meetings }: MeetingsSummaryProps) {
             Meetings
             {
               <Text as="span" fontSize="md" color="gray.500" ml={2}>
-                ({meetings.length} results)
+                ({totalMeetings} total results; {meetings.length} shown.)
               </Text>
             }
           </Heading>

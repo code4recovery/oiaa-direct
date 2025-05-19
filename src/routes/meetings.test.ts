@@ -3,12 +3,10 @@ import {
   test,
 } from "vitest"
 
+import { getMeetings } from "@/getData"
 import type { Format } from "@/meetingTypes"
 
-import {
-  buildFilter,
-  getMeetings,
-} from "../meetings-utils"
+import { buildFilter } from "../utils/meetings-utils"
 
 test("Retrieves an array of meetings", async () => {
   const result = await getMeetings()

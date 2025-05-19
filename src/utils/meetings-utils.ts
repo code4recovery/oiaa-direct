@@ -1,12 +1,6 @@
 import { matchSorter } from "match-sorter"
 
-import type {
-  Community,
-  Feature,
-  Format,
-  Meeting,
-  Type,
-} from "./meetingTypes"
+import type { Community, Feature, Format, Meeting, Type } from "../meetingTypes"
 
 // TODO This can extend CategoryMap?
 export interface FilterParams {
