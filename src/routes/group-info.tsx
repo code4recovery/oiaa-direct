@@ -35,6 +35,8 @@ import {
 
 import type { Route } from "./+types/group-info"
 
+import { sortMeetings } from "../utils/meetings-utils"
+
 const DESCRIPTIONS: Record<string, string> = {
   ...TYPE,
   ...FORMATS,
@@ -199,6 +201,13 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   // Check for website (could be in different properties) --- Tim: Not really. The backend code brings the
   // website from the group info into the meeting, so we can just use that if it exists.
   const websiteUrl = meeting.groupWebsite
+
+  // Sort meetings by upcoming RTC (relative time code), not timeUTC
+  // The timeUTC field is currently unreliable, so sortMeetings()
+  // uses rtc and the current time to produce a correct order.
+  // Note that sortMeetings() sorts the meetings array in place
+  const now = new Date();
+  sortMeetings(groupMeetings, now);
 
   return (
     <Layout>

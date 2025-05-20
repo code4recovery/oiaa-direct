@@ -1,4 +1,5 @@
 import { matchSorter } from "match-sorter"
+import { DateTime } from "luxon";
 
 import type { Community, Feature, Format, Meeting, Type } from "../meetingTypes"
 
@@ -111,3 +112,31 @@ export const applyMeetingFilters = (
 
   return applyFilters.reduce((data, filterFn) => filterFn(data), meetings)
 }
+
+export const sortMeetings = (meetings: Meeting[], referenceDate: Date): Meeting[] => {
+  const referenceUTC = DateTime.fromJSDate(referenceDate).toUTC();
+  const todayIndex = referenceUTC.weekday; // 1 = Monday, 7 = Sunday
+  const referenceMinutesUTC = referenceDate.getUTCHours() * 60 + referenceDate.getUTCMinutes();
+
+  const pad = (n: number) => n.toString().padStart(2, "0");
+
+  const getSortableKey = (rtc: string): string => {
+    const [dayStr, hourStr, minuteStr] = rtc.split(":");
+    let day = parseInt(dayStr, 10);
+    const hour = parseInt(hourStr, 10);
+    const minute = parseInt(minuteStr, 10);
+    const rtcMinutes = hour * 60 + minute;
+
+    if (day < todayIndex) {
+      day += 7;
+    } else if (day === todayIndex && rtcMinutes < referenceMinutesUTC) {
+      day += 7;
+    }
+
+    return `${pad(day)}:${pad(hour)}:${pad(minute)}`;
+  };
+
+  return meetings.sort((a, b) =>
+    getSortableKey(a.rtc).localeCompare(getSortableKey(b.rtc))
+  );
+};

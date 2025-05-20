@@ -23,15 +23,4 @@ export const createFetcher =
 
 export const getMeetings = createFetcher<Meeting[]>()
 export const getMeeting = createFetcher<Meeting>()
-export const getRelatedDetails = async (
-  ...args: Parameters<ReturnType<typeof createFetcher<RelatedGroupInfo>>>
-) => {
-  const fetcher = createFetcher<RelatedGroupInfo>();
-  const data = await fetcher(...args);
-
-  // sort related meetings by timeUTC
-  if (data?.groupMeetings) {
-    data.groupMeetings.sort((a, b) => a.timeUTC.localeCompare(b.timeUTC));
-  }
-  return data;
-};
+export const getRelatedDetails = createFetcher<RelatedGroupInfo>()
