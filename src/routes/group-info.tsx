@@ -200,6 +200,9 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   // website from the group info into the meeting, so we can just use that if it exists.
   const websiteUrl = meeting.groupWebsite
 
+  // Sort by timeUTC - sort is in situ
+  groupMeetings.sort((a, b) => a.timeUTC.localeCompare(b.timeUTC));
+
   return (
     <Layout>
       <Box mb={4}>
