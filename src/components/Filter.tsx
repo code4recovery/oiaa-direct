@@ -95,6 +95,21 @@ export function Filter({
     })
   }
 
+  const handleExclusiveToggle = (category: string) => (chosen: string) => {
+    sendFilterSelectionsToParent((prev: URLSearchParams) => {
+      const currentSelections = filterParams.getAll(category)
+      const isAlreadySelected = currentSelections.includes(chosen)
+
+      prev.delete(category)
+
+      if (!isAlreadySelected) {
+        prev.append(category, chosen)
+      }
+
+      return prev
+    })
+  }
+
   const handleFormatToggle = (formatOption: string) => {
     handleToggle("formats")(formatOption)
   }
@@ -104,7 +119,7 @@ export function Filter({
   }
 
   const handleTypeToggle = (typeOption: string) => {
-    handleToggle("type")(typeOption)
+    handleExclusiveToggle("type")(typeOption)
   }
 
   const handleCommunityToggle = (communityOption: string) => {
