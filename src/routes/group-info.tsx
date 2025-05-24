@@ -98,7 +98,7 @@ const getCategoryFullName = (
   categoryType: string
 ): string => {
   if (categoryType === "languages") {
-    return category // Languages are already full names
+    return category.toUpperCase() // Languages are already full names
   }
 
   return DESCRIPTIONS[category] || category
