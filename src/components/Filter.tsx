@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import type { WeekdayNumbers } from "luxon"
 import { DateTime } from "luxon"
@@ -35,6 +35,16 @@ export function Filter({
   sendQueryToParent,
 }: FilterProps) {
   const [searchQueryEntry, setSearchQueryEntry] = useState<string>("")
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (searchQueryEntry.length > 2) {
+        sendQueryToParent(searchQueryEntry)
+      }
+    }, 300)
+
+    return () => clearTimeout(delayDebounce)
+  }, [searchQueryEntry])
 
   const timeFrames = {
     morning: { start: "04:00", end: "10:59", hours: 7 },
@@ -196,7 +206,6 @@ export function Filter({
 
   const handleInputChange = (value: string) => {
     setSearchQueryEntry(value)
-    if (value.length > 2) sendQueryToParent(value)
   }
 
   return (
