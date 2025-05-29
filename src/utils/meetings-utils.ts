@@ -26,10 +26,12 @@ export const fuzzyGlobalTextFilter = <T>(
     : filterValue
   const terms = filterValueStr.split(" ")
 
-  return terms.reduceRight(
-    (results, term) => matchSorter(results, term, { keys }),
-    rows
-  )
+return terms.reduceRight(
+  (results, term) =>
+    matchSorter(results, term, {
+      keys: keys,
+      threshold: matchSorter.rankings.CONTAINS,
+    }), rows)
 }
 
 export const filteredData = <T extends object>(
