@@ -140,3 +140,29 @@ export interface RelatedGroupInfo {
   groupInfo: Group
   groupMeetings: Meeting[]
 }
+
+
+// src/constants/videoServices.ts
+
+export const videoServices: { [key: string]: string[] } = {
+  BlueJeans: ['bluejeans.com'],
+  DialPad: ['meetings.dialpad.com'],
+  Discord: ['discord.gg'],
+  'Free Conference': ['freeconference.com'],
+  FreeConferenceCall: ['freeconferencecall.com'],
+  'Google Meet': ['meet.google.com'],
+  GoTo: ['goto.com', 'gotomeet.me', 'gotomeeting.com'],
+  Jitsi: ['meet.jit.si'],
+  'Microsoft Teams': ['teams.live.com', 'teams.microsoft.com'],
+  Signal: ['signal.group'],
+  Skype: ['skype.com'],
+  'Virtual Reality': [
+    'horizon.meta.com',
+    'maps.secondlife.com',
+    'slurl.com',
+    'vrchat.com',
+  ],
+  WebEx: ['webex.com'],
+  Zoho: ['zoho.com'],
+  Zoom: ['zoom.us'],
+};
