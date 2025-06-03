@@ -26,14 +26,12 @@ npm run dev
 
 1. Clone the repo to a folder of your choice.
 2. Run `npm install` from that folder.
-3. Copy `.env.example` to `.env` and update environment variables as needed.
+3. Update `.env` environment variables as needed.
 
-### Required Environment Variables
+### Required Environment Variable
 
 ```env
-VITE_BASE_URL="/"
 VITE_CQ_URL="https://central-query.apps.code4recovery.org/api/v1/meetings"
-# VITE_COLOR_MODE="light"
 ```
 
 ---
