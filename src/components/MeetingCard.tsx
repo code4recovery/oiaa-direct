@@ -166,7 +166,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
                     py={1}
                     borderRadius="full"
                   >
-                    {item}
+                    {item?.toUpperCase()}
                   </Badge>
                 </Tooltip>
               ))
