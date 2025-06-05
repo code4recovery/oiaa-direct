@@ -15,6 +15,8 @@ import {
   VStack,
 } from "@chakra-ui/react"
 
+import JoinMeetingButton from './JoinMeetingButton'; 
+
 const DESCRIPTIONS: Record<string, string> = {
   ...TYPE,
   ...FORMATS,
@@ -136,25 +138,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         {/* Join Button */}
         {meeting.conference_url && (
           <Box>
-            <Link
-              href={meeting.conference_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              _hover={{ textDecoration: "none" }}
-            >
-              <Button
-                bg="blue.700"
-                color="white"
-                size="md"
-                width="full"
-                _hover={{
-                  bg: "blue.800",
-                }}
-              >
-                <FaExternalLinkAlt style={{ marginRight: "8px" }} />
-                Join Meeting
-              </Button>
-            </Link>
+            <JoinMeetingButton joinUrl={meeting.conference_url} />
             {meeting.conference_url_notes && (
               <Text fontSize="sm" color="gray.500" mt={2}>
                 {meeting.conference_url_notes}
