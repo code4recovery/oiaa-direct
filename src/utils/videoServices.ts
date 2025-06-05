@@ -1,7 +1,7 @@
-// videoServices.ts
-
 // Default fallback map
-const fallbackVideoServices: { [key: string]: string[] } = {
+// ...existing code...
+const fallbackVideoServices: Record<string, string[]> = {
+// ...existing code...
   BlueJeans: ['bluejeans.com'],
   DialPad: ['meetings.dialpad.com'],
   Discord: ['discord.gg'],
@@ -22,32 +22,32 @@ const fallbackVideoServices: { [key: string]: string[] } = {
   WebEx: ['webex.com'],
   Zoho: ['zoho.com'],
   Zoom: ['zoom.us'],
-};
+}
 
 // TODO: fetch map from central-query
 // For now, simply return the fallback version.
 function getVideoServiceMap(): Record<string, string[]> {
   // TODO: Replace this with actual fetch-once initialization logic
-  return fallbackVideoServices;
+  return fallbackVideoServices
 }
 
 // Determines the video provider name from a given meeting URL.
 export function getServiceProviderNameFromUrl(url: string): string | null {
-  if (!url) return null;
+  if (!url) return null
 
-  let host: string;
+  let host: string
 
   try {
-    host = new URL(url).hostname;
+    host = new URL(url).hostname
   } catch {
-    return null; // Invalid URL
+    return null // Invalid URL
   }
 
-  const serviceMap = getVideoServiceMap();
+  const serviceMap = getVideoServiceMap()
 
   return (
     Object.entries(serviceMap).find(([, domains]) =>
       domains.some(domain => host.endsWith(domain))
-    )?.[0] || null
-  );
+    )?.[0] ?? null
+  )
 }
