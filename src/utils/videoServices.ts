@@ -1,53 +1,51 @@
-// Default fallback map
-// ...existing code...
+import { Result, Ok, Err } from "ts-results-es"
+
 const fallbackVideoServices: Record<string, string[]> = {
-// ...existing code...
-  BlueJeans: ['bluejeans.com'],
-  DialPad: ['meetings.dialpad.com'],
-  Discord: ['discord.gg'],
-  'Free Conference': ['freeconference.com'],
-  FreeConferenceCall: ['freeconferencecall.com'],
-  'Google Meet': ['meet.google.com'],
-  GoTo: ['goto.com', 'gotomeet.me', 'gotomeeting.com'],
-  Jitsi: ['meet.jit.si'],
-  'Microsoft Teams': ['teams.live.com', 'teams.microsoft.com'],
-  Signal: ['signal.group'],
-  Skype: ['skype.com'],
-  'Virtual Reality': [
-    'horizon.meta.com',
-    'maps.secondlife.com',
-    'slurl.com',
-    'vrchat.com',
+  BlueJeans: ["bluejeans.com"],
+  DialPad: ["meetings.dialpad.com"],
+  Discord: ["discord.gg"],
+  "Free Conference": ["freeconference.com"],
+  FreeConferenceCall: ["freeconferencecall.com"],
+  "Google Meet": ["meet.google.com"],
+  GoTo: ["goto.com", "gotomeet.me", "gotomeeting.com"],
+  Jitsi: ["meet.jit.si"],
+  "Microsoft Teams": ["teams.live.com", "teams.microsoft.com"],
+  Signal: ["signal.group"],
+  Skype: ["skype.com"],
+  "Virtual Reality": [
+    "horizon.meta.com",
+    "maps.secondlife.com",
+    "slurl.com",
+    "vrchat.com",
   ],
-  WebEx: ['webex.com'],
-  Zoho: ['zoho.com'],
-  Zoom: ['zoom.us'],
+  WebEx: ["webex.com"],
+  Zoho: ["zoho.com"],
+  Zoom: ["zoom.us"],
 }
 
-// TODO: fetch map from central-query
-// For now, simply return the fallback version.
 function getVideoServiceMap(): Record<string, string[]> {
-  // TODO: Replace this with actual fetch-once initialization logic
+  // TODO: Replace this with actual fetch-once from central-query on initialization logic
+  // For now, simply return the fallback version.
   return fallbackVideoServices
 }
 
-// Determines the video provider name from a given meeting URL.
-export function getServiceProviderNameFromUrl(url: string): string | null {
-  if (!url) return null
-
-  let host: string
-
-  try {
-    host = new URL(url).hostname
-  } catch {
-    return null // Invalid URL
+export function getServiceProviderNameFromUrl(
+  url: string
+): Result<string, Error> {
+  if (!url) {
+    return Err(new Error("URL is empty or undefined"))
   }
 
-  const serviceMap = getVideoServiceMap()
+  try {
+    const host = new URL(url).hostname
+    const serviceMap = getVideoServiceMap()
 
-  return (
-    Object.entries(serviceMap).find(([, domains]) =>
-      domains.some(domain => host.endsWith(domain))
-    )?.[0] ?? null
-  )
+    const match = Object.entries(serviceMap).find(([, domains]) =>
+      domains.some((domain) => host.endsWith(domain))
+    )
+
+    return match ? Ok(match[0]) : Err(new Error("No matching provider found"))
+  } catch (error) {
+    return Err(error instanceof Error ? error : new Error(String(error)))
+  }
 }

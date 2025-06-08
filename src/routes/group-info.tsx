@@ -34,6 +34,7 @@ import {
 } from "@chakra-ui/react"
 
 import type { Route } from "./+types/group-info"
+import JoinMeetingButton from '../components/JoinMeetingButton'; 
 
 const DESCRIPTIONS: Record<string, string> = {
   ...TYPE,
@@ -269,32 +270,9 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
 
             <Box mt={{ base: 4, md: 0 }}>
               {meeting.conference_url && (
-                <Link
-                  href={meeting.conference_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  _hover={{ textDecoration: "none" }}
-                  display="inline-block"
-                  mr={2}
-                >
-                  <Button
-                    bg="blue.600"
-                    color="white"
-                    _hover={{
-                      bg: "blue.700",
-                    }}
-                    _dark={{
-                      bg: "blue.600",
-                      _hover: {
-                        bg: "blue.700",
-                      },
-                    }}
-                    size="md"
-                  >
-                    <FaExternalLinkAlt style={{ marginRight: "8px" }} />
-                    Join Meeting
-                  </Button>
-                </Link>
+                <Box as="span" display="inline-block" mr={2} verticalAlign="middle">
+                  <JoinMeetingButton joinUrl={meeting.conference_url} />
+                </Box>
               )}
 
               {websiteUrl && (
