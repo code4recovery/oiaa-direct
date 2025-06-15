@@ -1,5 +1,5 @@
 import { Button, Link } from "@chakra-ui/react"
-import { FaExternalLinkAlt } from "react-icons/fa"
+import { FaVideo, FaGlasses } from "react-icons/fa"
 import { getServiceProviderNameFromUrl } from "../utils/videoServices"
 
 type JoinMeetingButtonProps = {
@@ -9,7 +9,8 @@ type JoinMeetingButtonProps = {
 const JoinMeetingButton = ({ joinUrl }: JoinMeetingButtonProps) => {
   const result = getServiceProviderNameFromUrl(joinUrl)
   const label = result.isOk() ? `Join ${result.value} Meeting` : "Join Meeting"
-
+  const Icon = result.isOk() && result.value === "Virtual Reality" ? FaGlasses : FaVideo
+  
   return (
     <Link
       href={joinUrl}
@@ -24,7 +25,7 @@ const JoinMeetingButton = ({ joinUrl }: JoinMeetingButtonProps) => {
         width="full"
         _hover={{ bg: "blue.800" }}
       >
-        <FaExternalLinkAlt style={{ marginRight: "8px" }} />
+        <Icon style={{ marginRight: "8px" }} />
         {label}
       </Button>
     </Link>
