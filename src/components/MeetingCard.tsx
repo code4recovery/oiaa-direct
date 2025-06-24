@@ -1,9 +1,18 @@
-import { FaEnvelope, FaExternalLinkAlt, FaLink } from "react-icons/fa"
+import {
+  FaEnvelope,
+  FaLink,
+} from "react-icons/fa"
 import { Link as RRLink } from "react-router"
 
 import { Tooltip } from "@/components/ui/tooltip"
 import type { Meeting } from "@/meetingTypes"
-import { COMMUNITIES, FEATURES, FORMATS, TYPE } from "@/meetingTypes"
+import {
+  COMMUNITIES,
+  FEATURES,
+  FORMATS,
+  LANGUAGES,
+  TYPE,
+} from "@/meetingTypes"
 import {
   Badge,
   Box,
@@ -15,13 +24,15 @@ import {
   VStack,
 } from "@chakra-ui/react"
 
-import JoinMeetingButton from './JoinMeetingButton'; 
+import JoinMeetingButton from "./JoinMeetingButton"
 
 const DESCRIPTIONS: Record<string, string> = {
   ...TYPE,
   ...FORMATS,
   ...FEATURES,
   ...COMMUNITIES,
+  ...LANGUAGES,
+
 }
 
 interface CategoryColors {
@@ -81,7 +92,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
             </Heading>
           </RRLink>
           <Heading size="sm" color="gray.600" fontWeight="medium" mt={1}>
-            {new Date(`${meeting.timeUTC}`).toLocaleString(undefined, {
+            {new Date(meeting.timeUTC).toLocaleString(undefined, {
               weekday: "long",
               hour: "numeric",
               minute: "numeric",
@@ -105,7 +116,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         )}
 
         {/* Contact Buttons */}
-        {(meeting.groupEmail || meeting.groupWebsite) && (
+        {(meeting.groupEmail ?? meeting.groupWebsite) && (
           <HStack gap={2} wrap="wrap">
             {meeting.groupEmail && (
               <Link
@@ -154,10 +165,11 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
             const items = Array.isArray(value) ? value : [value]
             return (
               items.length > 0 &&
+              items[0] && // we don't have an array with a single undefined 
               items.map((item: string) => (
                 <Tooltip
                   key={`${category}-${item}`}
-                  content={DESCRIPTIONS[item] || item}
+                  content={DESCRIPTIONS[item] || item.toUpperCase()}
                 >
                   <Badge
                     colorScheme={CATEGORY_COLORS[category]}
@@ -166,7 +178,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
                     py={1}
                     borderRadius="full"
                   >
-                    {item?.toUpperCase()}
+                    {item.toUpperCase()}
                   </Badge>
                 </Tooltip>
               ))

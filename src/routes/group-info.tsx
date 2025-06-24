@@ -4,7 +4,6 @@ import {
   FaCalendarPlus,
   FaClock,
   FaEnvelope,
-  FaExternalLinkAlt,
   FaGlobeAmericas,
   FaInfoCircle,
 } from "react-icons/fa"
@@ -33,8 +32,8 @@ import {
   Text,
 } from "@chakra-ui/react"
 
+import JoinMeetingButton from "../components/JoinMeetingButton"
 import type { Route } from "./+types/group-info"
-import JoinMeetingButton from '../components/JoinMeetingButton'; 
 
 const DESCRIPTIONS: Record<string, string> = {
   ...TYPE,

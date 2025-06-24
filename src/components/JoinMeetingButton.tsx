@@ -1,8 +1,16 @@
-import { Button, Link } from "@chakra-ui/react"
-import { FaVideo, FaGlasses } from "react-icons/fa"
+import {
+  FaGlasses,
+  FaVideo,
+} from "react-icons/fa"
+
+import {
+  Button,
+  Link,
+} from "@chakra-ui/react"
+
 import { getServiceProviderNameFromUrl } from "../utils/videoServices"
 
-type JoinMeetingButtonProps = {
+interface JoinMeetingButtonProps{
   joinUrl: string
 }
 
