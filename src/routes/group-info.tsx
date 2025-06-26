@@ -18,6 +18,7 @@ import {
   COMMUNITIES,
   FEATURES,
   FORMATS,
+  LANGUAGES,
   type Meeting,
   TYPE,
 } from "@/meetingTypes"
@@ -40,6 +41,7 @@ const DESCRIPTIONS: Record<string, string> = {
   ...FORMATS,
   ...FEATURES,
   ...COMMUNITIES,
+  ...LANGUAGES,
 }
 
 const CATEGORY_COLORS = {
@@ -95,13 +97,8 @@ const localDay = (timeStamp: string) =>
 // Function to get full name of category
 const getCategoryFullName = (
   category: string,
-  categoryType: string
 ): string => {
-  if (categoryType === "languages") {
-    return category.toUpperCase() // Languages are already full names
-  }
-
-  return DESCRIPTIONS[category] || category
+   return DESCRIPTIONS[category] || category
 }
 
 // This function isn't ready yet, but it will be used to fetch the other group meetings byGroupId.
@@ -171,7 +168,7 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
               mr={1}
               mb={1}
             >
-              {getCategoryFullName(format, "formats")}
+              {getCategoryFullName(format)}
             </Badge>
           ))}
         </Flex>
@@ -389,7 +386,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                             py={1}
                             borderRadius="full"
                           >
-                            {getCategoryFullName(item, categoryType)}
+                            {getCategoryFullName(item)}
                           </Badge>
                         ))}
                     </Flex>
