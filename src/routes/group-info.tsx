@@ -201,7 +201,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   const websiteUrl = meeting.groupWebsite
 
   // Sort by timeUTC - sort is in situ
-  groupMeetings.sort((a, b) => a.timeUTC.localeCompare(b.timeUTC));
+  groupMeetings.sort((a, b) => a.timeUTC.localeCompare(b.timeUTC))
 
   return (
     <Layout>
@@ -269,7 +269,12 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
 
             <Box mt={{ base: 4, md: 0 }}>
               {meeting.conference_url && (
-                <Box as="span" display="inline-block" mr={2} verticalAlign="middle">
+                <Box
+                  as="span"
+                  display="inline-block"
+                  mr={2}
+                  verticalAlign="middle"
+                >
                   <JoinMeetingButton joinUrl={meeting.conference_url} />
                 </Box>
               )}
@@ -373,18 +378,20 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                       {categoryType}:
                     </Text>
                     <Flex flexWrap="wrap" gap={2}>
-                      {items.map((item) => (
-                        <Badge
-                          key={`${categoryType}-${item}`}
-                          colorScheme={CATEGORY_COLORS[categoryType]}
-                          variant="subtle"
-                          px={2}
-                          py={1}
-                          borderRadius="full"
-                        >
-                          {getCategoryFullName(item, categoryType)}
-                        </Badge>
-                      ))}
+                      {items
+                        .filter((item) => typeof item === "string")
+                        .map((item) => (
+                          <Badge
+                            key={`${categoryType}-${item}`}
+                            colorScheme={CATEGORY_COLORS[categoryType]}
+                            variant="subtle"
+                            px={2}
+                            py={1}
+                            borderRadius="full"
+                          >
+                            {getCategoryFullName(item, categoryType)}
+                          </Badge>
+                        ))}
                     </Flex>
                   </Box>
                 )

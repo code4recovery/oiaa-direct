@@ -32,7 +32,6 @@ const DESCRIPTIONS: Record<string, string> = {
   ...FEATURES,
   ...COMMUNITIES,
   ...LANGUAGES,
-
 }
 
 interface CategoryColors {
@@ -162,27 +161,24 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         <HStack wrap="wrap" gap={2}>
           {categories.map((category) => {
             const value = meeting[category]
+            if (!value) return
             const items = Array.isArray(value) ? value : [value]
-            return (
-              items.length > 0 &&
-              items[0] && // we don't have an array with a single undefined 
-              items.map((item: string) => (
-                <Tooltip
-                  key={`${category}-${item}`}
-                  content={DESCRIPTIONS[item] || item.toUpperCase()}
+            return items.map((item: string) => (
+              <Tooltip
+                key={`${category}-${item}`}
+                content={DESCRIPTIONS[item] || item.toUpperCase()}
+              >
+                <Badge
+                  colorScheme={CATEGORY_COLORS[category]}
+                  variant="subtle"
+                  px={2}
+                  py={1}
+                  borderRadius="full"
                 >
-                  <Badge
-                    colorScheme={CATEGORY_COLORS[category]}
-                    variant="subtle"
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                  >
-                    {item.toUpperCase()}
-                  </Badge>
-                </Tooltip>
-              ))
-            )
+                  {item.toUpperCase()}
+                </Badge>
+              </Tooltip>
+            ))
           })}
         </HStack>
       </VStack>
