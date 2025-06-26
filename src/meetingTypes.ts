@@ -88,9 +88,7 @@ export const LANGUAGES = {
   pt: "Portuguese",
   ru: "Russian",
   sv: "Swedish",
-} as const; //21
-
-
+} as const //21
 
 export type Type = keyof typeof TYPE
 export type Format = keyof typeof FORMATS
@@ -101,7 +99,7 @@ export type Language = keyof typeof LANGUAGES
 export type Category = Type | Format | Feature | Community | Language
 
 export interface CategoryMap {
-  type: Type
+  type: Type | undefined
   formats: Format[]
   features: Feature[]
   communities: Community[]

@@ -4,7 +4,6 @@ import {
   FaCalendarPlus,
   FaClock,
   FaEnvelope,
-  FaExternalLinkAlt,
   FaGlobeAmericas,
   FaInfoCircle,
 } from "react-icons/fa"
@@ -19,6 +18,7 @@ import {
   COMMUNITIES,
   FEATURES,
   FORMATS,
+  LANGUAGES,
   type Meeting,
   TYPE,
 } from "@/meetingTypes"
@@ -33,6 +33,7 @@ import {
   Text,
 } from "@chakra-ui/react"
 
+import JoinMeetingButton from "../components/JoinMeetingButton"
 import type { Route } from "./+types/group-info"
 
 const DESCRIPTIONS: Record<string, string> = {
@@ -40,6 +41,7 @@ const DESCRIPTIONS: Record<string, string> = {
   ...FORMATS,
   ...FEATURES,
   ...COMMUNITIES,
+  ...LANGUAGES,
 }
 
 const CATEGORY_COLORS = {
@@ -95,13 +97,8 @@ const localDay = (timeStamp: string) =>
 // Function to get full name of category
 const getCategoryFullName = (
   category: string,
-  categoryType: string
 ): string => {
-  if (categoryType === "languages") {
-    return category.toUpperCase() // Languages are already full names
-  }
-
-  return DESCRIPTIONS[category] || category
+   return DESCRIPTIONS[category] || category
 }
 
 // This function isn't ready yet, but it will be used to fetch the other group meetings byGroupId.
@@ -171,7 +168,7 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
               mr={1}
               mb={1}
             >
-              {getCategoryFullName(format, "formats")}
+              {getCategoryFullName(format)}
             </Badge>
           ))}
         </Flex>
@@ -201,7 +198,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   const websiteUrl = meeting.groupWebsite
 
   // Sort by timeUTC - sort is in situ
-  groupMeetings.sort((a, b) => a.timeUTC.localeCompare(b.timeUTC));
+  groupMeetings.sort((a, b) => a.timeUTC.localeCompare(b.timeUTC))
 
   return (
     <Layout>
@@ -269,32 +266,14 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
 
             <Box mt={{ base: 4, md: 0 }}>
               {meeting.conference_url && (
-                <Link
-                  href={meeting.conference_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  _hover={{ textDecoration: "none" }}
+                <Box
+                  as="span"
                   display="inline-block"
                   mr={2}
+                  verticalAlign="middle"
                 >
-                  <Button
-                    bg="blue.600"
-                    color="white"
-                    _hover={{
-                      bg: "blue.700",
-                    }}
-                    _dark={{
-                      bg: "blue.600",
-                      _hover: {
-                        bg: "blue.700",
-                      },
-                    }}
-                    size="md"
-                  >
-                    <FaExternalLinkAlt style={{ marginRight: "8px" }} />
-                    Join Meeting
-                  </Button>
-                </Link>
+                  <JoinMeetingButton joinUrl={meeting.conference_url} />
+                </Box>
               )}
 
               {websiteUrl && (
@@ -396,18 +375,20 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                       {categoryType}:
                     </Text>
                     <Flex flexWrap="wrap" gap={2}>
-                      {items.map((item) => (
-                        <Badge
-                          key={`${categoryType}-${item}`}
-                          colorScheme={CATEGORY_COLORS[categoryType]}
-                          variant="subtle"
-                          px={2}
-                          py={1}
-                          borderRadius="full"
-                        >
-                          {getCategoryFullName(item, categoryType)}
-                        </Badge>
-                      ))}
+                      {items
+                        .filter((item) => typeof item === "string")
+                        .map((item) => (
+                          <Badge
+                            key={`${categoryType}-${item}`}
+                            colorScheme={CATEGORY_COLORS[categoryType]}
+                            variant="subtle"
+                            px={2}
+                            py={1}
+                            borderRadius="full"
+                          >
+                            {getCategoryFullName(item)}
+                          </Badge>
+                        ))}
                     </Flex>
                   </Box>
                 )

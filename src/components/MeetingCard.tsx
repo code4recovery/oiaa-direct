@@ -1,9 +1,18 @@
-import { FaEnvelope, FaExternalLinkAlt, FaLink } from "react-icons/fa"
+import {
+  FaEnvelope,
+  FaLink,
+} from "react-icons/fa"
 import { Link as RRLink } from "react-router"
 
 import { Tooltip } from "@/components/ui/tooltip"
 import type { Meeting } from "@/meetingTypes"
-import { COMMUNITIES, FEATURES, FORMATS, TYPE } from "@/meetingTypes"
+import {
+  COMMUNITIES,
+  FEATURES,
+  FORMATS,
+  LANGUAGES,
+  TYPE,
+} from "@/meetingTypes"
 import {
   Badge,
   Box,
@@ -15,11 +24,14 @@ import {
   VStack,
 } from "@chakra-ui/react"
 
+import JoinMeetingButton from "./JoinMeetingButton"
+
 const DESCRIPTIONS: Record<string, string> = {
   ...TYPE,
   ...FORMATS,
   ...FEATURES,
   ...COMMUNITIES,
+  ...LANGUAGES,
 }
 
 interface CategoryColors {
@@ -79,7 +91,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
             </Heading>
           </RRLink>
           <Heading size="sm" color="gray.600" fontWeight="medium" mt={1}>
-            {new Date(`${meeting.timeUTC}`).toLocaleString(undefined, {
+            {new Date(meeting.timeUTC).toLocaleString(undefined, {
               weekday: "long",
               hour: "numeric",
               minute: "numeric",
@@ -103,7 +115,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         )}
 
         {/* Contact Buttons */}
-        {(meeting.groupEmail || meeting.groupWebsite) && (
+        {(meeting.groupEmail ?? meeting.groupWebsite) && (
           <HStack gap={2} wrap="wrap">
             {meeting.groupEmail && (
               <Link
@@ -136,25 +148,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         {/* Join Button */}
         {meeting.conference_url && (
           <Box>
-            <Link
-              href={meeting.conference_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              _hover={{ textDecoration: "none" }}
-            >
-              <Button
-                bg="blue.700"
-                color="white"
-                size="md"
-                width="full"
-                _hover={{
-                  bg: "blue.800",
-                }}
-              >
-                <FaExternalLinkAlt style={{ marginRight: "8px" }} />
-                Join Meeting
-              </Button>
-            </Link>
+            <JoinMeetingButton joinUrl={meeting.conference_url} />
             {meeting.conference_url_notes && (
               <Text fontSize="sm" color="gray.500" mt={2}>
                 {meeting.conference_url_notes}
@@ -167,26 +161,24 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         <HStack wrap="wrap" gap={2}>
           {categories.map((category) => {
             const value = meeting[category]
+            if (!value) return
             const items = Array.isArray(value) ? value : [value]
-            return (
-              items.length > 0 &&
-              items.map((item: string) => (
-                <Tooltip
-                  key={`${category}-${item}`}
-                  content={DESCRIPTIONS[item] || item}
+            return items.map((item: string) => (
+              <Tooltip
+                key={`${category}-${item}`}
+                content={DESCRIPTIONS[item] || item.toUpperCase()}
+              >
+                <Badge
+                  colorScheme={CATEGORY_COLORS[category]}
+                  variant="subtle"
+                  px={2}
+                  py={1}
+                  borderRadius="full"
                 >
-                  <Badge
-                    colorScheme={CATEGORY_COLORS[category]}
-                    variant="subtle"
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                  >
-                    {item?.toUpperCase()}
-                  </Badge>
-                </Tooltip>
-              ))
-            )
+                  {item.toUpperCase()}
+                </Badge>
+              </Tooltip>
+            ))
           })}
         </HStack>
       </VStack>
