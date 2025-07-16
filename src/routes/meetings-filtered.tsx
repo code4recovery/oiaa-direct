@@ -1,39 +1,31 @@
 import { useState } from "react"
 
 import { DateTime } from "luxon"
-import {
-  Outlet,
-  useSearchParams,
-} from "react-router"
+import { Outlet, useSearchParams } from "react-router"
 
 import { Filter } from "@/components/Filter"
 import { Layout } from "@/components/Layout"
 import { MeetingsSummary } from "@/components/MeetingsSummary"
 import { getMeetings } from "@/getData"
-import {
-  applyMeetingFilters,
-  buildFilter,
-} from "@/utils/meetings-utils"
 import { Text } from "@chakra-ui/react"
 
 import type { Route } from "./+types/meetings-filtered"
 
+function buildMeetingsQueryString(searchParams: URLSearchParams): string {
+  if (![...searchParams.entries()].length) {
+    const params = new URLSearchParams({
+      start: DateTime.now().toUTC().toISO(),
+      hours: "1",
+    })
+    return `?${params.toString()}`
+  }
+  return `?${searchParams.toString()}`
+}
+
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  console.log(request)
   const { searchParams } = new URL(request.url)
-  const isSearchParamsEmpty = ![...searchParams.entries()].length
-
-  console.log("searchParams", searchParams)
-  const qs = isSearchParamsEmpty
-    ? `?start=${DateTime.now().toUTC().toISO()}&hours="1"`
-    : `?${searchParams.toString()}`
-  console.log("qs", qs)
-  const filter = buildFilter(searchParams)
-  const unfilteredMeetings = await getMeetings(qs)
-
-  const meetings = applyMeetingFilters(unfilteredMeetings, filter)
-  console.log(meetings)
-
+  const qs = buildMeetingsQueryString(searchParams)
+  const meetings = await getMeetings(qs)
   return { meetings }
 }
 

@@ -1,12 +1,7 @@
-import {
-  expect,
-  test,
-} from "vitest"
+import { expect, test } from "vitest"
 
 import { getMeetings } from "@/getData"
 import type { Format } from "@/meetingTypes"
-
-import { buildFilter } from "../utils/meetings-utils"
 
 test("Retrieves an array of meetings", async () => {
   const result = await getMeetings()
@@ -42,54 +37,4 @@ test("Retrieves discussion meetings in Spanish", async () => {
 
   expect(results).toHaveLength(1)
   expect(results[0].name).toBe("Test Meeting 2")
-})
-
-test("Filter is correctly built", () => {
-  const { searchParams } = new URL(
-    new Request(
-      "http://localhost:5173/?languages=EN&languages=ES&communities=W"
-    ).url
-  )
-
-  expect(buildFilter(searchParams)).toStrictEqual({
-    languages: ["EN", "ES"],
-    communities: ["W"],
-  })
-})
-
-test("Empty search params returns empty filter", () => {
-  const { searchParams } = new URL(new Request("http://localhost:5173/").url)
-
-  expect(buildFilter(searchParams)).toStrictEqual({})
-})
-
-test("Single value params are returned as arrays", () => {
-  const { searchParams } = new URL(
-    new Request("http://localhost:5173/?communities=W").url
-  )
-
-  expect(buildFilter(searchParams)).toStrictEqual({
-    communities: ["W"],
-  })
-})
-
-test("Unknown params are not included in the filter", () => {
-  const { searchParams } = new URL(
-    new Request("http://localhost:5173/?unknown=test&communities=W").url
-  )
-  expect(buildFilter(searchParams)).toEqual({
-    communities: ["W"],
-  })
-})
-
-test("Multiple instances of same param are grouped", () => {
-  const { searchParams } = new URL(
-    new Request(
-      "http://localhost:5173/?communities=W&communities=X&communities=Y"
-    ).url
-  )
-
-  expect(buildFilter(searchParams)).toStrictEqual({
-    communities: ["W", "X", "Y"],
-  })
 })
