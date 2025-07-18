@@ -32,19 +32,29 @@ interface FilterProps {
 export function Filter({
   filterParams,
   sendFilterSelectionsToParent,
-  sendQueryToParent,
 }: FilterProps) {
   const [searchQueryEntry, setSearchQueryEntry] = useState<string>("")
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      if (searchQueryEntry.length > 2) {
         sendQueryToParent(searchQueryEntry)
-      }
     }, 300)
 
-    return () => clearTimeout(delayDebounce)
-  }, [searchQueryEntry])
+    const sendQueryToParent = (query: string) => {
+      sendFilterSelectionsToParent((prev: URLSearchParams) => {
+        const next = new URLSearchParams(prev)
+
+        if (query.length > 2) {
+          next.set("nameQuery", query)
+        } else {
+          next.delete("nameQuery")
+        }
+      return next
+      })
+    }
+
+      return () => { clearTimeout(delayDebounce) }
+  }, [searchQueryEntry, sendFilterSelectionsToParent])
 
   const timeFrames = {
     morning: { start: "04:00", end: "10:59", hours: 7 },
