@@ -1,4 +1,7 @@
-import { useState, useEffect } from "react"
+import {
+  useEffect,
+  useState,
+} from "react"
 
 import type { WeekdayNumbers } from "luxon"
 import { DateTime } from "luxon"
@@ -18,7 +21,14 @@ import {
   TYPE,
 } from "@/meetingTypes"
 import { toggleArrayElement } from "@/utils/meetings-utils"
-import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react"
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Text,
+  VStack,
+} from "@chakra-ui/react"
 
 import { CategoryFilter } from "./categoryFilter"
 import { SearchInput } from "./SearchInput"
@@ -34,6 +44,7 @@ export function Filter({
   sendFilterSelectionsToParent,
 }: FilterProps) {
   const [searchQueryEntry, setSearchQueryEntry] = useState<string>("")
+  const [showMinCharWarning, setShowMinCharWarning] = useState(false)
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -46,7 +57,7 @@ export function Filter({
 
         if (query.length > 2) {
           next.set("nameQuery", query)
-        } else {
+        } else if (query.length == 0){
           next.delete("nameQuery")
         }
       return next
@@ -231,6 +242,7 @@ export function Filter({
 
   const handleInputChange = (value: string) => {
     setSearchQueryEntry(value)
+    setShowMinCharWarning(value.length > 0 && value.length < 3)
   }
 
   return (
@@ -293,7 +305,16 @@ export function Filter({
               })}
             </select>
           </Box>
-          <SearchInput value={searchQueryEntry} onChange={handleInputChange} />
+          <SearchInput
+            value={searchQueryEntry}
+            onChange={handleInputChange}
+            isInvalid={showMinCharWarning}
+          />
+          {showMinCharWarning && (
+            <Text fontSize="sm" color="red.500" mt={1}>
+              Enter at least 3 characters to search by name.
+            </Text>
+          )}
           <CategoryFilter<Type>
             displayName={"Meeting Type"}
             options={TYPE}
