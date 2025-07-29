@@ -1,4 +1,7 @@
-import { useState, useEffect } from "react"
+import {
+  useEffect,
+  useState,
+} from "react"
 
 import type { WeekdayNumbers } from "luxon"
 import { DateTime } from "luxon"
@@ -18,7 +21,14 @@ import {
   TYPE,
 } from "@/meetingTypes"
 import { toggleArrayElement } from "@/utils/meetings-utils"
-import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react"
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Text,
+  VStack,
+} from "@chakra-ui/react"
 
 import { CategoryFilter } from "./categoryFilter"
 import { SearchInput } from "./SearchInput"
@@ -32,19 +42,30 @@ interface FilterProps {
 export function Filter({
   filterParams,
   sendFilterSelectionsToParent,
-  sendQueryToParent,
 }: FilterProps) {
   const [searchQueryEntry, setSearchQueryEntry] = useState<string>("")
+  const [showMinCharWarning, setShowMinCharWarning] = useState(false)
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      if (searchQueryEntry.length > 2) {
         sendQueryToParent(searchQueryEntry)
-      }
     }, 300)
 
-    return () => clearTimeout(delayDebounce)
-  }, [searchQueryEntry])
+    const sendQueryToParent = (query: string) => {
+      sendFilterSelectionsToParent((prev: URLSearchParams) => {
+        const next = new URLSearchParams(prev)
+
+        if (query.length > 2) {
+          next.set("nameQuery", query)
+        } else if (query.length == 0){
+          next.delete("nameQuery")
+        }
+      return next
+      })
+    }
+
+      return () => { clearTimeout(delayDebounce) }
+  }, [searchQueryEntry, sendFilterSelectionsToParent])
 
   const timeFrames = {
     morning: { start: "04:00", end: "10:59", hours: 7 },
@@ -221,6 +242,7 @@ export function Filter({
 
   const handleInputChange = (value: string) => {
     setSearchQueryEntry(value)
+    setShowMinCharWarning(value.length > 0 && value.length < 3)
   }
 
   return (
@@ -283,7 +305,16 @@ export function Filter({
               })}
             </select>
           </Box>
-          <SearchInput value={searchQueryEntry} onChange={handleInputChange} />
+          <SearchInput
+            value={searchQueryEntry}
+            onChange={handleInputChange}
+            isInvalid={showMinCharWarning}
+          />
+          {showMinCharWarning && (
+            <Text fontSize="sm" color="red.500" mt={1}>
+              Enter at least 3 characters to search by name.
+            </Text>
+          )}
           <CategoryFilter<Type>
             displayName={"Meeting Type"}
             options={TYPE}
