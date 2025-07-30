@@ -5,27 +5,27 @@ describe('getServiceProviderNameFromUrl', () => {
   it('returns correct provider for known domains', () => {
     const zoom = getServiceProviderNameFromUrl('https://zoom.us/j/123456')
     expect(zoom.isOk()).toBe(true)
-    expect(zoom.value).toBe('Zoom')
+    expect(zoom.unwrap()).toBe('Zoom')
 
     const meet = getServiceProviderNameFromUrl('https://meet.google.com/abc-defg-hij')
     expect(meet.isOk()).toBe(true)
-    expect(meet.value).toBe('Google Meet')
+    expect(meet.unwrap()).toBe('Google Meet')
 
     const teams = getServiceProviderNameFromUrl('https://teams.microsoft.com/l/meetup-join/abc')
     expect(teams.isOk()).toBe(true)
-    expect(teams.value).toBe('Microsoft Teams')
+    expect(teams.unwrap()).toBe('Microsoft Teams')
 
     const bluejeans = getServiceProviderNameFromUrl('https://bluejeans.com/123')
     expect(bluejeans.isOk()).toBe(true)
-    expect(bluejeans.value).toBe('BlueJeans')
+    expect(bluejeans.unwrap()).toBe('BlueJeans')
 
     const discord = getServiceProviderNameFromUrl('https://discord.gg/xyz')
     expect(discord.isOk()).toBe(true)
-    expect(discord.value).toBe('Discord')
+    expect(discord.unwrap()).toBe('Discord')
 
     const vr = getServiceProviderNameFromUrl('https://maps.secondlife.com/some-room')
     expect(vr.isOk()).toBe(true)
-    expect(vr.value).toBe('Virtual Reality')
+    expect(vr.unwrap()).toBe('Virtual Reality')
   })
 
   it('returns Err for unknown domain', () => {
@@ -43,11 +43,11 @@ describe('getServiceProviderNameFromUrl', () => {
   it('handles subdomains correctly (should match root domain)', () => {
     const zoomSub = getServiceProviderNameFromUrl('https://subdomain.zoom.us/j/987')
     expect(zoomSub.isOk()).toBe(true)
-    expect(zoomSub.value).toBe('Zoom')
+    expect(zoomSub.unwrap()).toBe('Zoom')
 
     const meetSub = getServiceProviderNameFromUrl('https://video.meet.google.com/xyz')
     expect(meetSub.isOk()).toBe(true)
-    expect(meetSub.value).toBe('Google Meet')
+    expect(meetSub.unwrap()).toBe('Google Meet')
   })
 
   it('returns Err for base domains when service requires subdomains', () => {
