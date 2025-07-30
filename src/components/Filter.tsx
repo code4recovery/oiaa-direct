@@ -15,8 +15,8 @@ import {
   FEATURES,
   type Format,
   FORMATS,
-  type Language,
   LANGUAGES,
+  type Language,
   type Type,
   TYPE,
 } from "@/meetingTypes"
@@ -91,6 +91,7 @@ export function Filter({
   const [selectedDay, setSelectedDay] = useState<string>(defaultDay)
   const [selectedTimeFrame, setSelectedTimeFrame] =
     useState<string>(defaultTimeFrame)
+  const [use24HourFormat, setUse24HourFormat] = useState<boolean>(false)
 
   const activeTypes =
     filterParams.getAll("features").length > 0 ||
@@ -262,11 +263,32 @@ export function Filter({
             <Text fontWeight="bold" mb={2}>
               Day:
             </Text>
-            <select
+            <Box
+              as="select"
               id="day"
-              name="day"
-              value={selectedDay}
-              onChange={handleDayOrTimeFrameChange}
+              {...({
+                value: selectedDay,
+                onChange: handleDayOrTimeFrameChange,
+              } as any)}
+              w="full"
+              p={2}
+              border="1px solid"
+              borderColor="gray.300"
+              borderRadius="md"
+              bg="white"
+              fontSize="sm"
+              cursor="pointer"
+              _hover={{ borderColor: "blue.400" }}
+              _focus={{ 
+                borderColor: "blue.500", 
+                boxShadow: "0 0 0 1px #3182ce",
+                outline: "none"
+              }}
+              _dark={{ 
+                bg: "gray.800", 
+                borderColor: "gray.600",
+                color: "white"
+              }}
             >
               <option value="monday">Monday</option>
               <option value="tuesday">Tuesday</option>
@@ -275,17 +297,52 @@ export function Filter({
               <option value="friday">Friday</option>
               <option value="saturday">Saturday</option>
               <option value="sunday">Sunday</option>
-            </select>
+            </Box>
           </Box>
           <Box>
-            <Text fontWeight="bold" mb={2}>
-              Time Frame:
-            </Text>
-            <select
+            <Flex justify="space-between" align="center" mb={2}>
+              <Text fontWeight="bold">
+                Time Frame:
+              </Text>
+              <Button
+                size="xs"
+                variant="ghost"
+                onClick={() => setUse24HourFormat(!use24HourFormat)}
+                fontSize="xs"
+                color="gray.600"
+                _dark={{ color: "gray.400" }}
+                px={2}
+                h={6}
+              >
+                {use24HourFormat ? "24h" : "12h"}
+              </Button>
+            </Flex>
+            <Box
+              as="select"
               id="timeFrame"
-              name="timeFrame"
-              value={selectedTimeFrame}
-              onChange={handleDayOrTimeFrameChange}
+              {...({
+                value: selectedTimeFrame,
+                onChange: handleDayOrTimeFrameChange,
+              } as any)}
+              w="full"
+              p={2}
+              border="1px solid"
+              borderColor="gray.300"
+              borderRadius="md"
+              bg="white"
+              fontSize="sm"
+              cursor="pointer"
+              _hover={{ borderColor: "blue.400" }}
+              _focus={{ 
+                borderColor: "blue.500", 
+                boxShadow: "0 0 0 1px #3182ce",
+                outline: "none"
+              }}
+              _dark={{ 
+                bg: "gray.800", 
+                borderColor: "gray.600",
+                color: "white"
+              }}
             >
               <option value="morning">Morning</option>
               <option value="midday">Midday</option>
@@ -295,7 +352,9 @@ export function Filter({
               <option disabled>──────────</option>
               {Array.from({ length: 24 }).map((_, hour) => {
                 const dt = DateTime.fromObject({ hour, minute: 0 })
-                const label = dt.toLocaleString(DateTime.TIME_SIMPLE)
+                const label = use24HourFormat 
+                  ? dt.toFormat("HH:mm")
+                  : dt.toLocaleString(DateTime.TIME_SIMPLE)
                 const value = dt.toFormat("HH:mm")
                 return (
                   <option value={value} key={value}>
@@ -303,7 +362,7 @@ export function Filter({
                   </option>
                 )
               })}
-            </select>
+            </Box>
           </Box>
           <SearchInput
             value={searchQueryEntry}
@@ -314,6 +373,20 @@ export function Filter({
             <Text fontSize="sm" color="red.500" mt={1}>
               Enter at least 3 characters to search by name.
             </Text>
+          )}
+          {hasActiveFilters && (
+            <Button
+              size="sm"
+              variant="ghost"
+              colorScheme="red"
+              onClick={clearFilters}
+              width="full"
+            >
+              <Flex align="center" gap={2}>
+                <FaTimesCircle />
+                <Text>Clear All Filters</Text>
+              </Flex>
+            </Button>
           )}
           <CategoryFilter<Type>
             displayName={"Meeting Type"}
@@ -345,24 +418,6 @@ export function Filter({
             selected={filterParams.getAll("languages") as Language[]}
             onToggle={handleLanguageToggle}
           />
-          {hasActiveFilters && (
-            <Button
-              size="sm"
-              variant="ghost"
-              colorScheme="gray"
-              onClick={clearFilters}
-              color="gray.600"
-              _dark={{
-                color: "gray.200",
-                _hover: { bg: "whiteAlpha.200" },
-              }}
-            >
-              <Flex align="center" gap={2}>
-                <FaTimesCircle />
-                <Text>Clear Filters</Text>
-              </Flex>
-            </Button>
-          )}
         </VStack>
       </Box>
     </>
