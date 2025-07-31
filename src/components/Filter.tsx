@@ -51,8 +51,6 @@ export function Filter({
         sendQueryToParent(searchQueryEntry)
     }, 300)
 
-    // Update warning state on render and not just on change
-    // This ensures the warning is shown if the initial value is less than 3 characters
     setShowMinCharWarning(searchQueryEntry.length > 0 && searchQueryEntry.length < 3)
 
     const sendQueryToParent = (query: string) => {
