@@ -43,13 +43,15 @@ export function Filter({
   filterParams,
   sendFilterSelectionsToParent,
 }: FilterProps) {
-  const [searchQueryEntry, setSearchQueryEntry] = useState<string>("")
+  const [searchQueryEntry, setSearchQueryEntry] = useState(filterParams.get("nameQuery") ?? "")
   const [showMinCharWarning, setShowMinCharWarning] = useState(false)
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
         sendQueryToParent(searchQueryEntry)
     }, 300)
+
+    setShowMinCharWarning(searchQueryEntry.length > 0 && searchQueryEntry.length < 3)
 
     const sendQueryToParent = (query: string) => {
       sendFilterSelectionsToParent((prev: URLSearchParams) => {
@@ -242,7 +244,6 @@ export function Filter({
 
   const handleInputChange = (value: string) => {
     setSearchQueryEntry(value)
-    setShowMinCharWarning(value.length > 0 && value.length < 3)
   }
 
   return (
@@ -311,8 +312,8 @@ export function Filter({
             isInvalid={showMinCharWarning}
           />
           {showMinCharWarning && (
-            <Text fontSize="sm" color="red.500" mt={1}>
-              Enter at least 3 characters to search by name.
+            <Text fontSize="sm" color="red.500" mt={0}>
+              Enter at least 3 characters.
             </Text>
           )}
           <CategoryFilter<Type>
