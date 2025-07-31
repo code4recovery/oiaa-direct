@@ -1,0 +1,80 @@
+{
+  "_chunk-K6AXKMTT-YwewBSBh.js": {
+    "file": "assets/chunk-K6AXKMTT-YwewBSBh.js",
+    "name": "chunk-K6AXKMTT"
+  },
+  "_getData-p7uX6C83.js": {
+    "file": "assets/getData-p7uX6C83.js",
+    "name": "getData",
+    "imports": [
+      "_iconBase-Beu9WE9T.js",
+      "_chunk-K6AXKMTT-YwewBSBh.js"
+    ]
+  },
+  "_iconBase-Beu9WE9T.js": {
+    "file": "assets/iconBase-Beu9WE9T.js",
+    "name": "iconBase",
+    "imports": [
+      "_chunk-K6AXKMTT-YwewBSBh.js"
+    ]
+  },
+  "_index-C-j6SY-t.js": {
+    "file": "assets/index-C-j6SY-t.js",
+    "name": "index",
+    "imports": [
+      "_chunk-K6AXKMTT-YwewBSBh.js"
+    ]
+  },
+  "_index-COU9E52-.js": {
+    "file": "assets/index-COU9E52-.js",
+    "name": "index"
+  },
+  "src/entry.client.tsx": {
+    "file": "assets/entry.client-Bi6AfinF.js",
+    "name": "entry.client",
+    "src": "src/entry.client.tsx",
+    "isEntry": true,
+    "imports": [
+      "_chunk-K6AXKMTT-YwewBSBh.js",
+      "_index-C-j6SY-t.js"
+    ]
+  },
+  "src/root.tsx?__react-router-build-client-route": {
+    "file": "assets/root-Ccv1T9Bh.js",
+    "name": "root",
+    "src": "src/root.tsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_iconBase-Beu9WE9T.js",
+      "_chunk-K6AXKMTT-YwewBSBh.js",
+      "_index-COU9E52-.js"
+    ],
+    "css": [
+      "assets/root-kQJbKSsj.css"
+    ]
+  },
+  "src/routes/group-info.tsx?__react-router-build-client-route": {
+    "file": "assets/group-info-DGBrLBPh.js",
+    "name": "group-info",
+    "src": "src/routes/group-info.tsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_iconBase-Beu9WE9T.js",
+      "_chunk-K6AXKMTT-YwewBSBh.js",
+      "_getData-p7uX6C83.js"
+    ]
+  },
+  "src/routes/meetings-filtered.tsx?__react-router-build-client-route": {
+    "file": "assets/meetings-filtered-BSGl17jg.js",
+    "name": "meetings-filtered",
+    "src": "src/routes/meetings-filtered.tsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_iconBase-Beu9WE9T.js",
+      "_chunk-K6AXKMTT-YwewBSBh.js",
+      "_getData-p7uX6C83.js",
+      "_index-COU9E52-.js",
+      "_index-C-j6SY-t.js"
+    ]
+  }
+}
