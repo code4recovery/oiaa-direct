@@ -1,7 +1,6 @@
 import {
   FaArrowLeft,
   FaCalendarAlt,
-  FaCalendarPlus,
   FaClock,
   FaEnvelope,
   FaGlobeAmericas,
@@ -33,7 +32,7 @@ import {
   Text,
 } from "@chakra-ui/react"
 
-import JoinMeetingButton from "../components/JoinMeetingButton"
+import { JoinMeetingButton, MeetingItem, CalendarActions } from "@/components/meetings"
 import type { Route } from "./+types/group-info"
 
 const DESCRIPTIONS: Record<string, string> = {
@@ -110,69 +109,84 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { meeting, group }
 }
 
-// Simple meeting display component for group meeting list
+// Calendar-focused meeting display for group detail page
 function MeetingDisplay({ meeting }: { meeting: Meeting }) {
-  const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone)
-
   return (
-    <Box>
-      <Flex
-        justifyContent="space-between"
-        alignItems="flex-start"
-        flexWrap="wrap"
-        mb={2}
+    <Box 
+      p={4} 
+      borderWidth="1px" 
+      borderColor="gray.200" 
+      borderRadius="md"
+      bg="white"
+      shadow="sm"
+      _dark={{ borderColor: "gray.700", bg: "gray.800" }}
+    >
+      <Flex 
+        direction={{ base: "column", md: "row" }} 
+        gap={4} 
+        align={{ base: "stretch", md: "flex-start" }}
       >
-        <Box>
-          <Heading size="sm" color="gray.700" _dark={{ color: "gray.300" }}>
+        {/* Meeting Info */}
+        <Box flex="1">
+          <Heading 
+            size="md" 
+            color="gray.900" 
+            _dark={{ color: "gray.100" }}
+            mb={2}
+          >
             {meeting.name}
           </Heading>
-          <Flex align="center" mt={1}>
-            <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-              <FaCalendarAlt />
-            </Box>
-            <Text color="gray.600" _dark={{ color: "gray.400" }}>
-              {localDay(meeting.timeUTC)} at {timeInfo.originalTime} (
-              {timeInfo.originalTimezone.replace("_", " ")})
-            </Text>
-          </Flex>
-          <Flex align="center" mt={1}>
-            <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-              <FaGlobeAmericas />
-            </Box>
-            <Text color="gray.600" _dark={{ color: "gray.400" }}>
-              Your local time: {timeInfo.userTime} ({timeInfo.userTimezone})
-            </Text>
+          
+          {/* Time Display */}
+          <MeetingItem
+            meeting={meeting}
+            variant="compact"
+            showActions={false}
+            showCategories={false}
+            showNotes={false}
+            showLink={false}
+          />
+          
+          {/* Categories */}
+          <Flex flexWrap="wrap" gap={1} mt={3}>
+            {meeting.formats.map((format: string) => (
+              <Badge
+                key={format}
+                colorScheme="blue"
+                variant="subtle"
+                px={2}
+                py={1}
+                borderRadius="full"
+                fontSize="xs"
+              >
+                {DESCRIPTIONS[format] || format}
+              </Badge>
+            ))}
+            {meeting.type && (
+              <Badge
+                colorScheme="purple"
+                variant="subtle"
+                px={2}
+                py={1}
+                borderRadius="full"
+                fontSize="xs"
+              >
+                {DESCRIPTIONS[meeting.type] || meeting.type}
+              </Badge>
+            )}
           </Flex>
         </Box>
-
-        <Button
-          colorScheme="green"
-          variant="outline"
-          size="sm"
-          mt={{ base: 2, md: 0 }}
-        >
-          <FaCalendarPlus style={{ marginRight: "8px" }} /> Add to Calendar
-        </Button>
+        
+        {/* Calendar Actions */}
+        <Box>
+          <CalendarActions
+            meeting={meeting}
+            mode="full"
+            size="md"
+            layout="vertical"
+          />
+        </Box>
       </Flex>
-
-      {meeting.formats.length > 0 && (
-        <Flex flexWrap="wrap" gap={1} mt={2}>
-          {meeting.formats.map((format: string) => (
-            <Badge
-              key={format}
-              colorScheme="blue"
-              variant="subtle"
-              px={2}
-              py={1}
-              borderRadius="full"
-              mr={1}
-              mb={1}
-            >
-              {getCategoryFullName(format)}
-            </Badge>
-          ))}
-        </Flex>
-      )}
     </Box>
   )
 }
