@@ -8,7 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react"
 
-import { MeetingCard } from "./MeetingCard"
+import MeetingItem from "./MeetingItem"
 
 interface MeetingsSummaryProps {
   meetings: Meeting[]
@@ -37,7 +37,15 @@ export function MeetingsSummary({
           </Heading>
           <VStack gap={6} align="stretch">
             {meetings.map((meeting) => (
-              <MeetingCard key={meeting.slug} meeting={meeting} />
+              <MeetingItem 
+                key={meeting.slug} 
+                meeting={meeting} 
+                variant="list"
+                showActions={true}
+                showCategories={true}
+                showNotes={false}
+                forceResponsive={true}
+              />
             ))}
             {meetings.length === 0 && (
               <Text color="gray.500" textAlign="center" py={8}>
