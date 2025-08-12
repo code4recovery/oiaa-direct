@@ -28,7 +28,6 @@ import {
   Box,
   Button,
   Flex,
-  HStack,
   Text,
   VStack,
   useDisclosure,
@@ -185,64 +184,64 @@ export const MobileFilters = ({
   }, [searchQuery, sendFilterSelectionsToParent])
 
   // Active filter counts
-  const activeFilters = {
-    types: filterParams.getAll("type").length,
-    formats: filterParams.getAll("formats").length,
-    features: filterParams.getAll("features").length,
-    communities: filterParams.getAll("communities").length,
-    languages: filterParams.getAll("languages").length,
-  }
+  // const activeFilters = {
+  //   types: filterParams.getAll("type").length,
+  //   formats: filterParams.getAll("formats").length,
+  //   features: filterParams.getAll("features").length,
+  //   communities: filterParams.getAll("communities").length,
+  //   languages: filterParams.getAll("languages").length,
+  // }
 
-  const totalActiveFilters = Object.values(activeFilters).reduce((sum, count) => sum + count, 0) +
-    (searchQuery ? 1 : 0) +
-    (selectedDay !== defaultDay ? 1 : 0) +
-    (selectedTimeFrame !== defaultTimeFrame ? 1 : 0)
+  // const totalActiveFilters = Object.values(activeFilters).reduce((sum, count) => sum + count, 0) +
+  //   (searchQuery ? 1 : 0) +
+  //   (selectedDay !== defaultDay ? 1 : 0) +
+  //   (selectedTimeFrame !== defaultTimeFrame ? 1 : 0)
 
-  const hasActiveFilters = totalActiveFilters > 0
+  // const hasActiveFilters = totalActiveFilters > 0
 
   // Quick Actions
-  const setQuickFilter = (type: 'now' | 'today' | 'thisWeek') => {
-    const now = DateTime.local()
+  // const setQuickFilter = (type: 'now' | 'today' | 'thisWeek') => {
+  //   const now = DateTime.local()
     
-    switch (type) {
-      case 'now':
-        // Next 2 hours from now
-        sendFilterSelectionsToParent((prev: URLSearchParams) => {
-          const next = new URLSearchParams(prev)
-          next.set("start", now.toUTC().toISO()!)
-          next.set("hours", "2")
-          return next
-        })
-        setSelectedTimeFrame(defaultTimeFrame)
-        setSelectedDay(defaultDay)
-        break
+  //   switch (type) {
+  //     case 'now':
+  //       // Next 2 hours from now
+  //       sendFilterSelectionsToParent((prev: URLSearchParams) => {
+  //         const next = new URLSearchParams(prev)
+  //         next.set("start", now.toUTC().toISO()!)
+  //         next.set("hours", "2")
+  //         return next
+  //       })
+  //       setSelectedTimeFrame(defaultTimeFrame)
+  //       setSelectedDay(defaultDay)
+  //       break
       
-      case 'today':
-        // Rest of today
-        const startOfToday = now.startOf('day').plus({ hours: now.hour })
-        sendFilterSelectionsToParent((prev: URLSearchParams) => {
-          const next = new URLSearchParams(prev)
-          next.set("start", startOfToday.toUTC().toISO()!)
-          next.set("hours", (24 - now.hour).toString())
-          return next
-        })
-        setSelectedDay(defaultDay)
-        setSelectedTimeFrame(defaultTimeFrame)
-        break
+  //     case 'today':
+  //       // Rest of today
+  //       const startOfToday = now.startOf('day').plus({ hours: now.hour })
+  //       sendFilterSelectionsToParent((prev: URLSearchParams) => {
+  //         const next = new URLSearchParams(prev)
+  //         next.set("start", startOfToday.toUTC().toISO()!)
+  //         next.set("hours", (24 - now.hour).toString())
+  //         return next
+  //       })
+  //       setSelectedDay(defaultDay)
+  //       setSelectedTimeFrame(defaultTimeFrame)
+  //       break
       
-      case 'thisWeek':
-        // Rest of this week
-        sendFilterSelectionsToParent((prev: URLSearchParams) => {
-          const next = new URLSearchParams(prev)
-          next.set("start", now.toUTC().toISO()!)
-          next.set("hours", "168") // 7 days
-          return next
-        })
-        setSelectedDay(defaultDay)
-        setSelectedTimeFrame(defaultTimeFrame)
-        break
-    }
-  }
+  //     case 'thisWeek':
+  //       // Rest of this week
+  //       sendFilterSelectionsToParent((prev: URLSearchParams) => {
+  //         const next = new URLSearchParams(prev)
+  //         next.set("start", now.toUTC().toISO()!)
+  //         next.set("hours", "168") // 7 days
+  //         return next
+  //       })
+  //       setSelectedDay(defaultDay)
+  //       setSelectedTimeFrame(defaultTimeFrame)
+  //       break
+  //   }
+  // }
 
   const clearAllFilters = () => {
     setSearchQuery("")
@@ -355,11 +354,12 @@ export const MobileFilters = ({
             <Flex align="center" gap={2}>
               <FaFilter />
               <Text>Filters</Text>
-              {hasActiveFilters && (
+              {/* {hasActiveFilters && ( */}
                 <Badge colorScheme="blue" variant="solid" borderRadius="full">
-                  {totalActiveFilters}
+                  {/* {totalActiveFilters} */}
+                  0
                 </Badge>
-              )}
+              {/* )} */}
               {isFiltersOpen ? <FaChevronUp /> : <FaChevronDown />}
             </Flex>
           </Button>
@@ -370,7 +370,7 @@ export const MobileFilters = ({
         </Flex>
 
         {/* Quick Actions - Always Visible */}
-        <Box overflowX="auto" pb={1}>
+        {/* <Box overflowX="auto" pb={1}>
           <HStack gap={2} minW="fit-content">
             <QuickFilterButton label="Now" onClick={() => setQuickFilter('now')} />
             <QuickFilterButton label="Today" onClick={() => setQuickFilter('today')} />
@@ -394,10 +394,10 @@ export const MobileFilters = ({
               </Button>
             )}
           </HStack>
-        </Box>
+        </Box> */}
 
         {/* Applied Filters Display */}
-        {hasActiveFilters && (
+        {/* {hasActiveFilters && (
           <Flex wrap="wrap" gap={1}>
             {searchQuery && (
               <Badge variant="solid" colorScheme="blue" borderRadius="full" fontSize="xs">
@@ -415,7 +415,7 @@ export const MobileFilters = ({
               </Badge>
             )}
           </Flex>
-        )}
+        )} */}
 
         {/* Collapsible Filter Sections */}
         {isFiltersOpen && (
@@ -426,10 +426,10 @@ export const MobileFilters = ({
               title="Day & Time"
               isOpen={isTimeOpen}
               onToggle={onTimeToggle}
-              badge={
-                (selectedDay !== defaultDay ? 1 : 0) +
-                (selectedTimeFrame !== defaultTimeFrame ? 1 : 0)
-              }
+              // badge={
+              //   (selectedDay !== defaultDay ? 1 : 0) +
+              //   (selectedTimeFrame !== defaultTimeFrame ? 1 : 0)
+              // }
             >
               <VStack gap={3} align="stretch">
                 <Box>
@@ -502,7 +502,7 @@ export const MobileFilters = ({
               title="Meeting Types"
               isOpen={isTypesOpen}
               onToggle={onTypesToggle}
-              badge={activeFilters.types}
+              // badge={activeFilters.types}
             >
               <CategoryFilter<Type>
                 displayName=""
@@ -517,7 +517,7 @@ export const MobileFilters = ({
               title="Formats"
               isOpen={isFormatsOpen}
               onToggle={onFormatsToggle}
-              badge={activeFilters.formats}
+              // badge={activeFilters.formats}
             >
               <CategoryFilter<Format>
                 displayName=""
@@ -532,7 +532,7 @@ export const MobileFilters = ({
               title="Features"
               isOpen={isFeaturesOpen}
               onToggle={onFeaturesToggle}
-              badge={activeFilters.features}
+              // badge={activeFilters.features}
             >
               <CategoryFilter<Feature>
                 displayName=""
@@ -547,7 +547,7 @@ export const MobileFilters = ({
               title="Communities"
               isOpen={isCommunitiesOpen}
               onToggle={onCommunitiesToggle}
-              badge={activeFilters.communities}
+              // badge={activeFilters.communities}
             >
               <CategoryFilter<Community>
                 displayName=""
@@ -562,7 +562,7 @@ export const MobileFilters = ({
               title="Languages"
               isOpen={isLanguagesOpen}
               onToggle={onLanguagesToggle}
-              badge={activeFilters.languages}
+              // badge={activeFilters.languages}
             >
               <CategoryFilter<Language>
                 displayName=""
