@@ -31,8 +31,9 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
 
 export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
   const [filterParams, setFilterParams] = useSearchParams()
-  const { meetings } = loaderData
-  const totalMeetings = meetings.length
+  // RESILIENT: Handle both array and object loaderData shapes
+  const allMeetings = Array.isArray(loaderData) ? loaderData : loaderData?.meetings ?? []
+  const totalMeetings = allMeetings.length
   const [currentPage, setCurrentPage] = useState(0)
   const meetingsPerPage = 25
 
@@ -48,7 +49,7 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
   }
 
   const handleNextPage = () => {
-    if ((currentPage + 1) * meetingsPerPage < meetings.length) {
+    if ((currentPage + 1) * meetingsPerPage < allMeetings.length) {
       setCurrentPage((prev) => prev + 1)
     }
   }
@@ -59,7 +60,7 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
     }
   }
 
-  const paginatedMeetings = meetings.slice(
+  const paginatedMeetings = allMeetings.slice(
     currentPage * meetingsPerPage,
     (currentPage + 1) * meetingsPerPage
   )
@@ -90,7 +91,7 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
       </button>
       <button
         onClick={handleNextPage}
-        disabled={(currentPage + 1) * meetingsPerPage >= meetings.length}
+        disabled={(currentPage + 1) * meetingsPerPage >= allMeetings.length}
         style={{
           padding: "8px 16px",
           backgroundColor: "#3182ce",
@@ -98,7 +99,7 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
           border: "none",
           borderRadius: "4px",
           cursor:
-            (currentPage + 1) * meetingsPerPage >= meetings.length
+            (currentPage + 1) * meetingsPerPage >= allMeetings.length
               ? "not-allowed"
               : "pointer",
         }}
@@ -134,7 +135,7 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
         )}
 
         {/* Meetings Content */}
-        {meetings.length > 0 ? (
+        {allMeetings.length > 0 ? (
           <>
             <PaginationButtons />
             <MeetingsSummary

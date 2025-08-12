@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug React UMD Test</title>
+</head>
+<body>
+    <div id="status">Loading React...</div>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <script>
+        const status = document.getElementById('status');
+        
+        // Debug React global
+        console.log('window.React:', window.React);
+        console.log('window.ReactDOM:', window.ReactDOM);
+        console.log('React.createContext:', React?.createContext);
+        
+        if (!window.React) {
+            status.innerHTML = '<div style="color: red;">❌ React is not available globally</div>';
+        } else if (!React.createContext) {
+            status.innerHTML = '<div style="color: red;">❌ React.createContext is not available</div>';
+        } else {
+            status.innerHTML = '<div style="color: green;">✅ React is properly loaded</div>';
+            
+            // Now try to load the ES module
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.textContent = `
+                try {
+                    const wordpressModule = await import('./dist/wordpress-entry.js');
+                    console.log('WordPress module loaded:', wordpressModule);
+                    console.log('Available exports:', Object.keys(wordpressModule));
+                    window.WordPressMeetings = wordpressModule.default;
+                    window.createMeetingsRouter = wordpressModule.createMeetingsRouter;
+                    window.RouterProvider = wordpressModule.RouterProvider;
+                    window.createBrowserRouter = wordpressModule.createBrowserRouter;
+                    console.log('window.WordPressMeetings:', window.WordPressMeetings);
+                    document.getElementById('status').innerHTML += '<br><div style="color: green;">✅ ES Module loaded successfully</div>';
+                } catch (error) {
+                    console.error('Module loading error:', error);
+                    document.getElementById('status').innerHTML += '<br><div style="color: red;">❌ ES Module failed to load: ' + error.message + '</div>';
+                }
+            `;
+            document.head.appendChild(script);
+        }
+    </script>
+</body>
+</html>

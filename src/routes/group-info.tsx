@@ -482,7 +482,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
           )}
 
           {/* Group Notes */}
-          {groupInfo.notes && (
+          {groupInfo?.notes && (
             <Box mt={4}>
               <Text fontWeight="bold" mb={2}>
                 Group Notes
@@ -493,7 +493,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                 _dark={{ bg: "gray.700" }}
                 borderRadius="md"
               >
-                {groupInfo.notes.split("\n").map((note, index) => (
+                {(groupInfo?.notes || '').split("\n").map((note, index) => (
                   <Text key={index} mb={2}>
                     {note}
                   </Text>
@@ -518,19 +518,19 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
       >
         <Box bg="blue.50" _dark={{ bg: "blue.900" }} p={4}>
           <Heading size="md" color="blue.600" _dark={{ color: "blue.300" }}>
-            {groupInfo.name} - All Meetings
+            {groupInfo?.name || 'Group'} - All Meetings
           </Heading>
-          {groupInfo.email && (
+          {groupInfo?.email && (
             <Flex align="center" mt={2}>
               <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
                 <FaEnvelope />
               </Box>
               <Link
-                href={`mailto:${groupInfo.email}`}
+                href={`mailto:${groupInfo?.email || ''}`}
                 color="gray.600"
                 _dark={{ color: "gray.400" }}
               >
-                {groupInfo.email}
+                {groupInfo?.email}
               </Link>
             </Flex>
           )}

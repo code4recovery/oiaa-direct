@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordPress Helper Function Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #meetings-app {
+            min-height: 600px;
+            border: 2px dashed #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            color: #666;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background: #e6ffe6; color: #006600; }
+        .error { background: #ffe6e6; color: #cc0000; }
+        .info { background: #e6f3ff; color: #0066cc; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WordPress Helper Function Test</h1>
+        <p>Testing the new <code>renderWordPressMeetings</code> helper function.</p>
+        
+        <div id="status"></div>
+        
+        <div id="meetings-app">
+            Loading React application...
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="testUpdate()">Test Update Function</button>
+            <button onclick="testUnmount()">Test Unmount Function</button>
+        </div>
+    </div>
+
+    <!-- Load React from CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <script type="module">
+        let renderControls = null;
+
+        async function loadApp() {
+            try {
+                document.getElementById('status').innerHTML = '<div class="status info">🔄 Loading WordPress module...</div>';
+                
+                const wordpressModule = await import('./dist/wordpress-entry.js');
+                console.log('WordPress module loaded:', wordpressModule);
+                
+                // Test the helper function
+                if (wordpressModule.renderWordPressMeetings) {
+                    const container = document.getElementById('meetings-app');
+                    
+                    renderControls = wordpressModule.renderWordPressMeetings(container, {
+                        basename: '/meetings',
+                        apiUrl: 'https://central-query.apps.code4recovery.org/api/v1/meetings'
+                    });
+                    
+                    document.getElementById('status').innerHTML = '<div class="status success">✅ Helper function worked! App rendered successfully.</div>';
+                    console.log('Render controls:', renderControls);
+                    
+                    // Make test functions available globally
+                    window.testUpdate = () => {
+                        if (renderControls) {
+                            renderControls.update({ basename: '/updated-meetings' });
+                            document.getElementById('status').innerHTML += '<div class="status info">🔄 Updated basename to "/updated-meetings"</div>';
+                        }
+                    };
+                    
+                    window.testUnmount = () => {
+                        if (renderControls) {
+                            renderControls.unmount();
+                            document.getElementById('meetings-app').innerHTML = 'App unmounted successfully!';
+                            document.getElementById('status').innerHTML += '<div class="status info">🗑️ App unmounted</div>';
+                        }
+                    };
+                    
+                } else {
+                    document.getElementById('status').innerHTML = '<div class="status error">❌ Helper function not available</div>';
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('status').innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Load the app when page is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadApp);
+        } else {
+            loadApp();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordPress React Integration Example</title>
+    
+    <!-- Include WordPress Build CSS -->
+    <link rel="stylesheet" href="./dist/wordpress-entry.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #react-root {
+            min-height: 600px;
+            border: 2px dashed #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            color: #666;
+        }
+        .error {
+            background: #ffe6e6;
+            color: #cc0000;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #e6ffe6;
+            color: #006600;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .code {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WordPress React Router 7 Integration Example</h1>
+        <p>This example demonstrates how to integrate the React Router 7 meetings application into WordPress.</p>
+        
+        <div class="warning">
+            <strong>Note:</strong> This demo loads React from CDN. If you see CORS errors, React might not load properly in development. The WordPress integration works correctly when React is provided by WordPress itself.
+        </div>
+        
+        <h2>Implementation Status</h2>
+        <div id="status">Loading...</div>
+        
+        <h2>WordPress Integration Code</h2>
+        <div class="code">
+<pre>// In your WordPress template or plugin:
+
+// 1. First, enqueue React and ReactDOM (if not already available)
+wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', array(), '18', false);
+wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', array('react'), '18', false);
+
+// 2. Enqueue your built WordPress entry file
+wp_enqueue_script('meetings-app', get_template_directory_uri() . '/dist/wordpress-entry.js', array('react', 'react-dom'), '1.0', true);
+
+// 3. Add a container div in your template
+echo '&lt;div id="react-root">&lt;/div>';
+
+// 4. Initialize the React application
+wp_add_inline_script('meetings-app', '
+    const wordpressModule = window.WordPressMeetings;
+    if (wordpressModule && wordpressModule.createMeetingsRouter) {
+        const router = wordpressModule.createMeetingsRouter("/meetings");
+        const element = React.createElement(wordpressModule.RouterProvider, { router });
+        const root = ReactDOM.createRoot(document.getElementById("react-root"));
+        root.render(element);
+    } else {
+        console.error("WordPress meetings module not loaded properly");
+    }
+');
+</pre>
+        </div>
+        
+        <h2>React Application Container</h2>
+        <div id="react-root">
+            React application will render here...
+        </div>
+    </div>
+
+    <!-- 
+        Alternative method: Load React via ES modules to avoid CORS issues
+        This approach works better with development servers
+    -->
+    <script type="module">
+        // First, let's try to load React dynamically to avoid CORS issues
+        async function loadReact() {
+            try {
+                // Try to load React from ES modules CDN (usually has better CORS support)
+                const [ReactModule, ReactDOMModule] = await Promise.all([
+                    import('https://esm.sh/react@18'),
+                    import('https://esm.sh/react-dom@18/client')
+                ]);
+                
+                // Make React available globally for our built module
+                window.React = ReactModule.default;
+                window.ReactDOM = ReactDOMModule;
+                
+                return { React: ReactModule.default, ReactDOM: ReactDOMModule };
+            } catch (error) {
+                console.warn('Failed to load React from esm.sh, falling back to UMD:', error);
+                
+                // Fallback: Load UMD versions with better error handling
+                return new Promise((resolve, reject) => {
+                    const reactScript = document.createElement('script');
+                    reactScript.src = 'https://unpkg.com/react@18/umd/react.development.js';
+                    reactScript.crossOrigin = 'anonymous';
+                    reactScript.onload = () => {
+                        const reactDOMScript = document.createElement('script');
+                        reactDOMScript.src = 'https://unpkg.com/react-dom@18/umd/react-dom.development.js';
+                        reactDOMScript.crossOrigin = 'anonymous';
+                        reactDOMScript.onload = () => resolve({ React: window.React, ReactDOM: window.ReactDOM });
+                        reactDOMScript.onerror = reject;
+                        document.head.appendChild(reactDOMScript);
+                    };
+                    reactScript.onerror = reject;
+                    document.head.appendChild(reactScript);
+                });
+            }
+        }
+
+        async function initializeApp() {
+            try {
+                // Update status
+                document.getElementById('status').innerHTML = '<div>Loading React...</div>';
+                
+                // Load React first
+                const { React, ReactDOM } = await loadReact();
+                
+                if (!React || !ReactDOM) {
+                    throw new Error('Failed to load React or ReactDOM');
+                }
+                
+                document.getElementById('status').innerHTML = '<div class="success">✅ React loaded successfully!</div>';
+                
+                // Now load the WordPress entry module
+                const wordpressModule = await import('./dist/wordpress-entry.js');
+                console.log('WordPress module loaded:', wordpressModule);
+                
+                // Check if we have the required exports
+                if (wordpressModule.createMeetingsRouter && wordpressModule.RouterProvider) {
+                    document.getElementById('status').innerHTML += '<div class="success">✅ Module loaded successfully! Found createMeetingsRouter and RouterProvider exports.</div>';
+                    
+                    try {
+                        // UPDATED: Use the default export which includes ChakraProvider and fixes all WordPress issues
+                        const { default: WordPressMeetings } = wordpressModule;
+                        const root = ReactDOM.createRoot(document.getElementById('react-root'));
+                        root.render(React.createElement(WordPressMeetings, { basename: '/meetings' }));
+                        
+                        document.getElementById('status').innerHTML += '<div class="success">✅ React application rendered successfully with ChakraProvider!</div>';
+                    } catch (renderError) {
+                        console.error('Render error:', renderError);
+                        document.getElementById('status').innerHTML += '<div class="error">❌ Error rendering React application: ' + renderError.message + '</div>';
+                        
+                        // Show more detailed error info
+                        document.getElementById('status').innerHTML += '<div class="error">Error details: ' + (renderError.stack || renderError.toString()) + '</div>';
+                    }
+                } else {
+                    document.getElementById('status').innerHTML += '<div class="error">❌ Required exports not found in module</div>';
+                    console.error('Available exports:', Object.keys(wordpressModule));
+                }
+            } catch (error) {
+                console.error('Error loading modules:', error);
+                document.getElementById('status').innerHTML = '<div class="error">❌ Error loading modules: ' + error.message + '</div>';
+                
+                // Additional debugging info
+                console.log('Window React:', window.React);
+                console.log('Window ReactDOM:', window.ReactDOM);
+            }
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+    </script>
+</body>
+</html>
