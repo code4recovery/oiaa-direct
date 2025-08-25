@@ -41,23 +41,21 @@ const CATEGORY_COLORS = {
 } as const
 
 export interface MeetingCategoriesProps {
-  /** Meeting data containing all categories */
+
   meeting: Meeting
-  /** Maximum number of badges to show before overflow */
+
   maxVisible?: number
-  /** Badge size */
+
   size?: 'sm' | 'md'
-  /** Layout mode */
+
   layout?: 'wrap' | 'scroll' | 'limited'
-  /** Show category names or just abbreviations */
+
   showFullNames?: boolean
-  /** Override responsive maxVisible behavior */
+
   forceMaxVisible?: number
 }
 
-/**
- * Gets all category items from a meeting with their metadata
- */
+
 const getCategoryItems = (meeting: Meeting) => {
   const items: Array<{
     key: string
@@ -66,7 +64,7 @@ const getCategoryItems = (meeting: Meeting) => {
     fullName: string
   }> = []
 
-  // Process each category type
+
   const categories = ["type", "formats", "features", "communities", "languages"] as const
   
   categories.forEach((category) => {
@@ -87,9 +85,7 @@ const getCategoryItems = (meeting: Meeting) => {
   return items
 }
 
-/**
- * Smart badge component with tooltip
- */
+
 const CategoryBadge = ({ 
   item, 
   size = 'sm',
@@ -120,9 +116,7 @@ const CategoryBadge = ({
   )
 }
 
-/**
- * Overflow indicator with popover showing remaining badges
- */
+
 const OverflowIndicator = ({ 
   hiddenItems, 
   size = 'sm',
@@ -183,22 +177,22 @@ export const MeetingCategories = ({
 }: MeetingCategoriesProps) => {
   const allItems = getCategoryItems(meeting)
   
-  // Responsive max visible badges
+
   const responsiveMaxVisible = useBreakpointValue({
-    base: 3,  // Mobile: show only 3 badges
-    sm: 4,    // Small tablet: 4 badges  
-    md: 6,    // Desktop: 6 badges
-    lg: 8,    // Large desktop: 8 badges
+    base: 3,  
+    sm: 4,    
+    md: 6,    
+    lg: 8,    
   })
 
   const effectiveMaxVisible = forceMaxVisible || maxVisible || responsiveMaxVisible || 3
 
-  // Early return for no categories
+
   if (allItems.length === 0) {
     return null
   }
 
-  // Layout: wrap - show all badges with wrapping
+
   if (layout === 'wrap') {
     return (
       <Flex wrap="wrap" gap={1}>
@@ -214,13 +208,13 @@ export const MeetingCategories = ({
     )
   }
 
-  // Layout: scroll - horizontal scrolling container
+
   if (layout === 'scroll') {
     return (
       <Box
         overflowX="auto"
         overflowY="hidden"
-        pb={1} // Space for scrollbar
+        pb={1} 
         css={{
           '&::-webkit-scrollbar': {
             height: '4px',
@@ -248,7 +242,7 @@ export const MeetingCategories = ({
     )
   }
 
-  // Layout: limited (default) - show limited badges with overflow indicator
+
   const visibleItems = allItems.slice(0, effectiveMaxVisible)
   const hiddenItems = allItems.slice(effectiveMaxVisible)
 

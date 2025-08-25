@@ -17,32 +17,30 @@ import type { Meeting } from "@/meetingTypes"
 import { getServiceProviderNameFromUrl } from "@/utils/videoServices"
 
 export interface QuickActionsProps {
-  /** Meeting data containing action URLs */
+
   meeting: Meeting
-  /** Layout orientation */
+
   layout?: 'horizontal' | 'vertical' | 'auto'
-  /** Button display mode */
+
   mode?: 'full' | 'compact' | 'icon-only'
-  /** Button size */
+
   size?: 'xs' | 'sm' | 'md'
-  /** Join button variant */
+
   joinVariant?: 'solid' | 'outline' | 'ghost'
-  /** Secondary button variant */
+
   secondaryVariant?: 'outline' | 'ghost'
-  /** Override responsive behavior */
+
   forceMode?: 'full' | 'compact' | 'icon-only'
 }
 
-/**
- * Get video service info from meeting URL
- */
+
 const getVideoServiceInfo = (url: string) => {
   const result = getServiceProviderNameFromUrl(url)
   if (result.isOk()) {
     const serviceName = result.unwrap()
     return {
       name: serviceName,
-      icon: FaVideo, // Could be expanded to service-specific icons
+      icon: FaVideo, 
     }
   }
   return {
@@ -51,9 +49,7 @@ const getVideoServiceInfo = (url: string) => {
   }
 }
 
-/**
- * Join Button Component
- */
+
 const JoinButton = ({
   meeting,
   mode,
@@ -74,7 +70,7 @@ const JoinButton = ({
     colorScheme: 'blue',
     variant,
     size,
-    minH: size === 'xs' ? '32px' : size === 'sm' ? '40px' : '44px', // Touch-friendly
+    minH: size === 'xs' ? '32px' : size === 'sm' ? '40px' : '44px',
     onClick: () => window.open(meeting.conference_url, '_blank', 'noopener,noreferrer'),
     color: variant === 'solid' ? 'white' : 'blue.600',
     _dark: { 
@@ -105,9 +101,7 @@ const JoinButton = ({
   )
 }
 
-/**
- * Email Button Component  
- */
+
 const EmailButton = ({
   email,
   mode,
@@ -154,9 +148,6 @@ const EmailButton = ({
   )
 }
 
-/**
- * Website Button Component
- */
 const WebsiteButton = ({
   url,
   mode,
@@ -213,7 +204,7 @@ export const QuickActions = ({
   forceMode,
 }: QuickActionsProps) => {
   
-  // Responsive mode selection
+
   const responsiveMode = useBreakpointValue({
     base: 'icon-only' as const,
     sm: 'compact' as const,
@@ -223,7 +214,7 @@ export const QuickActions = ({
 
   const effectiveMode = forceMode || mode || responsiveMode || 'compact'
 
-  // Responsive layout selection
+
   const responsiveLayout = useBreakpointValue({
     base: 'horizontal' as const,
     sm: 'horizontal' as const,
@@ -232,17 +223,16 @@ export const QuickActions = ({
 
   const effectiveLayout = layout === 'auto' ? responsiveLayout || 'horizontal' : layout
 
-  // Get available actions
+
   const hasJoin = Boolean(meeting.conference_url)
   const hasEmail = Boolean(meeting.groupEmail)
   const hasWebsite = Boolean(meeting.groupWebsite)
 
-  // Early return if no actions available
+
   if (!hasJoin && !hasEmail && !hasWebsite) {
     return null
   }
 
-  // Render actions based on layout
   const renderActions = () => {
     const actions = []
 
@@ -287,7 +277,6 @@ export const QuickActions = ({
 
   const actions = renderActions()
 
-  // Layout rendering
   if (effectiveLayout === 'vertical') {
     return (
       <VStack gap={2} align="stretch">
@@ -296,7 +285,6 @@ export const QuickActions = ({
     )
   }
 
-  // Horizontal layout (default)
   return (
     <Flex 
       gap={2} 

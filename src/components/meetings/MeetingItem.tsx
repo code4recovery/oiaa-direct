@@ -17,29 +17,24 @@ import QuickActions from "./QuickActions"
 export type MeetingItemVariant = 'compact' | 'list' | 'card' | 'detailed'
 
 export interface MeetingItemProps {
-  /** Meeting data to display */
+
   meeting: Meeting
-  /** Display variant */
+
   variant: MeetingItemVariant
-  /** Show action buttons */
+
   showActions?: boolean
-  /** Show meeting notes */
+
   showNotes?: boolean
-  /** Show categories */
+
   showCategories?: boolean
-  /** Maximum categories to show before overflow */
+
   maxCategories?: number
-  /** Show meeting link as clickable */
+
   showLink?: boolean
-  /** Override responsive behavior */
+
   forceResponsive?: boolean
 }
 
-/**
- * Compact variant (60px height)
- * Used for: Related meetings, dense lists, quick overview
- * Shows: Name, time, quick action
- */
 const CompactVariant = ({ meeting, showActions = false, showLink = true }: {
   meeting: Meeting
   showActions?: boolean
@@ -102,11 +97,6 @@ const CompactVariant = ({ meeting, showActions = false, showLink = true }: {
   return content
 }
 
-/**
- * List variant (100px height)
- * Used for: Mobile primary list, essential information
- * Shows: Name, time, actions, limited categories
- */
 const ListVariant = ({ 
   meeting, 
   showActions = true, 
@@ -140,7 +130,7 @@ const ListVariant = ({
       transition="all 0.2s"
     >
       <Flex direction="column" gap={2}>
-        {/* Header */}
+
         <Flex justify="space-between" align="flex-start">
           <Box flex="1" overflow="hidden">
             <Heading
@@ -171,7 +161,6 @@ const ListVariant = ({
           )}
         </Flex>
 
-        {/* Time */}
         <Box>
           <MeetingTime
             timeUTC={meeting.timeUTC}
@@ -182,7 +171,6 @@ const ListVariant = ({
           />
         </Box>
 
-        {/* Categories */}
         {showCategories && (
           <MeetingCategories
             meeting={meeting}
@@ -207,11 +195,6 @@ const ListVariant = ({
   return content
 }
 
-/**
- * Card variant (180px height)
- * Used for: Desktop/tablet cards, detailed view
- * Shows: Name, time, notes, actions, categories
- */
 const CardVariant = ({ 
   meeting, 
   showActions = true, 
@@ -245,7 +228,7 @@ const CardVariant = ({
       transition="all 0.2s"
     >
       <VStack align="stretch" gap={4} h="full">
-        {/* Header */}
+
         <Box>
           <Heading
             size="md"
@@ -273,7 +256,7 @@ const CardVariant = ({
           </Box>
         </Box>
 
-        {/* Notes */}
+
         {showNotes && meeting.notes && (
           <Box flex="1">
             <VStack align="stretch" gap={2}>
@@ -297,7 +280,7 @@ const CardVariant = ({
           </Box>
         )}
 
-        {/* Actions */}
+
         {showActions && (
           <Box>
             <QuickActions
@@ -308,7 +291,7 @@ const CardVariant = ({
           </Box>
         )}
 
-        {/* Categories */}
+
         {showCategories && (
           <MeetingCategories
             meeting={meeting}
@@ -333,11 +316,7 @@ const CardVariant = ({
   return content
 }
 
-/**
- * Detailed variant (variable height)
- * Used for: Full detail pages, comprehensive display
- * Shows: All information with full formatting
- */
+
 const DetailedVariant = ({ 
   meeting, 
   showActions = true, 
@@ -365,7 +344,7 @@ const DetailedVariant = ({
       shadow="sm"
     >
       <VStack align="stretch" gap={6}>
-        {/* Header */}
+
         <Box>
           <Heading
             size="lg"
@@ -386,7 +365,7 @@ const DetailedVariant = ({
           </Box>
         </Box>
 
-        {/* Notes */}
+
         {showNotes && meeting.notes && (
           <VStack align="stretch" gap={3}>
             <Text fontSize="md" fontWeight="medium" color="gray.800" _dark={{ color: "gray.200" }}>
@@ -405,7 +384,6 @@ const DetailedVariant = ({
           </VStack>
         )}
 
-        {/* Actions */}
         {showActions && (
           <Box>
             <QuickActions
@@ -421,7 +399,7 @@ const DetailedVariant = ({
           </Box>
         )}
 
-        {/* Categories */}
+
         {showCategories && (
           <Box>
             <Text fontSize="md" fontWeight="medium" color="gray.800" _dark={{ color: "gray.200" }} mb={3}>
@@ -461,7 +439,7 @@ export const MeetingItem = ({
   forceResponsive = false,
 }: MeetingItemProps) => {
   
-  // Responsive variant selection (can be overridden by forceResponsive: false)
+
   const responsiveVariant = useBreakpointValue({
     base: 'list' as const,
     md: 'card' as const,
