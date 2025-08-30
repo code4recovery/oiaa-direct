@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
   Box,
   Text,
@@ -9,20 +9,25 @@ import { SearchInput } from "./SearchInput"
 interface SearchFilterProps {
   initialValue?: string
   onQueryChange: (query: string) => void
-  variant?: "mobile" | "desktop"
   showMinCharWarning?: boolean
 }
 
 export function SearchFilter({
   initialValue = "",
   onQueryChange,
-  variant = "desktop",
   showMinCharWarning = true,
 }: SearchFilterProps) {
   const [searchQuery, setSearchQuery] = useState(initialValue)
   const [showWarning, setShowWarning] = useState(false)
+  const isFirstRender = useRef(true)
 
   useEffect(() => {
+    // Skip the effect on first render to avoid triggering API call on mount
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+
     const delayDebounce = setTimeout(() => {
       onQueryChange(searchQuery)
     }, 300)
@@ -31,7 +36,9 @@ export function SearchFilter({
       setShowWarning(searchQuery.length > 0 && searchQuery.length < 3)
     }
 
-    return () => clearTimeout(delayDebounce)
+    return () => {
+      clearTimeout(delayDebounce)
+    }
   }, [searchQuery, onQueryChange, showMinCharWarning])
 
   return (

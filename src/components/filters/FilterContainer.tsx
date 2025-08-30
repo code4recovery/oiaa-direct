@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import {
   FaChevronDown,
   FaChevronUp,
@@ -106,11 +106,10 @@ export function FilterContainer({
   showSearch = true,
   showTimeFilter = true,
   showClearButton = true,
-  collapsible = false,
+  collapsible: _collapsible = false
 }: FilterContainerProps) {
   const isMobile = variant === "mobile"
   
-  console.debug("FilterContainer initialized", { variant, collapsible })
   const defaultDay = getCurrentDay()
   const defaultTimeFrame = getCurrentTimeFrame()
   
@@ -133,15 +132,15 @@ export function FilterContainer({
     filterParams.getAll("languages").length > 0
 
   const hasActiveFilters =
-    filterParams.get("nameQuery") ||
+    Boolean(filterParams.get("nameQuery")) ||
     activeTypes ||
     selectedDay !== defaultDay ||
     selectedTimeFrame !== defaultTimeFrame
 
 
-  const handleQueryChange = (query: string) => {
+  const handleQueryChange = useCallback((query: string) => {
     sendFilterSelectionsToParent((prev: URLSearchParams) => updateQueryParams(prev, query))
-  }
+  }, [sendFilterSelectionsToParent])
 
   const handleTimeChange = (day: string, timeFrame: string) => {
     setSelectedDay(day)
@@ -187,7 +186,6 @@ export function FilterContainer({
             <SearchFilter
               initialValue={filterParams.get("nameQuery") ?? ""}
               onQueryChange={handleQueryChange}
-              variant="mobile"
             />
           )}
 
@@ -226,8 +224,12 @@ export function FilterContainer({
                   <TimeFilter
                     selectedDay={selectedDay}
                     selectedTimeFrame={selectedTimeFrame}
-                    onDayChange={(day) => handleTimeChange(day, selectedTimeFrame)}
-                    onTimeFrameChange={(timeFrame) => handleTimeChange(selectedDay, timeFrame)}
+                    onDayChange={(day) => {
+                      handleTimeChange(day, selectedTimeFrame)
+                    }}
+                    onTimeFrameChange={(timeFrame) => {
+                      handleTimeChange(selectedDay, timeFrame)
+                    }}
                     variant="mobile"
                   />
                 </FilterSection>
@@ -302,8 +304,12 @@ export function FilterContainer({
           <TimeFilter
             selectedDay={selectedDay}
             selectedTimeFrame={selectedTimeFrame}
-            onDayChange={(day) => handleTimeChange(day, selectedTimeFrame)}
-            onTimeFrameChange={(timeFrame) => handleTimeChange(selectedDay, timeFrame)}
+            onDayChange={(day) => {
+              handleTimeChange(day, selectedTimeFrame)
+            }}
+            onTimeFrameChange={(timeFrame) => {
+              handleTimeChange(selectedDay, timeFrame)
+            }}
             variant="desktop"
           />
         )}
@@ -312,7 +318,6 @@ export function FilterContainer({
           <SearchFilter
             initialValue={filterParams.get("nameQuery") ?? ""}
             onQueryChange={handleQueryChange}
-            variant="desktop"
           />
         )}
 

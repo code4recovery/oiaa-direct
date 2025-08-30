@@ -23,7 +23,10 @@ export function CategoryFilter<T extends string>({
   onToggle,
 }: CategoryFilterProps<T>) {
   const codes = Object.keys(options) as T[]
-  const colorScheme = CATEGORY_COLORS[displayName.toLowerCase().split(" ")[0] as keyof typeof CATEGORY_COLORS] || "blue"
+  const firstWord = displayName.toLowerCase().split(" ")[0]
+  const colorScheme = (firstWord in CATEGORY_COLORS) 
+    ? CATEGORY_COLORS[firstWord as keyof typeof CATEGORY_COLORS] 
+    : "blue"
   
   return (
     <Box>

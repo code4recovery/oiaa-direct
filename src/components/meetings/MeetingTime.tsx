@@ -111,8 +111,8 @@ const getRelativeTimeDescription = (timeUTC: string) => {
   if (diffDays === 0) return "Today"
   if (diffDays === 1) return "Tomorrow" 
   if (diffDays === -1) return "Yesterday"
-  if (diffDays > 1 && diffDays <= 7) return `In ${Math.floor(diffDays)} days`
-  if (diffDays < -1 && diffDays >= -7) return `${Math.abs(Math.floor(diffDays))} days ago`
+  if (diffDays > 1 && diffDays <= 7) return `In ${Math.floor(diffDays).toString()} days`
+  if (diffDays < -1 && diffDays >= -7) return `${Math.abs(Math.floor(diffDays)).toString()} days ago`
   
   return meetingDate.toFormat('ccc, MMM d') // e.g., "Mon, Jan 15"
 }
@@ -130,8 +130,8 @@ export const MeetingTime = ({
   
   // Responsive size handling
   const responsiveSize = useBreakpointValue({
-    base: size || 'sm',
-    md: size || 'md',
+    base: size ?? 'sm',
+    md: size ?? 'md',
   })
 
   const iconSize = responsiveSize === 'xs' ? 12 : responsiveSize === 'sm' ? 14 : 16
@@ -242,9 +242,8 @@ export const MeetingTime = ({
     )
   }
 
-  if (format === 'long') {
-    // Full detailed display with LOCAL TIME PROMINENTLY FEATURED
-    return (
+  // Full detailed display with LOCAL TIME PROMINENTLY FEATURED (format === 'long' or default)
+  return (
       <Box>
         {/* LOCAL TIME - Primary Display */}
         <Flex align="center" gap={2} mb={2}>
@@ -298,19 +297,6 @@ export const MeetingTime = ({
         </Flex>
       </Box>
     )
-  }
-
-  // Default to 'short' format
-  return (
-    <MeetingTime
-      timeUTC={timeUTC}
-      timezone={timezone}
-      format="short"
-      showLocal={showLocal}
-      showIcons={showIcons}
-      size={size}
-    />
-  )
 }
 
 export default MeetingTime

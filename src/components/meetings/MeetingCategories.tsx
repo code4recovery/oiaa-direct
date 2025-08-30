@@ -57,12 +57,12 @@ export interface MeetingCategoriesProps {
 
 
 const getCategoryItems = (meeting: Meeting) => {
-  const items: Array<{
+  const items: {
     key: string
     value: string
     category: keyof typeof CATEGORY_COLORS
     fullName: string
-  }> = []
+  }[] = []
 
 
   const categories = ["type", "formats", "features", "communities", "languages"] as const
@@ -185,7 +185,7 @@ export const MeetingCategories = ({
     lg: 8,    
   })
 
-  const effectiveMaxVisible = forceMaxVisible || maxVisible || responsiveMaxVisible || 3
+  const effectiveMaxVisible = forceMaxVisible ?? maxVisible ?? responsiveMaxVisible ?? 3
 
 
   if (allItems.length === 0) {

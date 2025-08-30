@@ -45,7 +45,7 @@ const SelectField = ({
   label: string
   value: string
   onChange: (value: string) => void
-  options: Array<{ value: string; label: string }>
+  options: { value: string; label: string }[]
   showLabel?: boolean
   includeHourlyOptions?: boolean
 }) => {
@@ -58,7 +58,9 @@ const SelectField = ({
       )}
       <select
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          onChange(e.target.value)
+        }}
         style={{
           width: "100%",
           padding: "8px",

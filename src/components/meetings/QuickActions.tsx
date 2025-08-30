@@ -212,7 +212,7 @@ export const QuickActions = ({
     lg: 'full' as const,
   })
 
-  const effectiveMode = forceMode || mode || responsiveMode || 'compact'
+  const effectiveMode = forceMode ?? mode ?? responsiveMode ?? 'compact'
 
 
   const responsiveLayout = useBreakpointValue({
@@ -221,7 +221,7 @@ export const QuickActions = ({
     md: 'horizontal' as const,
   })
 
-  const effectiveLayout = layout === 'auto' ? responsiveLayout || 'horizontal' : layout
+  const effectiveLayout = layout === 'auto' ? responsiveLayout ?? 'horizontal' : layout
 
 
   const hasJoin = Boolean(meeting.conference_url)
@@ -252,7 +252,7 @@ export const QuickActions = ({
       actions.push(
         <EmailButton
           key="email"
-          email={meeting.groupEmail!}
+          email={meeting.groupEmail ?? ''}
           mode={effectiveMode}
           size={size}
           variant={secondaryVariant}
@@ -264,7 +264,7 @@ export const QuickActions = ({
       actions.push(
         <WebsiteButton
           key="website"
-          url={meeting.groupWebsite!}
+          url={meeting.groupWebsite ?? ''}
           mode={effectiveMode}
           size={size}
           variant={secondaryVariant}

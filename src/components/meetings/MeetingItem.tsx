@@ -446,7 +446,7 @@ export const MeetingItem = ({
     lg: 'card' as const,
   })
 
-  const effectiveVariant = forceResponsive === false ? variant : (responsiveVariant || variant)
+  const effectiveVariant = !forceResponsive ? variant : (responsiveVariant ?? variant)
 
   switch (effectiveVariant) {
     case 'compact':

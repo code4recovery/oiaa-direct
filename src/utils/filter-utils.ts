@@ -82,14 +82,14 @@ export function createTimeFilterParams(day: string, timeFrame: string): { start?
     const { hours } = TIME_FRAMES[timeFrame as TimeFrame]
     const utcStart = targetDate.toUTC().toISO()
     return {
-      start: utcStart || undefined,
+      start: utcStart ?? undefined,
       hours: hours.toString(),
     }
   } else {
 
     const utcStart = targetDate.toUTC().toISO()
     return {
-      start: utcStart || undefined,
+      start: utcStart ?? undefined,
       hours: "1",
     }
   }
