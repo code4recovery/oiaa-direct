@@ -36,7 +36,7 @@ export interface CalendarActionsProps {
 /**
  * Generate ICS calendar content for a meeting
  */
-const generateICS = (meeting: Meeting, isRecurring: boolean = false): string => {
+const generateICS = (meeting: Meeting, isRecurring = false): string => {
   const startDate = DateTime.fromISO(meeting.timeUTC)
   const endDate = startDate.plus({ hours: 1 }) // Assume 1-hour meetings
   
@@ -53,7 +53,7 @@ const generateICS = (meeting: Meeting, isRecurring: boolean = false): string => 
 
   // Build description with meeting details
   const description = [
-    Array.isArray(meeting.notes) ? meeting.notes.join('\\n') : meeting.notes || '',
+    Array.isArray(meeting.notes) ? meeting.notes.join('\\n') : (meeting.notes || ''),
     meeting.conference_url ? `Join Meeting: ${meeting.conference_url}` : '',
     meeting.conference_phone ? `Phone: ${meeting.conference_phone}` : '',
     meeting.groupEmail ? `Contact: ${meeting.groupEmail}` : '',
@@ -61,7 +61,7 @@ const generateICS = (meeting: Meeting, isRecurring: boolean = false): string => 
   ].filter(Boolean).join('\\n\\n')
 
   // Location (online or address)
-  const location = meeting.conference_url || 'Online Meeting'
+  const location = meeting.conference_url ?? 'Online Meeting'
 
   // Recurrence rule for weekly meetings (if recurring)
   const recurrenceRule = isRecurring ? '\nRRULE:FREQ=WEEKLY;BYDAY=' + 
@@ -96,7 +96,7 @@ END:VCALENDAR`
 /**
  * Download ICS file for calendar import
  */
-const downloadICS = (meeting: Meeting, isRecurring: boolean = false) => {
+const downloadICS = (meeting: Meeting, isRecurring = false) => {
   const icsContent = generateICS(meeting, isRecurring)
   const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' })
   const url = URL.createObjectURL(blob)
@@ -113,7 +113,7 @@ const downloadICS = (meeting: Meeting, isRecurring: boolean = false) => {
 /**
  * Generate calendar URLs for popular services
  */
-const generateCalendarUrls = (meeting: Meeting, isRecurring: boolean = false) => {
+const generateCalendarUrls = (meeting: Meeting, isRecurring = false) => {
   const startDate = DateTime.fromISO(meeting.timeUTC)
   const endDate = startDate.plus({ hours: 1 })
   
@@ -121,20 +121,20 @@ const generateCalendarUrls = (meeting: Meeting, isRecurring: boolean = false) =>
   const googleStartDate = startDate.toUTC().toFormat("yyyyMMdd'T'HHmmss'Z'")
   const googleEndDate = endDate.toUTC().toFormat("yyyyMMdd'T'HHmmss'Z'")
   const googleDetails = encodeURIComponent([
-    Array.isArray(meeting.notes) ? meeting.notes.join('\n') : meeting.notes || '',
+    Array.isArray(meeting.notes) ? meeting.notes.join('\n') : (meeting.notes || ''),
     meeting.conference_url ? `Join: ${meeting.conference_url}` : '',
     meeting.groupEmail ? `Contact: ${meeting.groupEmail}` : '',
   ].filter(Boolean).join('\n\n'))
   
   const googleLocation = encodeURIComponent(
-    meeting.conference_url || 'Online Meeting'
+    meeting.conference_url ?? 'Online Meeting'
   )
 
   const recurrence = isRecurring ? '&recur=RRULE:FREQ=WEEKLY' : ''
 
   return {
     google: `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(meeting.name)}&dates=${googleStartDate}/${googleEndDate}&details=${googleDetails}&location=${googleLocation}${recurrence}`,
-    outlook: `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(meeting.name)}&startdt=${startDate.toISO()}&enddt=${endDate.toISO()}&body=${googleDetails}&location=${googleLocation}`,
+    outlook: `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(meeting.name)}&startdt=${startDate.toISO() ?? ''}&enddt=${endDate.toISO() ?? ''}&body=${googleDetails}&location=${googleLocation}`,
     yahoo: `https://calendar.yahoo.com/?v=60&view=d&type=20&title=${encodeURIComponent(meeting.name)}&st=${googleStartDate}&et=${googleEndDate}&desc=${googleDetails}&in_loc=${googleLocation}`,
   }
 }
@@ -153,13 +153,13 @@ export const CalendarActions = ({
     md: 'full' 
   })
   
-  const displayMode = forceMode || mode || responsiveMode
+  const displayMode = forceMode || mode || responsiveMode || 'compact'
 
   const calendarUrls = generateCalendarUrls(meeting, false)
   const recurringUrls = generateCalendarUrls(meeting, true)
 
   // Button content based on display mode
-  const getButtonContent = (isMain: boolean = true) => {
+  const getButtonContent = (isMain = true) => {
     if (displayMode === 'icon-only') {
       return <FaCalendarPlus />
     }
@@ -214,7 +214,9 @@ export const CalendarActions = ({
                 size="xs"
                 variant="ghost"
                 justifyContent="flex-start"
-                onClick={() => downloadICS(meeting, false)}
+                onClick={() => {
+                  downloadICS(meeting, false)
+                }}
               >
                 <FaCalendarPlus style={{ marginRight: '8px' }} />
                 Single Event (.ics)
@@ -224,7 +226,9 @@ export const CalendarActions = ({
                 size="xs"
                 variant="ghost"
                 justifyContent="flex-start"
-                onClick={() => downloadICS(meeting, true)}
+                onClick={() => {
+                  downloadICS(meeting, true)
+                }}
               >
                 <FaCalendarCheck style={{ marginRight: '8px' }} />
                 Recurring Series (.ics)
@@ -295,7 +299,9 @@ export const CalendarActions = ({
                   <Button
                     size="xs"
                     variant="outline"
-                    onClick={() => downloadICS(meeting, false)}
+                    onClick={() => {
+                      downloadICS(meeting, false)
+                    }}
                     flex="1"
                   >
                     <FaCalendarPlus style={{ marginRight: '4px' }} />
@@ -335,7 +341,9 @@ export const CalendarActions = ({
                     size="xs"
                     variant="outline"
                     colorScheme="purple"
-                    onClick={() => downloadICS(meeting, true)}
+                    onClick={() => {
+                      downloadICS(meeting, true)
+                    }}
                     flex="1"
                   >
                     <FaCalendarCheck style={{ marginRight: '4px' }} />

@@ -56,7 +56,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
             <MeetingTime
               timeUTC={meeting.timeUTC}
               timezone={meeting.timezone}
-              format={timeFormat || 'short'}
+              format={timeFormat ?? 'short'}
               showLocal={timeFormat === 'short'}
               showIcons={timeFormat === 'short'}
             />

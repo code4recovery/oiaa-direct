@@ -51,17 +51,14 @@ const CATEGORY_COLORS = {
   type: "cyan",
 }
 
-/**
- * Formats a time in both the original timezone and the user's local timezone
- */
+
 const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
-  // Create a date object from the UTC time
+
   const date = new Date(timeUTC)
 
-  // Get user's local timezone
+
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-  // Format date for the meeting's original timezone
   const originalTimeFormatter = new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
     minute: "numeric",
@@ -69,7 +66,7 @@ const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
     hour12: true,
   })
 
-  // Format date for user's local timezone
+
   const userTimeFormatter = new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
     minute: "numeric",
@@ -93,14 +90,14 @@ const localDay = (timeStamp: string) =>
     weekday: "long",
   })
 
-// Function to get full name of category
+
 const getCategoryFullName = (
   category: string,
 ): string => {
    return DESCRIPTIONS[category] || category
 }
 
-// This function isn't ready yet, but it will be used to fetch the other group meetings byGroupId.
+
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const meeting = await getMeeting(params.slug)
   const group = await getRelatedDetails(`${params.slug}/related-group-info`)
@@ -109,7 +106,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { meeting, group }
 }
 
-// Calendar-focused meeting display for group detail page
+
 function MeetingDisplay({ meeting }: { meeting: Meeting }) {
   return (
     <Box 
@@ -126,7 +123,7 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
         gap={4} 
         align={{ base: "stretch", md: "flex-start" }}
       >
-        {/* Meeting Info */}
+
         <Box flex="1">
           <Heading 
             size="md" 
@@ -136,8 +133,7 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
           >
             {meeting.name}
           </Heading>
-          
-          {/* Time Display */}
+
           <MeetingItem
             meeting={meeting}
             variant="compact"
@@ -147,7 +143,6 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
             showLink={false}
           />
           
-          {/* Categories */}
           <Flex flexWrap="wrap" gap={1} mt={3}>
             {meeting.formats.map((format: string) => (
               <Badge
@@ -177,7 +172,7 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
           </Flex>
         </Box>
         
-        {/* Calendar Actions */}
+
         <Box>
           <CalendarActions
             meeting={meeting}
@@ -194,11 +189,10 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
 export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   const { meeting, group } = loaderData
   const { groupMeetings, groupInfo } = group
-  // Convert group to GroupData or use a safe default using double assertion for safety
-  // const group = group ? (group as unknown as GroupData) : null
+
   const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone)
 
-  // Create arrays of categories that exist in the meeting
+
   const categories = [
     "features",
     "formats",
@@ -207,11 +201,10 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
     "type",
   ] as const
 
-  // Check for website (could be in different properties) --- Tim: Not really. The backend code brings the
-  // website from the group info into the meeting, so we can just use that if it exists.
+
   const websiteUrl = meeting.groupWebsite
 
-  // Sort by timeUTC - sort is in situ
+
   groupMeetings.sort((a, b) => a.timeUTC.localeCompare(b.timeUTC))
 
   return (
@@ -224,7 +217,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
           </Button>
         </RouterLink>
       </Box>
-      {/* Current Meeting Section - Essential Join Info */}
+
       <Box
         borderWidth="1px"
         borderRadius="lg"
@@ -348,7 +341,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
           </Flex>
         </Box>
       </Box>
-      {/* Meeting Details */}
+
       <Box
         borderWidth="1px"
         borderRadius="lg"
@@ -368,7 +361,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
         </Box>
 
         <Box p={6}>
-          {/* Meeting Categories */}
+
           <Box mb={6}>
             <Heading size="sm" mb={3} display="flex" alignItems="center">
               <Box as="span" mr={2}>
@@ -410,7 +403,6 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
             </SimpleGrid>
           </Box>
 
-          {/* Technical Information */}
           <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={6}>
             <Box>
               <Text fontWeight="bold">Meeting ID</Text>
@@ -452,7 +444,6 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
             )}
           </SimpleGrid>
 
-          {/* About This Group */}
           {meeting.notes && (
             <Box mb={6}>
               <Heading size="sm" mb={3}>
@@ -481,8 +472,8 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
             </Box>
           )}
 
-          {/* Group Notes */}
-          {groupInfo?.notes && (
+
+          {groupInfo.notes && (
             <Box mt={4}>
               <Text fontWeight="bold" mb={2}>
                 Group Notes
@@ -503,7 +494,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
           )}
         </Box>
       </Box>
-      {/* Group Information and Meetings */}
+
       <Box
         borderWidth="1px"
         borderRadius="lg"
