@@ -1,13 +1,20 @@
 import { useState } from "react"
 
 import { DateTime } from "luxon"
-import { Outlet, useSearchParams } from "react-router"
+import {
+  Outlet,
+  useSearchParams,
+} from "react-router"
 
-import { Filter, MobileFilters } from "@/components/filters"
+import { Filter } from "@/components/filters"
 import { Layout } from "@/components/Layout"
 import { MeetingsSummary } from "@/components/meetings"
 import { getMeetings } from "@/getData"
-import { Text, Box, useBreakpointValue } from "@chakra-ui/react"
+import {
+  Box,
+  Text,
+  useBreakpointValue,
+} from "@chakra-ui/react"
 
 import type { Route } from "./+types/meetings-filtered"
 
@@ -36,16 +43,29 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
   const [currentPage, setCurrentPage] = useState(0)
   const meetingsPerPage = 25
 
-  // Responsive: show mobile filters on mobile, sidebar on desktop
-  const showMobileFilters = useBreakpointValue({ base: true, md: false })
-  const showSidebar = useBreakpointValue({ base: false, md: true })
+  const filterVariant =
+    useBreakpointValue<"mobile" | "desktop">({
+      base: "mobile",
+      md: "desktop",
+    }) ?? "mobile"
 
-  const handleQuery = (query: string) => {
-    setFilterParams((prev) => {
-      prev.set("nameQuery", query)
-      return prev
-    })
-  }
+  const paginatedMeetings = meetings.slice(
+    currentPage * meetingsPerPage,
+    (currentPage + 1) * meetingsPerPage
+  )
+
+  const filterComponent = (
+    <Filter
+      filterParams={filterParams}
+      sendFilterSelectionsToParent={setFilterParams}
+      variant={filterVariant}
+      showSearch={true}
+      showTimeFilter={true}
+      showClearButton={true}
+      totalMeetings={totalMeetings}
+      shownMeetings={paginatedMeetings.length}
+    />
+  )
 
   const handleNextPage = () => {
     if ((currentPage + 1) * meetingsPerPage < meetings.length) {
@@ -58,11 +78,6 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
       setCurrentPage((prev) => prev - 1)
     }
   }
-
-  const paginatedMeetings = meetings.slice(
-    currentPage * meetingsPerPage,
-    (currentPage + 1) * meetingsPerPage
-  )
 
   const PaginationButtons = () => (
     <div
@@ -111,29 +126,10 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <Layout
-        sidebar={
-          showSidebar ? (
-            <Filter
-              filterParams={filterParams}
-              sendFilterSelectionsToParent={setFilterParams}
-              sendQueryToParent={handleQuery}
-            />
-          ) : undefined
-        }
+        sidebar={filterVariant === "desktop" ? filterComponent : undefined}
       >
-        {/* Mobile Filters at Top */}
-        {showMobileFilters && (
-          <Box mb={6}>
-            <MobileFilters
-              filterParams={filterParams}
-              sendFilterSelectionsToParent={setFilterParams}
-              totalMeetings={totalMeetings}
-              shownMeetings={paginatedMeetings.length}
-            />
-          </Box>
-        )}
+        {filterVariant === "mobile" && <Box mb={6}>{filterComponent}</Box>}
 
-        {/* Meetings Content */}
         {meetings.length > 0 ? (
           <>
             <PaginationButtons />
