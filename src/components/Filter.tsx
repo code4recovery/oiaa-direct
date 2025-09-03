@@ -8,17 +8,13 @@ import { DateTime } from "luxon"
 import { FaTimesCircle } from "react-icons/fa"
 import type { SetURLSearchParams } from "react-router"
 
+import { useFacets } from "@/hooks/useFacets"
 import {
-  COMMUNITIES,
   type Community,
   type Feature,
-  FEATURES,
   type Format,
-  FORMATS,
   type Language,
-  LANGUAGES,
   type Type,
-  TYPE,
 } from "@/meetingTypes"
 import { toggleArrayElement } from "@/utils/meetings-utils"
 import {
@@ -45,6 +41,8 @@ export function Filter({
 }: FilterProps) {
   const [searchQueryEntry, setSearchQueryEntry] = useState(filterParams.get("nameQuery") ?? "")
   const [showMinCharWarning, setShowMinCharWarning] = useState(false)
+
+  const { facetOptions } = useFacets()
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -318,31 +316,31 @@ export function Filter({
           )}
           <CategoryFilter<Type>
             displayName={"Meeting Type"}
-            options={TYPE}
+            options={facetOptions.TYPES}
             selected={filterParams.getAll("type") as Type[]}
             onToggle={handleTypeToggle}
           />
           <CategoryFilter<Format>
             displayName={"Formats"}
-            options={FORMATS}
+            options={facetOptions.FORMATS}
             selected={filterParams.getAll("formats") as Format[]}
             onToggle={handleFormatToggle}
           />
           <CategoryFilter<Feature>
             displayName={"Features"}
-            options={FEATURES}
+            options={facetOptions.FEATURES}
             selected={filterParams.getAll("features") as Feature[]}
             onToggle={handleFeatureToggle}
           />
           <CategoryFilter<Community>
             displayName={"Communities"}
-            options={COMMUNITIES}
+            options={facetOptions.COMMUNITIES}
             selected={filterParams.getAll("communities") as Community[]}
             onToggle={handleCommunityToggle}
           />
           <CategoryFilter<Language>
             displayName={"Languages"}
-            options={LANGUAGES}
+            options={facetOptions.LANGUAGES}
             selected={filterParams.getAll("languages") as Language[]}
             onToggle={handleLanguageToggle}
           />
