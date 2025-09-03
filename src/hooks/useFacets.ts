@@ -78,17 +78,26 @@ export interface FacetOptions {
       let cancelled = false
       async function fetchFacets() {
         try {
-          const url = import.meta.env.VITE_CQ_FACETS_URL as string
-          if (!url) throw new Error("VITE_CQ_FACETS_URL not set")
-          const raw = await fetchData<FacetsResponse>(url)
+          console.log("Facet fetch started");
+          const url = import.meta.env.VITE_CQ_FACETS_URL as string;
+          if (!url) throw new Error("VITE_CQ_FACETS_URL not set");
+          const raw = await fetchData<FacetsResponse>(url);
+          console.log("Facet fetch response:", raw);
+          // Treat empty array (from fetchData error) as an error
+          if (Array.isArray(raw) && raw.length === 0) {
+            throw new Error("Facet response is empty (fetchData error)");
+          }
+          console.log("Facet fetch succeeded");
           if (!cancelled) {
-            setFacetOptions(mapFacets(raw))
-            setLoading(false)
+            setFacetOptions(mapFacets(raw));
+            setLoading(false);
           }
         } catch (e) {
+          console.error("Facet fetch error:", e);
           if (!cancelled) {
-            setError(e instanceof Error ? e : new Error(String(e)))
-            setLoading(false)
+            setError(e instanceof Error ? e : new Error(String(e)));
+            setFacetOptions(fallbackFacetOptions);
+            setLoading(false);
           }
         }
       }
