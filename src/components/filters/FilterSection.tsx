@@ -65,9 +65,11 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
       </IconButton>
     </Flex>
     <Collapsible.Root open={isOpen}>
-      <Box px={4} pb={4}>
-        {children}
-      </Box>
+      <Collapsible.Content>
+        <Box px={4} pb={4}>
+          {children}
+        </Box>
+      </Collapsible.Content>
     </Collapsible.Root>
   </Box>
 )
