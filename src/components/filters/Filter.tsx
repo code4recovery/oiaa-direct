@@ -36,7 +36,6 @@ interface FilterProps {
   showSearch?: boolean
   showTimeFilter?: boolean
   showClearButton?: boolean
-  collapsible?: boolean
 }
 
 export function Filter({
@@ -46,7 +45,6 @@ export function Filter({
   showSearch = true,
   showTimeFilter = true,
   showClearButton = true,
-  collapsible = false,
 }: FilterProps) {
   const isMobile = variant === "mobile"
 
