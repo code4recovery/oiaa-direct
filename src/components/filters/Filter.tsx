@@ -1,7 +1,4 @@
-import {
-  useCallback,
-  useState,
-} from "react"
+import { useCallback, useState } from "react"
 
 import {
   FaChevronDown,
@@ -36,8 +33,6 @@ interface FilterProps {
   filterParams: URLSearchParams
   sendFilterSelectionsToParent: ReturnType<() => SetURLSearchParams>
   variant: "mobile" | "desktop"
-  totalMeetings?: number
-  shownMeetings?: number
   showSearch?: boolean
   showTimeFilter?: boolean
   showClearButton?: boolean
@@ -48,8 +43,6 @@ export function Filter({
   filterParams,
   sendFilterSelectionsToParent,
   variant,
-  totalMeetings,
-  shownMeetings,
   showSearch = true,
   showTimeFilter = true,
   showClearButton = true,
