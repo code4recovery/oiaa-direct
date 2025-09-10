@@ -1,4 +1,7 @@
-import { useCallback, useState } from "react"
+import {
+  useCallback,
+  useState,
+} from "react"
 
 import {
   FaChevronDown,
@@ -59,16 +62,21 @@ export function Filter({
     defaultOpen: false,
   })
 
-  const disclosureStates = isMobile
-    ? {
-        time: useDisclosure({ defaultOpen: false }),
-        type: useDisclosure({ defaultOpen: false }),
-        formats: useDisclosure({ defaultOpen: false }),
-        features: useDisclosure({ defaultOpen: false }),
-        communities: useDisclosure({ defaultOpen: false }),
-        languages: useDisclosure({ defaultOpen: false }),
-      }
-    : undefined
+  const timeDisclosure = useDisclosure({ defaultOpen: false })
+  const typeDisclosure = useDisclosure({ defaultOpen: false })
+  const formatsDisclosure = useDisclosure({ defaultOpen: false })
+  const featuresDisclosure = useDisclosure({ defaultOpen: false })
+  const communitiesDisclosure = useDisclosure({ defaultOpen: false })
+  const languagesDisclosure = useDisclosure({ defaultOpen: false })
+
+  const disclosureStates = {
+    time: timeDisclosure,
+    type: typeDisclosure,
+    formats: formatsDisclosure,
+    features: featuresDisclosure,
+    communities: communitiesDisclosure,
+    languages: languagesDisclosure,
+  }
 
   const activeTypes =
     filterParams.getAll("features").length > 0 ||
