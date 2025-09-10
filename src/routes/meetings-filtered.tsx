@@ -62,8 +62,6 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
       showSearch={true}
       showTimeFilter={true}
       showClearButton={true}
-      totalMeetings={totalMeetings}
-      shownMeetings={paginatedMeetings.length}
     />
   )
 
