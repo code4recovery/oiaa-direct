@@ -50,16 +50,23 @@ export function renderFilterGroups({
         <FilterSection
           key="time"
           title="Day & Time"
-          isOpen={disclosureStates!.time.open}
-          onToggle={disclosureStates!.time.onToggle}
+          isOpen={disclosureStates?.time.open ?? false}
+          onToggle={
+            disclosureStates?.time.onToggle ??
+            (() => {
+              /* no-op fallback */
+            })
+          }
         >
           <TimeFilter
             selectedDay={selectedDay}
             selectedTimeFrame={selectedTimeFrame}
-            onDayChange={(day) => handleTimeChange(day, selectedTimeFrame)}
-            onTimeFrameChange={(timeFrame) =>
+            onDayChange={(day) => {
+              handleTimeChange(day, selectedTimeFrame)
+            }}
+            onTimeFrameChange={(timeFrame) => {
               handleTimeChange(selectedDay, timeFrame)
-            }
+            }}
             variant="mobile"
           />
         </FilterSection>
@@ -68,10 +75,12 @@ export function renderFilterGroups({
           key="time"
           selectedDay={selectedDay}
           selectedTimeFrame={selectedTimeFrame}
-          onDayChange={(day) => handleTimeChange(day, selectedTimeFrame)}
-          onTimeFrameChange={(timeFrame) =>
+          onDayChange={(day) => {
+            handleTimeChange(day, selectedTimeFrame)
+          }}
+          onTimeFrameChange={(timeFrame) => {
             handleTimeChange(selectedDay, timeFrame)
-          }
+          }}
           variant="desktop"
         />
       )
@@ -143,14 +152,19 @@ export function renderFilterGroups({
         <FilterSection
           key={key}
           title={title}
-          isOpen={disclosureStates![key].open}
-          onToggle={disclosureStates![key].onToggle}
+          isOpen={disclosureStates?.[key]?.open ?? false}
+          onToggle={
+            disclosureStates?.[key]?.onToggle ??
+            (() => {
+              /* no-op fallback */
+            })
+          }
           badge={selectedCount}
         >
           <CategoryFilter
             displayName=""
             options={typedOptions}
-            selected={selected as any}
+            selected={selected}
             onToggle={onToggle}
           />
         </FilterSection>
@@ -159,7 +173,7 @@ export function renderFilterGroups({
           key={key}
           displayName={title}
           options={typedOptions}
-          selected={selected as any}
+          selected={selected}
           onToggle={onToggle}
         />
       )
