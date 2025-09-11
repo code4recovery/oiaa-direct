@@ -91,6 +91,16 @@ export function Filter({
     selectedDay !== defaultDay ||
     selectedTimeFrame !== defaultTimeFrame
 
+  const activeFilterCount =
+    (filterParams.get("nameQuery") ? 1 : 0) +
+    (selectedDay !== defaultDay ? 1 : 0) +
+    (selectedTimeFrame !== defaultTimeFrame ? 1 : 0) +
+    filterParams.getAll("features").length +
+    filterParams.getAll("formats").length +
+    filterParams.getAll("type").length +
+    filterParams.getAll("communities").length +
+    filterParams.getAll("languages").length
+
   const handleQueryChange = useCallback(
     (query: string) => {
       sendFilterSelectionsToParent((prev: URLSearchParams) =>
@@ -183,7 +193,7 @@ export function Filter({
                 <FaFilter />
                 <Text>Filters</Text>
                 <Badge colorScheme="blue" variant="solid" borderRadius="full">
-                  {hasActiveFilters ? 1 : 0}
+                  {activeFilterCount}
                 </Badge>
                 {filtersOpen ? <FaChevronUp /> : <FaChevronDown />}
               </Flex>
