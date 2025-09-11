@@ -78,28 +78,14 @@ export function Filter({
     languages: languagesDisclosure,
   }
 
-  const activeTypes =
-    filterParams.getAll("features").length > 0 ||
-    filterParams.getAll("formats").length > 0 ||
-    filterParams.getAll("type").length > 0 ||
-    filterParams.getAll("communities").length > 0 ||
-    filterParams.getAll("languages").length > 0
-
-  const hasActiveFilters =
-    Boolean(filterParams.get("nameQuery")) ||
-    activeTypes ||
-    selectedDay !== defaultDay ||
-    selectedTimeFrame !== defaultTimeFrame
-
-  const activeFilterCount =
-    (filterParams.get("nameQuery") ? 1 : 0) +
-    (selectedDay !== defaultDay ? 1 : 0) +
-    (selectedTimeFrame !== defaultTimeFrame ? 1 : 0) +
-    filterParams.getAll("features").length +
-    filterParams.getAll("formats").length +
-    filterParams.getAll("type").length +
-    filterParams.getAll("communities").length +
-    filterParams.getAll("languages").length
+  const { count: activeFilterCount, hasActive: hasActiveFilters } =
+    getActiveFilters(
+      filterParams,
+      selectedDay,
+      defaultDay,
+      selectedTimeFrame,
+      defaultTimeFrame
+    )
 
   const handleQueryChange = useCallback(
     (query: string) => {
@@ -234,4 +220,24 @@ export function Filter({
       </VStack>
     </Box>
   )
+}
+
+function getActiveFilters(
+  filterParams: URLSearchParams,
+  selectedDay: string,
+  defaultDay: string,
+  selectedTimeFrame: string,
+  defaultTimeFrame: string
+) {
+  const filterKeys = ["features", "formats", "type", "communities", "languages"]
+  const filterCounts = filterKeys.map((key) => filterParams.getAll(key).length)
+  const totalCount =
+    (filterParams.get("nameQuery") ? 1 : 0) +
+    (selectedDay !== defaultDay ? 1 : 0) +
+    (selectedTimeFrame !== defaultTimeFrame ? 1 : 0) +
+    filterCounts.reduce((a, b) => a + b, 0)
+  return {
+    count: totalCount,
+    hasActive: totalCount > 0,
+  }
 }
