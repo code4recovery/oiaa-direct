@@ -65,10 +65,18 @@ const JoinButton = ({
     size,
     minH: size === 'xs' ? '32px' : size === 'sm' ? '40px' : '44px',
     onClick: () => window.open(meeting.conference_url, '_blank', 'noopener,noreferrer'),
-    color: variant === 'solid' ? 'white' : 'blue.600',
-    _dark: { 
-      color: variant === 'solid' ? 'white' : 'blue.300' 
-    },
+    ...(variant === 'solid'
+      ? {
+          bg: 'blue.700',
+          color: 'white',
+          _hover: { bg: 'blue.800' },
+          _dark: { bg: 'blue.600', color: 'white', _hover: { bg: 'blue.700' } },
+        }
+      : {
+          color: 'blue.600',
+          _dark: { color: 'blue.300' },
+        }
+    ),
   }
 
   if (mode === 'icon-only') {
