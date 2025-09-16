@@ -1,13 +1,20 @@
 import { useState } from "react"
 
 import { DateTime } from "luxon"
-import { Outlet, useSearchParams } from "react-router"
+import {
+  Outlet,
+  useSearchParams,
+} from "react-router"
 
-import { Filter } from "@/components/Filter"
+import { Filter } from "@/components/filters"
 import { Layout } from "@/components/Layout"
-import { MeetingsSummary } from "@/components/MeetingsSummary"
+import { MeetingsSummary } from "@/components/meetings"
 import { getMeetings } from "@/getData"
-import { Text } from "@chakra-ui/react"
+import {
+  Box,
+  Text,
+  useBreakpointValue,
+} from "@chakra-ui/react"
 
 import type { Route } from "./+types/meetings-filtered"
 
@@ -36,12 +43,27 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
   const [currentPage, setCurrentPage] = useState(0)
   const meetingsPerPage = 25
 
-  const handleQuery = (query: string) => {
-    setFilterParams((prev) => {
-      prev.set("nameQuery", query)
-      return prev
-    })
-  }
+  const filterVariant =
+    useBreakpointValue<"mobile" | "desktop">({
+      base: "mobile",
+      md: "desktop",
+    }) ?? "mobile"
+
+  const paginatedMeetings = meetings.slice(
+    currentPage * meetingsPerPage,
+    (currentPage + 1) * meetingsPerPage
+  )
+
+  const filterComponent = (
+    <Filter
+      filterParams={filterParams}
+      sendFilterSelectionsToParent={setFilterParams}
+      variant={filterVariant}
+      showSearch={true}
+      showTimeFilter={true}
+      showClearButton={true}
+    />
+  )
 
   const handleNextPage = () => {
     if ((currentPage + 1) * meetingsPerPage < meetings.length) {
@@ -54,11 +76,6 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
       setCurrentPage((prev) => prev - 1)
     }
   }
-
-  const paginatedMeetings = meetings.slice(
-    currentPage * meetingsPerPage,
-    (currentPage + 1) * meetingsPerPage
-  )
 
   const PaginationButtons = () => (
     <div
@@ -107,16 +124,10 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <Layout
-        sidebar={
-          <>
-            <Filter
-              filterParams={filterParams}
-              sendFilterSelectionsToParent={setFilterParams}
-              sendQueryToParent={handleQuery}
-            />
-          </>
-        }
+        sidebar={filterVariant === "desktop" ? filterComponent : undefined}
       >
+        {filterVariant === "mobile" && <Box mb={6}>{filterComponent}</Box>}
+
         {meetings.length > 0 ? (
           <>
             <PaginationButtons />

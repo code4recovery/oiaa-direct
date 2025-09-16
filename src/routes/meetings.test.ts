@@ -1,4 +1,7 @@
-import { expect, test } from "vitest"
+import {
+  expect,
+  test,
+} from "vitest"
 
 import { getMeetings } from "@/getData"
 

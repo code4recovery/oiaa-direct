@@ -1,7 +1,6 @@
 import {
   FaArrowLeft,
   FaCalendarAlt,
-  FaCalendarPlus,
   FaClock,
   FaEnvelope,
   FaGlobeAmericas,
@@ -33,7 +32,7 @@ import {
   Text,
 } from "@chakra-ui/react"
 
-import JoinMeetingButton from "../components/JoinMeetingButton"
+import { JoinMeetingButton, MeetingItem, CalendarActions } from "@/components/meetings"
 import type { Route } from "./+types/group-info"
 
 const DESCRIPTIONS: Record<string, string> = {
@@ -52,17 +51,14 @@ const CATEGORY_COLORS = {
   type: "cyan",
 }
 
-/**
- * Formats a time in both the original timezone and the user's local timezone
- */
+
 const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
-  // Create a date object from the UTC time
+
   const date = new Date(timeUTC)
 
-  // Get user's local timezone
+
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-  // Format date for the meeting's original timezone
   const originalTimeFormatter = new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
     minute: "numeric",
@@ -70,7 +66,7 @@ const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
     hour12: true,
   })
 
-  // Format date for user's local timezone
+
   const userTimeFormatter = new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
     minute: "numeric",
@@ -94,14 +90,14 @@ const localDay = (timeStamp: string) =>
     weekday: "long",
   })
 
-// Function to get full name of category
+
 const getCategoryFullName = (
   category: string,
 ): string => {
    return DESCRIPTIONS[category] || category
 }
 
-// This function isn't ready yet, but it will be used to fetch the other group meetings byGroupId.
+
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const meeting = await getMeeting(params.slug)
   const group = await getRelatedDetails(`${params.slug}/related-group-info`)
@@ -110,69 +106,82 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { meeting, group }
 }
 
-// Simple meeting display component for group meeting list
-function MeetingDisplay({ meeting }: { meeting: Meeting }) {
-  const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone)
 
+function MeetingDisplay({ meeting }: { meeting: Meeting }) {
   return (
-    <Box>
-      <Flex
-        justifyContent="space-between"
-        alignItems="flex-start"
-        flexWrap="wrap"
-        mb={2}
+    <Box 
+      p={4} 
+      borderWidth="1px" 
+      borderColor="gray.200" 
+      borderRadius="md"
+      bg="white"
+      shadow="sm"
+      _dark={{ borderColor: "gray.700", bg: "gray.800" }}
+    >
+      <Flex 
+        direction={{ base: "column", md: "row" }} 
+        gap={4} 
+        align={{ base: "stretch", md: "flex-start" }}
       >
-        <Box>
-          <Heading size="sm" color="gray.700" _dark={{ color: "gray.300" }}>
+
+        <Box flex="1">
+          <Heading 
+            size="md" 
+            color="gray.900" 
+            _dark={{ color: "gray.100" }}
+            mb={2}
+          >
             {meeting.name}
           </Heading>
-          <Flex align="center" mt={1}>
-            <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-              <FaCalendarAlt />
-            </Box>
-            <Text color="gray.600" _dark={{ color: "gray.400" }}>
-              {localDay(meeting.timeUTC)} at {timeInfo.originalTime} (
-              {timeInfo.originalTimezone.replace("_", " ")})
-            </Text>
-          </Flex>
-          <Flex align="center" mt={1}>
-            <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-              <FaGlobeAmericas />
-            </Box>
-            <Text color="gray.600" _dark={{ color: "gray.400" }}>
-              Your local time: {timeInfo.userTime} ({timeInfo.userTimezone})
-            </Text>
+
+          <MeetingItem
+            meeting={meeting}
+            variant="compact"
+            showActions={false}
+            showCategories={false}
+            showNotes={false}
+            showLink={false}
+          />
+          
+          <Flex flexWrap="wrap" gap={1} mt={3}>
+            {meeting.formats.map((format: string) => (
+              <Badge
+                key={format}
+                colorScheme="blue"
+                variant="subtle"
+                px={2}
+                py={1}
+                borderRadius="full"
+                fontSize="xs"
+              >
+                {DESCRIPTIONS[format] || format}
+              </Badge>
+            ))}
+            {meeting.type && (
+              <Badge
+                colorScheme="purple"
+                variant="subtle"
+                px={2}
+                py={1}
+                borderRadius="full"
+                fontSize="xs"
+              >
+                {DESCRIPTIONS[meeting.type] || meeting.type}
+              </Badge>
+            )}
           </Flex>
         </Box>
+        
 
-        <Button
-          colorScheme="green"
-          variant="outline"
-          size="sm"
-          mt={{ base: 2, md: 0 }}
-        >
-          <FaCalendarPlus style={{ marginRight: "8px" }} /> Add to Calendar
-        </Button>
+        <Box>
+          <CalendarActions
+            meeting={meeting}
+            mode="full"
+            size="md"
+            layout="vertical"
+          />
+        </Box>
       </Flex>
-
-      {meeting.formats.length > 0 && (
-        <Flex flexWrap="wrap" gap={1} mt={2}>
-          {meeting.formats.map((format: string) => (
-            <Badge
-              key={format}
-              colorScheme="blue"
-              variant="subtle"
-              px={2}
-              py={1}
-              borderRadius="full"
-              mr={1}
-              mb={1}
-            >
-              {getCategoryFullName(format)}
-            </Badge>
-          ))}
-        </Flex>
-      )}
     </Box>
   )
 }
@@ -180,11 +189,10 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
 export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   const { meeting, group } = loaderData
   const { groupMeetings, groupInfo } = group
-  // Convert group to GroupData or use a safe default using double assertion for safety
-  // const group = group ? (group as unknown as GroupData) : null
+
   const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone)
 
-  // Create arrays of categories that exist in the meeting
+
   const categories = [
     "features",
     "formats",
@@ -193,11 +201,10 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
     "type",
   ] as const
 
-  // Check for website (could be in different properties) --- Tim: Not really. The backend code brings the
-  // website from the group info into the meeting, so we can just use that if it exists.
+
   const websiteUrl = meeting.groupWebsite
 
-  // Sort by timeUTC - sort is in situ
+
   groupMeetings.sort((a, b) => a.timeUTC.localeCompare(b.timeUTC))
 
   return (
@@ -210,7 +217,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
           </Button>
         </RouterLink>
       </Box>
-      {/* Current Meeting Section - Essential Join Info */}
+
       <Box
         borderWidth="1px"
         borderRadius="lg"
@@ -334,7 +341,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
           </Flex>
         </Box>
       </Box>
-      {/* Meeting Details */}
+
       <Box
         borderWidth="1px"
         borderRadius="lg"
@@ -354,7 +361,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
         </Box>
 
         <Box p={6}>
-          {/* Meeting Categories */}
+
           <Box mb={6}>
             <Heading size="sm" mb={3} display="flex" alignItems="center">
               <Box as="span" mr={2}>
@@ -396,7 +403,6 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
             </SimpleGrid>
           </Box>
 
-          {/* Technical Information */}
           <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={6}>
             <Box>
               <Text fontWeight="bold">Meeting ID</Text>
@@ -438,7 +444,6 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
             )}
           </SimpleGrid>
 
-          {/* About This Group */}
           {meeting.notes && (
             <Box mb={6}>
               <Heading size="sm" mb={3}>
@@ -467,7 +472,6 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
             </Box>
           )}
 
-          {/* Group Notes */}
           {groupInfo.notes && (
             <Box mt={4}>
               <Text fontWeight="bold" mb={2}>
@@ -489,7 +493,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
           )}
         </Box>
       </Box>
-      {/* Group Information and Meetings */}
+
       <Box
         borderWidth="1px"
         borderRadius="lg"

@@ -11,7 +11,7 @@ const meetings = JSON.parse(data) as Meeting[]
 
 export const handlers = [
   http.get(
-    "https://central-query.apps.code4recovery.org/api/v1/meetings/next",
+    "https://central-query.apps.code4recovery.org/api/v1/meetings/",
     () => {
       return HttpResponse.json(meetings)
     }

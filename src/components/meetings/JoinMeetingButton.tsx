@@ -8,7 +8,7 @@ import {
   Link,
 } from "@chakra-ui/react"
 
-import { getServiceProviderNameFromUrl } from "../utils/videoServices"
+import { getServiceProviderNameFromUrl } from "@/utils/videoServices"
 
 interface JoinMeetingButtonProps{
   joinUrl: string
