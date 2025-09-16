@@ -5,22 +5,19 @@ import {
   Box,
   Heading,
   Text,
-  VStack,
   useBreakpointValue,
+  VStack,
 } from "@chakra-ui/react"
 
-import MeetingTime from "./MeetingTime"
 import MeetingCategories from "./MeetingCategories"
+import MeetingTime from "./MeetingTime"
 import QuickActions from "./QuickActions"
-
-// Category logic moved to MeetingCategories component
 
 interface MeetingCardProps {
   meeting: Meeting
 }
 
 export const MeetingCard = ({ meeting }: MeetingCardProps) => {
-  // Responsive time format: compact on mobile, short on desktop
   const timeFormat = useBreakpointValue({
     base: 'compact' as const,
     md: 'short' as const,
@@ -40,7 +37,6 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
       }}
     >
       <VStack align="stretch" gap={4}>
-        {/* Header */}
         <Box>
           <RRLink to={`/group-info/${meeting.slug}`}>
             <Heading
@@ -63,7 +59,6 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
           </Box>
         </Box>
 
-        {/* Meeting Info */}
         {meeting.notes && (
           <VStack align="stretch" gap={2}>
             {(Array.isArray(meeting.notes)
@@ -77,7 +72,6 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
           </VStack>
         )}
 
-        {/* Action Buttons */}
         <Box>
           <QuickActions
             meeting={meeting}
@@ -93,7 +87,6 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
           )}
         </Box>
 
-        {/* Categories */}
         <MeetingCategories
           meeting={meeting}
           size={timeFormat === 'compact' ? 'sm' : 'md'}
