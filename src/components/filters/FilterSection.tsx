@@ -33,8 +33,8 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
     borderRadius="md"
     borderWidth="1px"
     borderColor="gray.200"
+    _dark={{ borderColor: "gray.700" }}
     mb={2}
-    bg="white"
   >
     <Flex
       align="center"
