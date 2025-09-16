@@ -11,13 +11,17 @@ test("Retrieves an array of meetings", async () => {
 })
 
 test("Retrieves meetings with query string parameters", async () => {
+  // Note: In the actual implementation, filtering would happen server-side
+  // but since we're using mock data, we test that the function accepts query strings
   const result = await getMeetings("?nameQuery=Test%20Meeting%202")
   expect(result).toHaveLength(3) // Mock returns all meetings
 })
 
 test("Retrieves meetings with filter parameters", async () => {
+  // Note: In the actual implementation, filtering would happen server-side
   const result = await getMeetings("?features=DB,OUT&communities=M&type=C")
   expect(result).toHaveLength(3) // Mock returns all meetings
+  // We can verify the mock data contains the expected meeting
   const testMeeting3 = result.find(m => m.name === "Test Meeting 3")
   expect(testMeeting3).toBeDefined()
   expect(testMeeting3?.features).toContain("DB")
@@ -27,8 +31,10 @@ test("Retrieves meetings with filter parameters", async () => {
 })
 
 test("Retrieves meetings with format and language parameters", async () => {
+  // Note: In the actual implementation, filtering would happen server-side
   const result = await getMeetings("?formats=D&languages=ES")
   expect(result).toHaveLength(3) // Mock returns all meetings
+  // We can verify the mock data contains the expected meeting
   const testMeeting2 = result.find(m => m.name === "Test Meeting 2")
   expect(testMeeting2).toBeDefined()
   expect(testMeeting2?.formats).toContain("D")
