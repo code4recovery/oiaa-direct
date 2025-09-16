@@ -1,4 +1,8 @@
-import { useState, useEffect, useRef } from "react"
+import {
+  useEffect,
+  useState,
+} from "react"
+
 import {
   Box,
   Text,
@@ -19,14 +23,8 @@ export function SearchFilter({
 }: SearchFilterProps) {
   const [searchQuery, setSearchQuery] = useState(initialValue)
   const [showWarning, setShowWarning] = useState(false)
-  const isFirstRender = useRef(true)
 
   useEffect(() => {
-    // Skip the effect on first render to avoid triggering API call on mount
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
 
     const delayDebounce = setTimeout(() => {
       onQueryChange(searchQuery)
