@@ -79,7 +79,7 @@ export function Filter({
   }
 
   const { count: activeFilterCount, hasActive: hasActiveFilters } =
-    getActiveFilters(
+    getActiveFiltersStatus(
       filterParams,
       selectedDay,
       defaultDay,
@@ -222,7 +222,7 @@ export function Filter({
   )
 }
 
-function getActiveFilters(
+function getActiveFiltersStatus(
   filterParams: URLSearchParams,
   selectedDay: string,
   defaultDay: string,
