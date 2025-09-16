@@ -1,11 +1,4 @@
 import {
-  Button,
-  Flex,
-  IconButton,
-  VStack,
-  useBreakpointValue,
-} from "@chakra-ui/react"
-import {
   FaEnvelope,
   FaExternalLinkAlt,
   FaLink,
@@ -15,8 +8,15 @@ import {
 import { Tooltip } from "@/components/ui/tooltip"
 import type { Meeting } from "@/meetingTypes"
 import { getServiceProviderNameFromUrl } from "@/utils/videoServices"
+import {
+  Button,
+  Flex,
+  IconButton,
+  useBreakpointValue,
+  VStack,
+} from "@chakra-ui/react"
 
-export interface QuickActionsProps {
+export interface MeetingActionsProps {
 
   meeting: Meeting
 
@@ -194,7 +194,7 @@ const WebsiteButton = ({
   )
 }
 
-export const QuickActions = ({
+export const MeetingActions = ({
   meeting,
   layout = 'auto',
   mode,
@@ -202,7 +202,7 @@ export const QuickActions = ({
   joinVariant = 'solid',
   secondaryVariant = 'outline',
   forceMode,
-}: QuickActionsProps) => {
+}: MeetingActionsProps) => {
   
 
   const responsiveMode = useBreakpointValue({
@@ -297,4 +297,4 @@ export const QuickActions = ({
   )
 }
 
-export default QuickActions
+export default MeetingActions

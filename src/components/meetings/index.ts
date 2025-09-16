@@ -7,8 +7,8 @@ export type { MeetingTimeProps } from "./MeetingTime"
 export { default as MeetingCategories } from "./MeetingCategories"
 export type { MeetingCategoriesProps } from "./MeetingCategories"
 
-export { default as QuickActions } from "./QuickActions"
-export type { QuickActionsProps } from "./QuickActions"
+export { default as MeetingActions } from "./MeetingActions"
+export type { MeetingActionsProps } from "./MeetingActions"
 
 export { default as CalendarActions } from "./CalendarActions"
 export type { CalendarActionsProps } from "./CalendarActions"

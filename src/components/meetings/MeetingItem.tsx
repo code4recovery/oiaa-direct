@@ -6,13 +6,13 @@ import {
   Flex,
   Heading,
   Text,
-  VStack,
   useBreakpointValue,
+  VStack,
 } from "@chakra-ui/react"
 
-import MeetingTime from "./MeetingTime"
+import MeetingActions from "./MeetingActions"
 import MeetingCategories from "./MeetingCategories"
-import QuickActions from "./QuickActions"
+import MeetingTime from "./MeetingTime"
 
 export type MeetingItemVariant = 'compact' | 'list' | 'card' | 'detailed'
 
@@ -75,7 +75,7 @@ const CompactVariant = ({ meeting, showActions = false, showLink = true }: {
       
       {showActions && (
         <Box ml={3}>
-          <QuickActions
+          <MeetingActions
             meeting={meeting}
             forceMode="icon-only"
             size="xs"
@@ -152,7 +152,7 @@ const ListVariant = ({
           
           {showActions && (
             <Box ml={3} flexShrink={0}>
-              <QuickActions
+              <MeetingActions
                 meeting={meeting}
                 size="sm"
                 layout="horizontal"
@@ -283,7 +283,7 @@ const CardVariant = ({
 
         {showActions && (
           <Box>
-            <QuickActions
+            <MeetingActions
               meeting={meeting}
               size="sm"
               layout="horizontal"
@@ -386,7 +386,7 @@ const DetailedVariant = ({
 
         {showActions && (
           <Box>
-            <QuickActions
+            <MeetingActions
               meeting={meeting}
               size="md"
               layout="horizontal"

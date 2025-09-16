@@ -9,9 +9,9 @@ import {
   VStack,
 } from "@chakra-ui/react"
 
+import MeetingActions from "./MeetingActions"
 import MeetingCategories from "./MeetingCategories"
 import MeetingTime from "./MeetingTime"
-import QuickActions from "./QuickActions"
 
 interface MeetingCardProps {
   meeting: Meeting
@@ -73,7 +73,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
         )}
 
         <Box>
-          <QuickActions
+          <MeetingActions
             meeting={meeting}
             layout="auto"
             size={timeFormat === 'compact' ? 'sm' : 'md'}
