@@ -4,4 +4,4 @@ export { SearchInput } from "./SearchInput"
 export { SearchFilter } from "./SearchFilter"
 export { TimeFilter } from "./TimeFilter"
 
-export { CategoryFilter } from "./categoryFilter"
+export { CategoryFilter } from "./CategoryFilter"

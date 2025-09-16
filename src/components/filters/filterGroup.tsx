@@ -15,7 +15,7 @@ import {
   TYPE,
 } from "@/meetingTypes"
 
-import { CategoryFilter } from "./categoryFilter"
+import { CategoryFilter } from "./CategoryFilter"
 import { FilterSection } from "./FilterSection"
 import { TimeFilter } from "./TimeFilter"
 
