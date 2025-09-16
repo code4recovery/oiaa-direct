@@ -17,19 +17,12 @@ import {
 } from "@chakra-ui/react"
 
 export interface MeetingActionsProps {
-
   meeting: Meeting
-
   layout?: 'horizontal' | 'vertical' | 'auto'
-
   mode?: 'full' | 'compact' | 'icon-only'
-
   size?: 'xs' | 'sm' | 'md'
-
   joinVariant?: 'solid' | 'outline' | 'ghost'
-
   secondaryVariant?: 'outline' | 'ghost'
-
   forceMode?: 'full' | 'compact' | 'icon-only'
 }
 
