@@ -1,4 +1,5 @@
 import { DateTime } from "luxon"
+
 import {
   Box,
   Text,
@@ -40,7 +41,7 @@ const SelectField = ({
   onChange,
   options,
   showLabel = true,
-  includeHourlyOptions = false,
+  includeHourlyOptions = true,
 }: {
   label: string
   value: string
@@ -94,21 +95,26 @@ const SelectField = ({
   )
 }
 
-const MobileTimeFilter = ({
+
+const TimeFilterFields = ({
   selectedDay,
   selectedTimeFrame,
   onDayChange,
   onTimeFrameChange,
-  showLabels = true,
+  showLabels,
+  variant,
 }: {
   selectedDay: string
   selectedTimeFrame: string
   onDayChange: (day: string) => void
   onTimeFrameChange: (timeFrame: string) => void
-  showLabels?: boolean
+  showLabels: boolean
+  variant: TimeFilterVariant
 }) => {
+  const gap = variant === "mobile" ? 3 : 4
+  // const includeHourlyOptions = variant === "mobile"
   return (
-    <VStack gap={3} align="stretch">
+    <VStack gap={gap} align="stretch">
       <SelectField
         label="Day"
         value={selectedDay}
@@ -118,51 +124,17 @@ const MobileTimeFilter = ({
         includeHourlyOptions={false}
       />
       <SelectField
-        label="Time"
+        label={"Time"}
         value={selectedTimeFrame}
         onChange={onTimeFrameChange}
         options={TIME_FRAME_OPTIONS}
         showLabel={showLabels}
-        includeHourlyOptions={false}
+        // includeHourlyOptions={includeHourlyOptions}
       />
     </VStack>
   )
 }
 
-const DesktopTimeFilter = ({
-  selectedDay,
-  selectedTimeFrame,
-  onDayChange,
-  onTimeFrameChange,
-  showLabels = true,
-}: {
-  selectedDay: string
-  selectedTimeFrame: string
-  onDayChange: (day: string) => void
-  onTimeFrameChange: (timeFrame: string) => void
-  showLabels?: boolean
-}) => {
-  return (
-    <VStack gap={4} align="stretch">
-      <SelectField
-        label="Day"
-        value={selectedDay}
-        onChange={onDayChange}
-        options={DAY_OPTIONS}
-        showLabel={showLabels}
-        includeHourlyOptions={false}
-      />
-      <SelectField
-        label="Time Frame"
-        value={selectedTimeFrame}
-        onChange={onTimeFrameChange}
-        options={TIME_FRAME_OPTIONS}
-        showLabel={showLabels}
-        includeHourlyOptions={true}
-      />
-    </VStack>
-  )
-}
 
 export function TimeFilter({
   selectedDay,
@@ -172,38 +144,14 @@ export function TimeFilter({
   variant,
   showLabels = true,
 }: TimeFilterProps) {
-  switch (variant) {
-    case "mobile":
-      return (
-        <MobileTimeFilter
-          selectedDay={selectedDay}
-          selectedTimeFrame={selectedTimeFrame}
-          onDayChange={onDayChange}
-          onTimeFrameChange={onTimeFrameChange}
-          showLabels={showLabels}
-        />
-      )
-    
-    case "desktop":
-      return (
-        <DesktopTimeFilter
-          selectedDay={selectedDay}
-          selectedTimeFrame={selectedTimeFrame}
-          onDayChange={onDayChange}
-          onTimeFrameChange={onTimeFrameChange}
-          showLabels={showLabels}
-        />
-      )
-    
-    default:
-      return (
-        <DesktopTimeFilter
-          selectedDay={selectedDay}
-          selectedTimeFrame={selectedTimeFrame}
-          onDayChange={onDayChange}
-          onTimeFrameChange={onTimeFrameChange}
-          showLabels={showLabels}
-        />
-      )
-  }
+  return (
+    <TimeFilterFields
+      selectedDay={selectedDay}
+      selectedTimeFrame={selectedTimeFrame}
+      onDayChange={onDayChange}
+      onTimeFrameChange={onTimeFrameChange}
+      showLabels={showLabels}
+      variant={variant}
+    />
+  )
 }
