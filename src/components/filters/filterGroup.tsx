@@ -87,7 +87,7 @@ export function renderFilterGroups({
     {
       key: "type",
       title: "Meeting Type",
-      options: facetOptions.TYPES as Record<string, string | string[]>,
+      options: facetOptions.TYPES as Record<Type, string | string[]>,
       selected: filterParams.getAll("type") as Type[],
       onToggle: handleExclusiveToggle("type"),
     },

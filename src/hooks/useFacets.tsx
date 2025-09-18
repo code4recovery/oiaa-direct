@@ -112,7 +112,6 @@ export function useFacets(): {
         }
         const url = `${baseUrl}/facets`
         const raw = await fetchData<FacetsResponse>(url)
-        console.log("Facet fetch response:", raw)
         // Treat empty array (from fetchData error) as an error
         if (Array.isArray(raw) && raw.length === 0) {
           throw new Error("Facet response is empty (fetchData error)")
