@@ -1,18 +1,12 @@
 import React from "react"
 
+import type { FacetOptions } from "@/hooks/useFacets"
 import type {
   Community,
   Feature,
   Format,
   Language,
   Type,
-} from "@/meetingTypes"
-import {
-  COMMUNITIES,
-  FEATURES,
-  FORMATS,
-  LANGUAGES,
-  TYPE,
 } from "@/meetingTypes"
 
 import { CategoryFilter } from "./CategoryFilter"
@@ -29,6 +23,7 @@ interface RenderFilterGroupsProps {
   showTimeFilter: boolean
   isMobile: boolean
   disclosureStates?: Record<string, { open: boolean; onToggle: () => void }>
+  facetOptions: FacetOptions
 }
 
 export function renderFilterGroups({
@@ -41,6 +36,7 @@ export function renderFilterGroups({
   showTimeFilter,
   isMobile,
   disclosureStates,
+  facetOptions,
 }: RenderFilterGroupsProps) {
   const groups: React.ReactNode[] = []
 
@@ -91,35 +87,35 @@ export function renderFilterGroups({
     {
       key: "type",
       title: "Meeting Type",
-      options: TYPE as Record<Type, string | string[]>,
+      options: facetOptions.types,
       selected: filterParams.getAll("type") as Type[],
       onToggle: handleExclusiveToggle("type"),
     },
     {
       key: "formats",
       title: "Formats",
-      options: FORMATS as Record<Format, string | string[]>,
+      options: facetOptions.formats,
       selected: filterParams.getAll("formats") as Format[],
       onToggle: handleToggle("formats"),
     },
     {
       key: "features",
       title: "Features",
-      options: FEATURES as Record<Feature, string | string[]>,
+      options: facetOptions.features,
       selected: filterParams.getAll("features") as Feature[],
       onToggle: handleToggle("features"),
     },
     {
       key: "communities",
       title: "Communities",
-      options: COMMUNITIES as Record<Community, string | string[]>,
+      options: facetOptions.communities,
       selected: filterParams.getAll("communities") as Community[],
       onToggle: handleToggle("communities"),
     },
     {
       key: "languages",
       title: "Languages",
-      options: LANGUAGES as Record<Language, string | string[]>,
+      options: facetOptions.languages,
       selected: filterParams.getAll("languages") as Language[],
       onToggle: handleToggle("languages"),
     },

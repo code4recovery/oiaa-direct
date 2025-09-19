@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa"
 import type { SetURLSearchParams } from "react-router"
 
+import { useFacets } from "@/hooks/useFacets"
 import {
   getCurrentDay,
   getCurrentTimeFrame,
@@ -51,6 +52,7 @@ export function Filter({
 }: FilterProps) {
   const isMobile = variant === "mobile"
 
+  const { facetOptions } = useFacets()
   const defaultDay = getCurrentDay()
   const defaultTimeFrame = getCurrentTimeFrame()
 
@@ -196,6 +198,7 @@ export function Filter({
                   showTimeFilter,
                   isMobile,
                   disclosureStates,
+                  facetOptions,
                 })}
               </VStack>
             )}
@@ -214,6 +217,7 @@ export function Filter({
               handleExclusiveToggle,
               showTimeFilter,
               isMobile,
+              facetOptions,
             })}
           </>
         )}
