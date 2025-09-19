@@ -26,13 +26,13 @@ interface FacetCodeDesc {
 }
 
 interface FacetsResponse {
-  categories?: {
-    communities?: FacetCodeDesc[]
-    features?: FacetCodeDesc[]
-    formats?: FacetCodeDesc[]
-    type?: FacetCodeDesc[]
+  categories: {
+    communities: FacetCodeDesc[]
+    features: FacetCodeDesc[]
+    formats: FacetCodeDesc[]
+    type: FacetCodeDesc[]
   }
-  languages?: {
+  languages: {
     English: string
     alpha2: string
   }[]
