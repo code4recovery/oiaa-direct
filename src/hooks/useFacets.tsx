@@ -13,11 +13,11 @@ import {
 import { fetchData } from "@/utils/meetings-utils"
 
 export interface FacetOptions {
-  TYPES: Record<string, string>
-  FORMATS: Record<string, string>
-  FEATURES: Record<string, string>
-  COMMUNITIES: Record<string, string>
-  LANGUAGES: Record<string, string>
+  types: Record<string, string>
+  formats: Record<string, string>
+  features: Record<string, string>
+  communities: Record<string, string>
+  languages: Record<string, string>
 }
 
 interface FacetCodeDesc {
@@ -39,11 +39,11 @@ interface FacetsResponse {
 }
 
 const fallbackFacetOptions: FacetOptions = {
-  TYPES: TYPE,
-  FORMATS: FORMATS,
-  FEATURES: FEATURES,
-  COMMUNITIES: COMMUNITIES,
-  LANGUAGES: LANGUAGES,
+  types: TYPE,
+  formats: FORMATS,
+  features: FEATURES,
+  communities: COMMUNITIES,
+  languages: LANGUAGES,
 }
 
 const facetsToRecord = (facets?: FacetCodeDesc[]) =>
@@ -84,11 +84,11 @@ const mapFacets = (raw: FacetsResponse): FacetOptions => {
   ) as Record<string, string>
 
   return {
-    TYPES: sortFacetRecord(facetsToRecord(cats.type), TYPE),
-    FORMATS: sortFacetRecord(facetsToRecord(cats.formats), FORMATS),
-    FEATURES: sortFacetRecord(facetsToRecord(cats.features), FEATURES),
-    COMMUNITIES: sortFacetRecord(facetsToRecord(cats.communities), COMMUNITIES),
-    LANGUAGES: sortFacetRecord(fetchedLanguages, LANGUAGES),
+    types: sortFacetRecord(facetsToRecord(cats.type), TYPE),
+    formats: sortFacetRecord(facetsToRecord(cats.formats), FORMATS),
+    features: sortFacetRecord(facetsToRecord(cats.features), FEATURES),
+    communities: sortFacetRecord(facetsToRecord(cats.communities), COMMUNITIES),
+    languages: sortFacetRecord(fetchedLanguages, LANGUAGES),
   }
 }
 
