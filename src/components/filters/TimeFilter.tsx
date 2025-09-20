@@ -112,7 +112,7 @@ const TimeFilterFields = ({
   variant: TimeFilterVariant
 }) => {
   const gap = variant === "mobile" ? 3 : 4
-  // const includeHourlyOptions = variant === "mobile"
+
   return (
     <VStack gap={gap} align="stretch">
       <SelectField
@@ -129,7 +129,7 @@ const TimeFilterFields = ({
         onChange={onTimeFrameChange}
         options={TIME_FRAME_OPTIONS}
         showLabel={showLabels}
-        // includeHourlyOptions={includeHourlyOptions}
+
       />
     </VStack>
   )
