@@ -158,7 +158,7 @@ export const MeetingTime = ({
       <Text {...primaryTextProps}>
         {!timeInfo.isSameTimezone && showLocal ? (
           <>
-            {timeInfo.userDate} {timeInfo.userTime}
+            {timeInfo.userDay} {timeInfo.userTime}
             {!timeInfo.isSameDay && (
               <Text as="span" {...secondaryTextProps} ml={1}>
                 (originally {timeInfo.originalDay})
