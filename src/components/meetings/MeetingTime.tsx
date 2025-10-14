@@ -1,15 +1,16 @@
 import { DateTime } from "luxon"
 import {
+  FaCalendarAlt,
+  FaClock,
+  FaGlobeAmericas,
+} from "react-icons/fa"
+
+import {
   Box,
   Flex,
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react"
-import {
-  FaCalendarAlt,
-  FaClock,
-  FaGlobeAmericas,
-} from "react-icons/fa"
 
 export interface MeetingTimeProps {
   /** UTC time string from the meeting data */
@@ -157,7 +158,7 @@ export const MeetingTime = ({
       <Text {...primaryTextProps}>
         {!timeInfo.isSameTimezone && showLocal ? (
           <>
-            {timeInfo.userDate} {timeInfo.userTime}
+            {timeInfo.userDay} {timeInfo.userTime}
             {!timeInfo.isSameDay && (
               <Text as="span" {...secondaryTextProps} ml={1}>
                 (originally {timeInfo.originalDay})
@@ -185,7 +186,7 @@ export const MeetingTime = ({
           )}
           <Text {...primaryTextProps}>
             {!timeInfo.isSameTimezone && showLocal 
-              ? `${timeInfo.userDate} at ${timeInfo.userTime}`
+              ? `${timeInfo.dayName} at ${timeInfo.userTime}`
               : `${timeInfo.dayName} at ${timeInfo.originalTime}`
             }
           </Text>
@@ -198,7 +199,7 @@ export const MeetingTime = ({
               </Box>
             )}
             <Text {...secondaryTextProps}>
-              Meeting time: {timeInfo.originalDate} at {timeInfo.originalTime}
+              Meeting time: {timeInfo.originalDay} at {timeInfo.originalTime}
               {timeInfo.originalTimezone !== 'UTC' && (
                 <Text as="span">
                   {' '}({timeInfo.originalTimezone.replace('_', ' ')})
