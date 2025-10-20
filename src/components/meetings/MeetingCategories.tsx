@@ -1,20 +1,11 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Flex,
-  Text,
-  useBreakpointValue,
-} from "@chakra-ui/react"
+import { FaPlus } from "react-icons/fa"
+
 import {
   PopoverBody,
   PopoverContent,
   PopoverRoot,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { FaPlus } from "react-icons/fa"
-
-import { Tooltip } from "@/components/ui/tooltip"
 import type { Meeting } from "@/meetingTypes"
 import {
   COMMUNITIES,
@@ -23,6 +14,14 @@ import {
   LANGUAGES,
   TYPE,
 } from "@/meetingTypes"
+import {
+  Badge,
+  Box,
+  Button,
+  Flex,
+  Text,
+  useBreakpointValue,
+} from "@chakra-ui/react"
 
 const DESCRIPTIONS: Record<string, string> = {
   ...TYPE,
@@ -49,8 +48,6 @@ export interface MeetingCategoriesProps {
   size?: 'sm' | 'md'
 
   layout?: 'wrap' | 'scroll' | 'limited'
-
-  showFullNames?: boolean
 
   forceMaxVisible?: number
 }
@@ -89,30 +86,24 @@ const getCategoryItems = (meeting: Meeting) => {
 const CategoryBadge = ({ 
   item, 
   size = 'sm',
-  showFullName = false,
 }: { 
   item: ReturnType<typeof getCategoryItems>[0]
   size?: 'sm' | 'md'
-  showFullName?: boolean
 }) => {
-  const displayText = showFullName ? item.fullName : item.value.toUpperCase()
   
   return (
-    <Tooltip content={item.fullName}>
-      <Badge
-        colorScheme={CATEGORY_COLORS[item.category]}
-        variant="subtle"
-        size={size}
-        px={size === 'sm' ? 2 : 3}
-        py={1}
-        borderRadius="full"
-        fontSize={size === 'sm' ? 'xs' : 'sm'}
-        fontWeight="medium"
-        cursor="help"
-      >
-        {displayText}
-      </Badge>
-    </Tooltip>
+    <Badge
+      colorScheme={CATEGORY_COLORS[item.category]}
+      variant="subtle"
+      size={size}
+      px={size === 'sm' ? 2 : 3}
+      py={1}
+      borderRadius="full"
+      fontSize={size === 'sm' ? 'xs' : 'sm'}
+      fontWeight="medium"
+    >
+      {item.fullName}
+    </Badge>
   )
 }
 
@@ -120,11 +111,9 @@ const CategoryBadge = ({
 const OverflowIndicator = ({ 
   hiddenItems, 
   size = 'sm',
-  showFullNames = false,
 }: { 
   hiddenItems: ReturnType<typeof getCategoryItems>
   size?: 'sm' | 'md'
-  showFullNames?: boolean
 }) => {
   return (
     <PopoverRoot positioning={{ placement: "top" }}>
@@ -157,7 +146,6 @@ const OverflowIndicator = ({
                 key={item.key}
                 item={item} 
                 size={size}
-                showFullName={showFullNames}
               />
             ))}
           </Flex>
@@ -172,7 +160,6 @@ export const MeetingCategories = ({
   maxVisible,
   size = 'sm',
   layout = 'limited',
-  showFullNames = false,
   forceMaxVisible,
 }: MeetingCategoriesProps) => {
   const allItems = getCategoryItems(meeting)
@@ -201,7 +188,6 @@ export const MeetingCategories = ({
             key={item.key}
             item={item} 
             size={size}
-            showFullName={showFullNames}
           />
         ))}
       </Flex>
@@ -234,7 +220,6 @@ export const MeetingCategories = ({
               key={item.key}
               item={item} 
               size={size}
-              showFullName={showFullNames}
             />
           ))}
         </Flex>
@@ -253,14 +238,12 @@ export const MeetingCategories = ({
           key={item.key}
           item={item} 
           size={size}
-          showFullName={showFullNames}
         />
       ))}
       {hiddenItems.length > 0 && (
         <OverflowIndicator 
           hiddenItems={hiddenItems}
           size={size}
-          showFullNames={showFullNames}
         />
       )}
     </Flex>
