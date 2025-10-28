@@ -55,40 +55,27 @@ const facetsToRecord = (facets?: FacetCodeDesc[]) =>
 const normalizeLanguage = (englishName: string) =>
   englishName.split(";")[0]?.trim() || englishName
 
-function sortFacetRecord(
-  unsorted: Record<string, string>,
-  fallback: Record<string, string>
-): Record<string, string> {
-  const sorted: Record<string, string> = {}
-  // Add keys from fallback in order if present in unsorted
-  for (const key of Object.keys(fallback)) {
-    if (key in unsorted) {
-      sorted[key] = unsorted[key]
-    }
-  }
-  // Add any extra keys from unsorted not in fallback
-  for (const key of Object.keys(unsorted)) {
-    if (!(key in sorted)) {
-      sorted[key] = unsorted[key]
-    }
-  }
-  return sorted
+function sortFacetRecord(unsorted: Record<string, string>): Record<string, string> {
+  // Return a new record with keys sorted strictly alphabetically (by key).
+  return Object.fromEntries(
+    Object.entries(unsorted).sort(([a], [b]) => a.localeCompare(b))
+  ) as Record<string, string>
 }
 
 const mapFacets = (raw: FacetsResponse): FacetOptions => {
-  const cats = raw.categories ?? {}
+  const cats = raw.categories
   const fetchedLanguages = Object.fromEntries(
-    (raw.languages ?? [])
+    (raw.languages)
       .filter((lang) => lang.alpha2)
       .map((lang) => [lang.alpha2, normalizeLanguage(lang.English)])
   ) as Record<string, string>
 
   return {
-    types: sortFacetRecord(facetsToRecord(cats.type), TYPE),
-    formats: sortFacetRecord(facetsToRecord(cats.formats), FORMATS),
-    features: sortFacetRecord(facetsToRecord(cats.features), FEATURES),
-    communities: sortFacetRecord(facetsToRecord(cats.communities), COMMUNITIES),
-    languages: sortFacetRecord(fetchedLanguages, LANGUAGES),
+    types: sortFacetRecord(facetsToRecord(cats.type)),
+    formats: sortFacetRecord(facetsToRecord(cats.formats)),
+    features: sortFacetRecord(facetsToRecord(cats.features)),
+    communities: sortFacetRecord(facetsToRecord(cats.communities)),
+    languages: sortFacetRecord(fetchedLanguages),
   }
 }
 
