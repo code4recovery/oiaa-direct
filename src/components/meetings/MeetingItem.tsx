@@ -14,10 +14,9 @@ import MeetingActions from "./MeetingActions"
 import MeetingCategories from "./MeetingCategories"
 import MeetingTime from "./MeetingTime"
 
-export type MeetingItemVariant = 'compact' | 'list' | 'card' | 'detailed'
+export type MeetingItemVariant = "compact" | "list" | "card" | "detailed"
 
 export interface MeetingItemProps {
-
   meeting: Meeting
 
   variant: MeetingItemVariant
@@ -35,7 +34,11 @@ export interface MeetingItemProps {
   forceResponsive?: boolean
 }
 
-const CompactVariant = ({ meeting, showActions = false, showLink = true }: {
+const CompactVariant = ({
+  meeting,
+  showActions = false,
+  showLink = true,
+}: {
   meeting: Meeting
   showActions?: boolean
   showLink?: boolean
@@ -63,16 +66,16 @@ const CompactVariant = ({ meeting, showActions = false, showLink = true }: {
           {meeting.name}
         </Text>
         <Box mt={1}>
-                  <MeetingTime
-          timeUTC={meeting.timeUTC}
-          timezone={meeting.timezone}
-          format="compact"
-          showLocal={true}
-          showIcons={false}
-        />
+          <MeetingTime
+            timeUTC={meeting.timeUTC}
+            timezone={meeting.timezone}
+            format="compact"
+            showLocal={true}
+            showIcons={false}
+          />
         </Box>
       </Flex>
-      
+
       {showActions && (
         <Box ml={3}>
           <MeetingActions
@@ -87,22 +90,18 @@ const CompactVariant = ({ meeting, showActions = false, showLink = true }: {
   )
 
   if (showLink) {
-    return (
-      <RRLink to={`/group-info/${meeting.slug}`}>
-        {content}
-      </RRLink>
-    )
+    return <RRLink to={`/group-info/${meeting.slug}`}>{content}</RRLink>
   }
 
   return content
 }
 
-const ListVariant = ({ 
-  meeting, 
-  showActions = true, 
-  showCategories = true, 
+const ListVariant = ({
+  meeting,
+  showActions = true,
+  showCategories = true,
   maxCategories = 3,
-  showLink = true 
+  showLink = true,
 }: {
   meeting: Meeting
   showActions?: boolean
@@ -118,19 +117,18 @@ const ListVariant = ({
       borderRadius="md"
       borderColor="gray.200"
       bg="white"
-      _dark={{ 
+      _dark={{
         borderColor: "gray.700",
-        bg: "gray.800"
+        bg: "gray.800",
       }}
-      _hover={{ 
+      _hover={{
         shadow: "sm",
         borderColor: "blue.300",
-        _dark: { borderColor: "blue.500" }
+        _dark: { borderColor: "blue.500" },
       }}
       transition="all 0.2s"
     >
       <Flex direction="column" gap={2}>
-
         <Flex justify="space-between" align="flex-start">
           <Box flex="1" overflow="hidden">
             <Heading
@@ -142,21 +140,17 @@ const ListVariant = ({
               display="-webkit-box"
               css={{
                 WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
+                WebkitBoxOrient: "vertical",
               }}
               _hover={showLink ? { textDecoration: "underline" } : {}}
             >
               {meeting.name}
             </Heading>
           </Box>
-          
+
           {showActions && (
             <Box ml={3} flexShrink={0}>
-              <MeetingActions
-                meeting={meeting}
-                size="sm"
-                layout="horizontal"
-              />
+              <MeetingActions meeting={meeting} size="sm" layout="horizontal" />
             </Box>
           )}
         </Flex>
@@ -177,7 +171,6 @@ const ListVariant = ({
             size="sm"
             layout="limited"
             maxVisible={maxCategories}
-            showFullNames={false}
           />
         )}
       </Flex>
@@ -185,22 +178,18 @@ const ListVariant = ({
   )
 
   if (showLink) {
-    return (
-      <RRLink to={`/group-info/${meeting.slug}`}>
-        {content}
-      </RRLink>
-    )
+    return <RRLink to={`/group-info/${meeting.slug}`}>{content}</RRLink>
   }
 
   return content
 }
 
-const CardVariant = ({ 
-  meeting, 
-  showActions = true, 
-  showNotes = true, 
+const CardVariant = ({
+  meeting,
+  showActions = true,
+  showNotes = true,
   showCategories = true,
-  showLink = true 
+  showLink = true,
 }: {
   meeting: Meeting
   showActions?: boolean
@@ -216,19 +205,18 @@ const CardVariant = ({
       borderRadius="lg"
       borderColor="gray.200"
       bg="white"
-      _dark={{ 
+      _dark={{
         borderColor: "gray.700",
-        bg: "gray.800"
+        bg: "gray.800",
       }}
-      _hover={{ 
+      _hover={{
         shadow: "md",
         borderColor: "blue.300",
-        _dark: { borderColor: "blue.500" }
+        _dark: { borderColor: "blue.500" },
       }}
       transition="all 0.2s"
     >
       <VStack align="stretch" gap={4} h="full">
-
         <Box>
           <Heading
             size="md"
@@ -239,7 +227,7 @@ const CardVariant = ({
             display="-webkit-box"
             css={{
               WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
+              WebkitBoxOrient: "vertical",
             }}
             _hover={showLink ? { textDecoration: "underline" } : {}}
           >
@@ -256,41 +244,36 @@ const CardVariant = ({
           </Box>
         </Box>
 
-
         {showNotes && meeting.notes && (
           <Box flex="1">
             <VStack align="stretch" gap={2}>
               {(Array.isArray(meeting.notes)
                 ? meeting.notes
                 : (meeting.notes as string).split("\n")
-              ).slice(0, 2).map((note: string, index: number) => (
-                <Text 
-                  key={index} 
-                  fontSize="sm" 
-                  color="gray.700" 
-                  _dark={{ color: "gray.300" }} 
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                >
-                  {note}
-                </Text>
-              ))}
+              )
+                .slice(0, 2)
+                .map((note: string, index: number) => (
+                  <Text
+                    key={index}
+                    fontSize="sm"
+                    color="gray.700"
+                    _dark={{ color: "gray.300" }}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                  >
+                    {note}
+                  </Text>
+                ))}
             </VStack>
           </Box>
         )}
 
-
         {showActions && (
           <Box>
-            <MeetingActions
-              meeting={meeting}
-              size="sm"
-              layout="horizontal"
-            />
+            <MeetingActions meeting={meeting} size="sm" layout="horizontal" />
           </Box>
         )}
-
 
         {showCategories && (
           <MeetingCategories
@@ -298,7 +281,6 @@ const CardVariant = ({
             size="sm"
             layout="limited"
             maxVisible={6}
-            showFullNames={false}
           />
         )}
       </VStack>
@@ -306,23 +288,18 @@ const CardVariant = ({
   )
 
   if (showLink) {
-    return (
-      <RRLink to={`/group-info/${meeting.slug}`}>
-        {content}
-      </RRLink>
-    )
+    return <RRLink to={`/group-info/${meeting.slug}`}>{content}</RRLink>
   }
 
   return content
 }
 
-
-const DetailedVariant = ({ 
-  meeting, 
-  showActions = true, 
-  showNotes = true, 
+const DetailedVariant = ({
+  meeting,
+  showActions = true,
+  showNotes = true,
   showCategories = true,
-  showLink = false 
+  showLink = false,
 }: {
   meeting: Meeting
   showActions?: boolean
@@ -337,14 +314,13 @@ const DetailedVariant = ({
       borderRadius="lg"
       borderColor="gray.200"
       bg="white"
-      _dark={{ 
+      _dark={{
         borderColor: "gray.700",
-        bg: "gray.800"
+        bg: "gray.800",
       }}
       shadow="sm"
     >
       <VStack align="stretch" gap={6}>
-
         <Box>
           <Heading
             size="lg"
@@ -365,10 +341,14 @@ const DetailedVariant = ({
           </Box>
         </Box>
 
-
         {showNotes && meeting.notes && (
           <VStack align="stretch" gap={3}>
-            <Text fontSize="md" fontWeight="medium" color="gray.800" _dark={{ color: "gray.200" }}>
+            <Text
+              fontSize="md"
+              fontWeight="medium"
+              color="gray.800"
+              _dark={{ color: "gray.200" }}
+            >
               Meeting Information
             </Text>
             <VStack align="stretch" gap={2}>
@@ -376,7 +356,12 @@ const DetailedVariant = ({
                 ? meeting.notes
                 : (meeting.notes as string).split("\n")
               ).map((note: string, index: number) => (
-                <Text key={index} fontSize="md" color="gray.700" _dark={{ color: "gray.300" }}>
+                <Text
+                  key={index}
+                  fontSize="md"
+                  color="gray.700"
+                  _dark={{ color: "gray.300" }}
+                >
                   {note}
                 </Text>
               ))}
@@ -386,11 +371,7 @@ const DetailedVariant = ({
 
         {showActions && (
           <Box>
-            <MeetingActions
-              meeting={meeting}
-              size="md"
-              layout="horizontal"
-            />
+            <MeetingActions meeting={meeting} size="md" layout="horizontal" />
             {meeting.conference_url_notes && (
               <Text fontSize="sm" color="gray.500" mt={3}>
                 {meeting.conference_url_notes}
@@ -399,18 +380,18 @@ const DetailedVariant = ({
           </Box>
         )}
 
-
         {showCategories && (
           <Box>
-            <Text fontSize="md" fontWeight="medium" color="gray.800" _dark={{ color: "gray.200" }} mb={3}>
+            <Text
+              fontSize="md"
+              fontWeight="medium"
+              color="gray.800"
+              _dark={{ color: "gray.200" }}
+              mb={3}
+            >
               Meeting Details
             </Text>
-            <MeetingCategories
-              meeting={meeting}
-              size="md"
-              layout="wrap"
-              showFullNames={true}
-            />
+            <MeetingCategories meeting={meeting} size="md" layout="wrap" />
           </Box>
         )}
       </VStack>
@@ -418,11 +399,7 @@ const DetailedVariant = ({
   )
 
   if (showLink) {
-    return (
-      <RRLink to={`/group-info/${meeting.slug}`}>
-        {content}
-      </RRLink>
-    )
+    return <RRLink to={`/group-info/${meeting.slug}`}>{content}</RRLink>
   }
 
   return content
@@ -438,29 +415,29 @@ export const MeetingItem = ({
   showLink = true,
   forceResponsive = false,
 }: MeetingItemProps) => {
-  
-
   const responsiveVariant = useBreakpointValue({
-    base: 'list' as const,
-    md: 'card' as const,
-    lg: 'card' as const,
+    base: "list" as const,
+    md: "card" as const,
+    lg: "card" as const,
   })
 
-  const effectiveVariant = !forceResponsive ? variant : (responsiveVariant ?? variant)
+  const effectiveVariant = !forceResponsive
+    ? variant
+    : responsiveVariant ?? variant
 
   switch (effectiveVariant) {
-    case 'compact':
+    case "compact":
       return (
-        <CompactVariant 
+        <CompactVariant
           meeting={meeting}
           showActions={showActions}
           showLink={showLink}
         />
       )
-    
-    case 'list':
+
+    case "list":
       return (
-        <ListVariant 
+        <ListVariant
           meeting={meeting}
           showActions={showActions}
           showCategories={showCategories}
@@ -468,10 +445,10 @@ export const MeetingItem = ({
           showLink={showLink}
         />
       )
-    
-    case 'card':
+
+    case "card":
       return (
-        <CardVariant 
+        <CardVariant
           meeting={meeting}
           showActions={showActions}
           showNotes={showNotes}
@@ -479,10 +456,10 @@ export const MeetingItem = ({
           showLink={showLink}
         />
       )
-    
-    case 'detailed':
+
+    case "detailed":
       return (
-        <DetailedVariant 
+        <DetailedVariant
           meeting={meeting}
           showActions={showActions}
           showNotes={showNotes}
@@ -490,10 +467,10 @@ export const MeetingItem = ({
           showLink={showLink}
         />
       )
-    
+
     default:
       return (
-        <ListVariant 
+        <ListVariant
           meeting={meeting}
           showActions={showActions}
           showCategories={showCategories}
