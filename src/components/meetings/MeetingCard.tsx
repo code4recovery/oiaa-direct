@@ -19,8 +19,8 @@ interface MeetingCardProps {
 
 export const MeetingCard = ({ meeting }: MeetingCardProps) => {
   const timeFormat = useBreakpointValue({
-    base: 'compact' as const,
-    md: 'short' as const,
+    base: "compact" as const,
+    md: "short" as const,
   })
 
   return (
@@ -52,9 +52,9 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
             <MeetingTime
               timeUTC={meeting.timeUTC}
               timezone={meeting.timezone}
-              format={timeFormat ?? 'short'}
-              showLocal={timeFormat === 'short'}
-              showIcons={timeFormat === 'short'}
+              format={timeFormat ?? "short"}
+              showLocal={timeFormat === "short"}
+              showIcons={timeFormat === "short"}
             />
           </Box>
         </Box>
@@ -76,7 +76,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
           <MeetingActions
             meeting={meeting}
             layout="auto"
-            size={timeFormat === 'compact' ? 'sm' : 'md'}
+            size={timeFormat === "compact" ? "sm" : "md"}
             joinVariant="solid"
             secondaryVariant="outline"
           />
@@ -89,9 +89,8 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
 
         <MeetingCategories
           meeting={meeting}
-          size={timeFormat === 'compact' ? 'sm' : 'md'}
+          size={timeFormat === "compact" ? "sm" : "md"}
           layout="limited"
-          showFullNames={false}
         />
       </VStack>
     </Box>
