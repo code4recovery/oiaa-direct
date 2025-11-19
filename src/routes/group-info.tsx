@@ -106,7 +106,6 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { meeting, group }
 }
 
-
 function MeetingDisplay({ meeting }: { meeting: Meeting }) {
   return (
     <Box 
