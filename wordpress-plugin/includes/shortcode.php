@@ -34,8 +34,8 @@ function oiaa_meetings_shortcode($atts) {
     <div id="oiaa-meetings-root"></div>
     <script>
         window.OIAA_CONFIG = {
-            apiUrl: <?php echo json_encode($api_url); ?>,
-            colorMode: <?php echo json_encode($color_mode); ?>
+            apiUrl: <?php echo wp_json_encode($api_url); ?>,
+            colorMode: <?php echo wp_json_encode($color_mode); ?>
         };
     </script>
     <?php
