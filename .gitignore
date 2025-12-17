@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dist-wordpress
 build
 *.local
 .react-router
@@ -17,6 +18,10 @@ build
 .github
 .cache
 .next
+
+# WordPress plugin build outputs
+wordpress-plugin/assets/
+*.zip
 
 # Editor directories and files
 .vscode/*
