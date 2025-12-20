@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useRef,
   useState,
 } from "react"
 
@@ -23,8 +24,14 @@ export function SearchFilter({
 }: SearchFilterProps) {
   const [searchQuery, setSearchQuery] = useState(initialValue)
   const [showWarning, setShowWarning] = useState(false)
+  const isInitialMount = useRef(true)
 
   useEffect(() => {
+    // Skip calling onQueryChange on initial mount to avoid triggering loader
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
 
     const delayDebounce = setTimeout(() => {
       onQueryChange(searchQuery)
@@ -37,8 +44,10 @@ export function SearchFilter({
     return () => {
       clearTimeout(delayDebounce)
     }
-  }, [searchQuery, onQueryChange, showMinCharWarning])
-
+  },
+   // eslint-disable-next-line react-hooks/exhaustive-deps
+   [searchQuery, showMinCharWarning]) // Removed onQueryChange - only trigger when searchQuery changes
+  
   return (
     <Box>
       <SearchInput
