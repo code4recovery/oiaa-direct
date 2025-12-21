@@ -10,6 +10,7 @@ import { Filter } from "@/components/filters"
 import { Layout } from "@/components/Layout"
 import { MeetingsSummary } from "@/components/meetings"
 import { getMeetings } from "@/getData"
+import type { Meeting } from "@/meetingTypes"
 import { shuffleMeetings } from "@/utils/meetings-utils"
 import {
   Box,
@@ -37,7 +38,7 @@ function buildMeetingsQueryString(searchParams: URLSearchParams): string {
 
 let loaderCallCount = 0
 
-export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise<{ meetings: Meeting[] }> {
   const callId = String(++loaderCallCount)
   console.log(`🔵 #${callId} clientLoader called`, 'URL:', request.url)
   const { searchParams } = new URL(request.url)
