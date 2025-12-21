@@ -24,7 +24,7 @@ export const toggleArrayElement = <T>(array: T[], value: T): T[] => {
  * @param meetings - Array of meetings sorted by timeUTC
  * @returns A new shuffled array (does not mutate the original)
  */
-export const shuffleMeetings = (meetings: Meeting[]): Meeting[] => {
+export const shuffleMeetings = <T extends { timeUTC: string }>(meetings: T[]): T[] => {
 
   // Assert the array is sorted by timeUTC
   for (let i = 1; i < meetings.length; i++) {
