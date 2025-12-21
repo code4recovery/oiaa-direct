@@ -1,6 +1,4 @@
 /** ToDo: Fix error handling */
-import type { Meeting } from "@/meetingTypes"
-
 export const fetchData = async <T>(url: string): Promise<T> => {
   try {
     const response = await fetch(url)
@@ -30,7 +28,7 @@ export const shuffleMeetings = (meetings: Meeting[]): Meeting[] => {
 
   // Assert the array is sorted by timeUTC
   for (let i = 1; i < meetings.length; i++) {
-    if (meetings[i].timeUTC <= meetings[i - 1].timeUTC) {
+    if (meetings[i].timeUTC < meetings[i - 1].timeUTC) {
       console.warn('shuffleMeetings: initial meetings array is not sorted by timeUTC')
       break
     }
