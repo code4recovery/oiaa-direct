@@ -10,6 +10,7 @@ import { Filter } from "@/components/filters"
 import { Layout } from "@/components/Layout"
 import { MeetingsSummary } from "@/components/meetings"
 import { getMeetings } from "@/getData"
+import { shuffleMeetings } from "@/utils/meetings-utils"
 import {
   Box,
   Text,
@@ -18,12 +19,15 @@ import {
 
 import type { Route } from "./+types/meetings-filtered"
 
-let loaderCallCount = 0
-
 function buildMeetingsQueryString(searchParams: URLSearchParams): string {
-  if (![...searchParams.entries()].length) {
+  const hasParams = [...searchParams.entries()].length
+  console.log('🔍 Has search params:', hasParams, 'Params:', [...searchParams.entries()])
+  
+  if (!hasParams) {
+    const now = DateTime.now().toUTC().toISO()
+    console.log('⏰ Generated timestamp:', now)
     const params = new URLSearchParams({
-      start: DateTime.now().toUTC().toISO(),
+      start: now,
       hours: "1",
     })
     return `?${params.toString()}`
@@ -31,15 +35,21 @@ function buildMeetingsQueryString(searchParams: URLSearchParams): string {
   return `?${searchParams.toString()}`
 }
 
+let loaderCallCount = 0
+
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const callId = String(++loaderCallCount)
   console.log(`🔵 #${callId} clientLoader called`, 'URL:', request.url)
   const { searchParams } = new URL(request.url)
   const qs = buildMeetingsQueryString(searchParams)
-  console.log(`📝 #${callId} Query string:`, qs)
+  console.log(`📝 #${callId} Query string :`, qs)
+  
   const meetings = await getMeetings(qs)
-  console.log(`🟢 #${callId} returning`, meetings.length, 'meetings')
-  return { meetings }
+  const shuffled = shuffleMeetings(meetings)
+  const firstThree = shuffled.slice(0, 3).map(m => m.slug)
+  console.log(`🟢 #${callId} returning`, shuffled.length, 'meetings (shuffled). First 3:', firstThree)
+  
+  return { meetings: shuffled }
 }
 
 export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
