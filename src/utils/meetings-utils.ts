@@ -1,4 +1,6 @@
 /** ToDo: Fix error handling */
+import type { Meeting } from "@/meetingTypes"
+
 export const fetchData = async <T>(url: string): Promise<T> => {
   try {
     const response = await fetch(url)
@@ -24,7 +26,7 @@ export const toggleArrayElement = <T>(array: T[], value: T): T[] => {
  * @param meetings - Array of meetings sorted by timeUTC
  * @returns A new shuffled array (does not mutate the original)
  */
-export const shuffleMeetings = (meetings: { timeUTC: string }[]): typeof meetings => {
+export const shuffleMeetings = (meetings: Meeting[]): Meeting[] => {
 
   // Assert the array is sorted by timeUTC
   for (let i = 1; i < meetings.length; i++) {
