@@ -36,6 +36,15 @@ function buildMeetingsQueryString(searchParams: URLSearchParams): string {
   return `?${searchParams.toString()}`
 }
 
+// Generate cache key from query string
+function getCacheKey(queryString: string): string {
+  // Remove leading '?' if present
+  return queryString.startsWith('?') ? queryString.slice(1) : queryString
+}
+
+// Promise-based cache to deduplicate concurrent loader calls
+const loaderCache = new Map<string, { promise: Promise<{ meetings: Meeting[] }>, callId: string }>()
+
 let loaderCallCount = 0
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise<{ meetings: Meeting[] }> {
@@ -45,12 +54,40 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise
   const qs = buildMeetingsQueryString(searchParams)
   console.log(`📝 #${callId} Query string :`, qs)
   
-  const meetings = await getMeetings(qs)
-  const shuffled = shuffleMeetings(meetings)
-  const firstThree = shuffled.slice(0, 3).map(m => m.slug)
-  console.log(`🟢 #${callId} returning`, shuffled.length, 'meetings (shuffled). First 3:', firstThree)
+  // If searchParams is empty, use 'default' as cache key
+  const hasParams = [...searchParams.entries()].length > 0
+  const cacheKey = hasParams ? getCacheKey(qs) : 'default'
+  console.log(`🔑 #${callId} Cache key :`, cacheKey)
   
-  return { meetings: shuffled }
+  // Check cache - if exists, return it
+  const cachedEntry = loaderCache.get(cacheKey)
+  if (cachedEntry) {
+    console.log(`💾 #${callId} Using cached promise from call #${cachedEntry.callId}`)
+    return cachedEntry.promise
+  }
+  
+  // Create and store promise immediately (before awaiting) to prevent race conditions
+  const promise = (async () => {
+    const meetings = await getMeetings(qs)
+    const shuffled = shuffleMeetings(meetings)
+    const firstThree = shuffled.slice(0, 3).map(m => m.slug)
+    console.log(`🟢 #${callId} returning`, shuffled.length, 'meetings (shuffled). First 3:', firstThree)
+    return { meetings: shuffled }
+  })()
+  
+  // Store in cache IMMEDIATELY (synchronously) so concurrent calls can see it
+  loaderCache.set(cacheKey, { promise, callId })
+  console.log(`📦 #${callId} Stored new promise in cache`)
+  
+  // Set up cache cleanup after promise resolves
+  void promise.finally(() => {
+    setTimeout(() => {
+      console.log(`🗑️ #${callId} Clearing cache for key: ${cacheKey}`)
+      loaderCache.delete(cacheKey)
+    }, 60000) // 60 seconds
+  })
+  
+  return promise
 }
 
 export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
