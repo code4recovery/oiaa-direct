@@ -36,10 +36,10 @@ function buildMeetingsQueryString(searchParams: URLSearchParams): string {
   return `?${searchParams.toString()}`
 }
 
-// Generate cache key from query string
-function getCacheKey(queryString: string): string {
-  // Remove leading '?' if present
-  return queryString.startsWith('?') ? queryString.slice(1) : queryString
+// Generate cache key from search params
+function getCacheKey(searchParams: URLSearchParams): string {
+  const hasParams = [...searchParams.entries()].length > 0
+  return !hasParams ? 'default' : searchParams.toString()
 }
 
 // Promise-based cache to deduplicate concurrent loader calls
@@ -54,9 +54,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise
   const qs = buildMeetingsQueryString(searchParams)
   console.log(`📝 #${callId} Query string :`, qs)
   
-  // If searchParams is empty, use 'default' as cache key
-  const hasParams = [...searchParams.entries()].length > 0
-  const cacheKey = hasParams ? getCacheKey(qs) : 'default'
+  const cacheKey = getCacheKey(searchParams)
   console.log(`🔑 #${callId} Cache key :`, cacheKey)
   
   // Check cache - if exists, return it
