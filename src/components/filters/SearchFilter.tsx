@@ -44,8 +44,10 @@ export function SearchFilter({
       clearTimeout(delayDebounce)
     }
   },
-   // eslint-disable-next-line react-hooks/exhaustive-deps
-   [searchQuery, showMinCharWarning]) // Issue #63
+  // Intentionally omitting onQueryChange from deps array
+  // See PR #63 for full discussion
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [searchQuery, showMinCharWarning])
   
   return (
     <Box>
