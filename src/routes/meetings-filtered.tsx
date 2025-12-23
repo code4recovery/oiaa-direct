@@ -18,6 +18,8 @@ import {
 
 import type { Route } from "./+types/meetings-filtered"
 
+let loaderCallCount = 0
+
 function buildMeetingsQueryString(searchParams: URLSearchParams): string {
   if (![...searchParams.entries()].length) {
     const params = new URLSearchParams({
@@ -30,13 +32,18 @@ function buildMeetingsQueryString(searchParams: URLSearchParams): string {
 }
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  const callId = String(++loaderCallCount)
+  console.log(`🔵 #${callId} clientLoader called`, 'URL:', request.url)
   const { searchParams } = new URL(request.url)
   const qs = buildMeetingsQueryString(searchParams)
+  console.log(`📝 #${callId} Query string:`, qs)
   const meetings = await getMeetings(qs)
+  console.log(`🟢 #${callId} returning`, meetings.length, 'meetings')
   return { meetings }
 }
 
 export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
+  console.log('🔴 Component render')
   const [filterParams, setFilterParams] = useSearchParams()
   const { meetings } = loaderData
   const totalMeetings = meetings.length
@@ -147,3 +154,4 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
     </>
   )
 }
+

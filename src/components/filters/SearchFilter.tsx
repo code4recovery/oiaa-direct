@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useRef,
   useState,
 } from "react"
 
@@ -23,8 +24,13 @@ export function SearchFilter({
 }: SearchFilterProps) {
   const [searchQuery, setSearchQuery] = useState(initialValue)
   const [showWarning, setShowWarning] = useState(false)
+  const isInitialMount = useRef(true)
 
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
 
     const delayDebounce = setTimeout(() => {
       onQueryChange(searchQuery)
@@ -37,8 +43,12 @@ export function SearchFilter({
     return () => {
       clearTimeout(delayDebounce)
     }
-  }, [searchQuery, onQueryChange, showMinCharWarning])
-
+  },
+  // Intentionally omitting onQueryChange from deps array
+  // See PR #63 for full discussion
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [searchQuery, showMinCharWarning])
+  
   return (
     <Box>
       <SearchInput
