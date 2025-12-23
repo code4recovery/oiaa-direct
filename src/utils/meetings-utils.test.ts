@@ -14,7 +14,16 @@ describe("toggleArrayElement", () => {
     const array1: string[] = []
     expect(toggleArrayElement(array1, "A")).toEqual(["A"])
   })
+describe("toggleArrayElement", () => {
+  test("First filter selection adds to params correctly", () => {
+    const array1: string[] = []
+    expect(toggleArrayElement(array1, "A")).toEqual(["A"])
+  })
 
+  test("Second selection of A should return an empty array", () => {
+    const testArray: string[] = ["A"]
+    expect(toggleArrayElement(testArray, "A")).toEqual([])
+  })
   test("Second selection of A should return an empty array", () => {
     const testArray: string[] = ["A"]
     expect(toggleArrayElement(testArray, "A")).toEqual([])
