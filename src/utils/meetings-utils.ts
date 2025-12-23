@@ -17,34 +17,26 @@ export const toggleArrayElement = <T>(array: T[], value: T): T[] => {
   return newArray.length === array.length ? [...newArray, value] : newArray
 }
 
-/**
- * Shuffles meetings while maintaining chronological order by start time.
- * Assumes the input array is already sorted by timeUTC (earliest to latest).
- * Meetings with the same start time are shuffled randomly among themselves.
- * @param meetings - Array of meetings sorted by timeUTC
- * @returns A new shuffled array (does not mutate the original)
- */
-export const shuffleMeetings = <T extends { timeUTC: string }>(meetings: T[]): T[] => {
 
-  // Assert the array is sorted by timeUTC
+export const shuffleMeetings = <T extends { timeUTC: string }>(meetings: T[]): T[] => {
+ 
   for (let i = 1; i < meetings.length; i++) {
     if (meetings[i].timeUTC < meetings[i - 1].timeUTC) {
-      console.warn('shuffleMeetings: initial meetings array is not sorted by timeUTC')
-      break
+      throw new Error('shuffleMeetings requires meetings to be sorted by timeUTC')
     }
   }
 
   const result = [...meetings]
-  let i = 0
 
-  while (i < result.length) {
+  for (let i = 0; i < result.length; ) {
     const currentTime = result[i].timeUTC
-    // Find the end index of meetings with the same start time
+    
+    // Find the end of this time slot
     let j = i + 1
     while (j < result.length && result[j].timeUTC === currentTime) {
       j++
     }
-
+    
     // Shuffle the subarray [i, j) if there's more than one meeting
     if (j - i > 1) {
       for (let k = j - 1; k > i; k--) {
@@ -52,9 +44,8 @@ export const shuffleMeetings = <T extends { timeUTC: string }>(meetings: T[]): T
         ;[result[k], result[randIdx]] = [result[randIdx], result[k]]
       }
     }
-
-    // Move to the next time slot
-    i = j
+    
+    i = j // Move to next time slot
   }
 
   return result

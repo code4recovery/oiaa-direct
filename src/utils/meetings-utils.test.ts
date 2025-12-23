@@ -26,6 +26,14 @@ describe("toggleArrayElement", () => {
 })
 
 describe("shuffleMeetings", () => {
+  const testMeetings = [
+    { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-1" },
+    { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-2" },
+    { timeUTC: "2025-01-01T11:00:00Z", slug: "meeting-3" },
+    { timeUTC: "2025-01-01T11:00:00Z", slug: "meeting-4" },
+    { timeUTC: "2025-01-01T12:00:00Z", slug: "meeting-5" },
+  ]
+
   test("returns empty array for empty input", () => {
     expect(shuffleMeetings([])).toEqual([])
   })
@@ -35,64 +43,23 @@ describe("shuffleMeetings", () => {
     expect(shuffleMeetings(meetings)).toEqual(meetings)
   })
 
-  test("maintains chronological order when all meetings have different times", () => {
-    const meetings = [
-      { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-1" },
-      { timeUTC: "2025-01-01T11:00:00Z", slug: "meeting-2" },
-      { timeUTC: "2025-01-01T12:00:00Z", slug: "meeting-3" },
-    ]
-    const result = shuffleMeetings(meetings)
-    expect(result[0].timeUTC).toBe("2025-01-01T10:00:00Z")
-    expect(result[1].timeUTC).toBe("2025-01-01T11:00:00Z")
-    expect(result[2].timeUTC).toBe("2025-01-01T12:00:00Z")
-  })
-
-  test("shuffles meetings with same start time while keeping chronological order", () => {
-    const meetings = [
-      { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-1" },
-      { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-2" },
-      { timeUTC: "2025-01-01T11:00:00Z", slug: "meeting-3" },
-    ]
-    
-    // Run shuffle multiple times to verify we get different orders
-    const results = new Set<string>()
-    for (let i = 0; i < 10; i++) {
-      const result = shuffleMeetings(meetings)
-      
-      // All meetings should still be at their correct time slots
-      expect(result[0].timeUTC).toBe("2025-01-01T10:00:00Z")
-      expect(result[1].timeUTC).toBe("2025-01-01T10:00:00Z")
-      expect(result[2].timeUTC).toBe("2025-01-01T11:00:00Z")
-      
-      // Track the order of 10:00 meetings
-      const order = `${result[0].slug},${result[1].slug}`
-      results.add(order)
+  test("maintains chronological order", () => {
+    const result = shuffleMeetings(testMeetings)
+    for (let i = 1; i < result.length; i++) {
+      expect(result[i].timeUTC >= result[i - 1].timeUTC).toBe(true)
     }
-    
-    // Should get at least 2 different orderings (statistically very likely with 10 runs)
-    expect(results.size).toBeGreaterThan(1)
   })
 
-  test("shuffles multiple time slots independently", () => {
-    const meetings = [
-      { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-1" },
-      { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-2" },
-      { timeUTC: "2025-01-01T11:00:00Z", slug: "meeting-3" },
-      { timeUTC: "2025-01-01T11:00:00Z", slug: "meeting-4" },
-      { timeUTC: "2025-01-01T12:00:00Z", slug: "meeting-5" },
-    ]
-    
-    // Run shuffle multiple times to verify we get different orders
+  test("shuffles meetings within same time slots", () => {
     const results = new Set<string>()
+    
     for (let i = 0; i < 10; i++) {
-      const result = shuffleMeetings(meetings)
+      const result = shuffleMeetings(testMeetings)
       
       // Verify chronological order maintained
-      expect(result[0].timeUTC).toBe("2025-01-01T10:00:00Z")
-      expect(result[1].timeUTC).toBe("2025-01-01T10:00:00Z")
-      expect(result[2].timeUTC).toBe("2025-01-01T11:00:00Z")
-      expect(result[3].timeUTC).toBe("2025-01-01T11:00:00Z")
-      expect(result[4].timeUTC).toBe("2025-01-01T12:00:00Z")
+      for (let j = 1; j < result.length; j++) {
+        expect(result[j].timeUTC >= result[j - 1].timeUTC).toBe(true)
+      }
       
       // Track the full slug order
       const slugOrder = result.map(m => m.slug).join(",")
@@ -103,50 +70,28 @@ describe("shuffleMeetings", () => {
     expect(results.size).toBeGreaterThan(1)
   })
 
-  test("does not mutate original array", () => {
-    const meetings = [
-      { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-1" },
-      { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-2" },
-    ]
-    const original = [...meetings]
+  test("contains all original meetings", () => {
+    const result = shuffleMeetings(testMeetings)
     
-    shuffleMeetings(meetings)
-    
-    expect(meetings).toEqual(original)
-  })
-
-  test("handles three meetings at same time", () => {
-    const meetings = [
-      { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-1" },
-      { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-2" },
-      { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-3" },
-    ]
-    
-    const result = shuffleMeetings(meetings)
-    
-    // All should have same time
-    expect(result.every(m => m.timeUTC === "2025-01-01T10:00:00Z")).toBe(true)
-    // Should contain all original slugs
+    const originalSlugs = testMeetings.map(m => m.slug).sort()
     const resultSlugs = result.map(m => m.slug).sort()
-    expect(resultSlugs).toEqual(["meeting-1", "meeting-2", "meeting-3"])
+    expect(resultSlugs).toEqual(originalSlugs)
   })
 
-  test("warns when input is not sorted", () => {
-    const originalWarn = console.warn
-    const warnings: string[] = []
-    console.warn = (msg: string) => warnings.push(msg)
-    
-    const meetings = [
+  test("does not mutate original array", () => {
+    const meetings = [...testMeetings] 
+    shuffleMeetings(meetings)
+    expect(meetings).toEqual(testMeetings)
+  })
+
+  test("throws error when input is not sorted", () => {
+    const unsortedMeetings = [
       { timeUTC: "2025-01-01T11:00:00Z", slug: "meeting-2" },
       { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-1" },
     ]
     
-    shuffleMeetings(meetings)
-    
-    expect(warnings).toContain(
-      "shuffleMeetings: initial meetings array is not sorted by timeUTC"
+    expect(() => shuffleMeetings(unsortedMeetings)).toThrow(
+      "shuffleMeetings requires meetings to be sorted by timeUTC"
     )
-    
-    console.warn = originalWarn
   })
 })
