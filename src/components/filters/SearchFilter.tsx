@@ -27,7 +27,6 @@ export function SearchFilter({
   const isInitialMount = useRef(true)
 
   useEffect(() => {
-    // Skip calling onQueryChange on initial mount to avoid triggering loader
     if (isInitialMount.current) {
       isInitialMount.current = false
       return
@@ -46,7 +45,7 @@ export function SearchFilter({
     }
   },
    // eslint-disable-next-line react-hooks/exhaustive-deps
-   [searchQuery, showMinCharWarning]) // Removed onQueryChange - only trigger when searchQuery changes
+   [searchQuery, showMinCharWarning]) // Issue #63
   
   return (
     <Box>
