@@ -16,3 +16,50 @@ export const toggleArrayElement = <T>(array: T[], value: T): T[] => {
   const newArray = array.filter((x) => x !== value)
   return newArray.length === array.length ? [...newArray, value] : newArray
 }
+
+interface TimeSlotted {
+  timeUTC: string
+}
+
+const fisherYatesShuffle = <T>(array: T[]): T[] => {
+  const result = [...array]
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[result[i], result[j]] = [result[j], result[i]]
+  }
+  return result
+}
+
+const groupByTimeSlot = <T extends TimeSlotted>(items: T[]): T[][] => {
+  return items.reduce<T[][]>((acc, item) => {
+    const lastGroup = acc[acc.length - 1]
+    
+    // incorrect lint error on checking for lastGroup being defined
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (lastGroup && lastGroup[0]?.timeUTC === item.timeUTC) {
+      lastGroup.push(item)
+    } else {
+      acc.push([item])
+    }
+    
+    return acc
+  }, [])
+}
+
+export const shuffleWithinTimeSlots = <T extends TimeSlotted>(
+  items: T[]
+): T[] => {
+  const isSorted = items
+    .slice(1)
+    .every((item, i) => item.timeUTC >= items[i].timeUTC)
+
+  if (!isSorted) {
+    throw new Error(
+      "shuffleWithinTimeSlots requires meetings to be sorted by timeUTC"
+    )
+  }
+
+  return groupByTimeSlot(items).flatMap((group) =>
+    group.length > 1 ? fisherYatesShuffle(group) : group
+  )
+}
