@@ -11,7 +11,7 @@ import { Layout } from "@/components/Layout"
 import { MeetingsSummary } from "@/components/meetings"
 import { getMeetings } from "@/getData"
 import type { Meeting } from "@/meetingTypes"
-import { shuffleMeetings } from "@/utils/meetings-utils"
+import { shuffleWithinTimeSlots } from "@/utils/meetings-utils"
 import {
   Box,
   Text,
@@ -46,7 +46,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise
   console.log(`📝 #${callId} Query string :`, qs)
   
   const meetings = await getMeetings(qs)
-  const shuffled = shuffleMeetings(meetings)
+  const shuffled = shuffleWithinTimeSlots(meetings)
   const firstThree = shuffled.slice(0, 3).map(m => m.slug)
   console.log(`🟢 #${callId} returning`, shuffled.length, 'meetings (shuffled). First 3:', firstThree)
   

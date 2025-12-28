@@ -5,7 +5,7 @@ import {
 } from "vitest"
 
 import {
-  shuffleMeetings,
+  shuffleWithinTimeSlots,
   toggleArrayElement,
 } from "./meetings-utils"
 
@@ -19,13 +19,17 @@ describe("toggleArrayElement", () => {
     const testArray: string[] = ["A"]
     expect(toggleArrayElement(testArray, "A")).toEqual([])
   })
+  test("Second selection of A should return an empty array", () => {
+    const testArray: string[] = ["A"]
+    expect(toggleArrayElement(testArray, "A")).toEqual([])
+  })
 
   test("Second selection of B should return just A", () => {
     expect(toggleArrayElement(["A", "B"], "B")).toEqual(["A"])
   })
 })
 
-describe("shuffleMeetings", () => {
+describe("shuffleWithinTimeSlots", () => {
   const testMeetings = [
     { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-1" },
     { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-2" },
@@ -35,16 +39,16 @@ describe("shuffleMeetings", () => {
   ]
 
   test("returns empty array for empty input", () => {
-    expect(shuffleMeetings([])).toEqual([])
+    expect(shuffleWithinTimeSlots([])).toEqual([])
   })
 
   test("returns single meeting unchanged", () => {
     const meetings = [{ timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-1" }]
-    expect(shuffleMeetings(meetings)).toEqual(meetings)
+    expect(shuffleWithinTimeSlots(meetings)).toEqual(meetings)
   })
 
   test("maintains chronological order", () => {
-    const result = shuffleMeetings(testMeetings)
+    const result = shuffleWithinTimeSlots(testMeetings)
     for (let i = 1; i < result.length; i++) {
       expect(result[i].timeUTC >= result[i - 1].timeUTC).toBe(true)
     }
@@ -54,7 +58,7 @@ describe("shuffleMeetings", () => {
     const results = new Set<string>()
     
     for (let i = 0; i < 10; i++) {
-      const result = shuffleMeetings(testMeetings)
+      const result = shuffleWithinTimeSlots(testMeetings)
       
       // Verify chronological order maintained
       for (let j = 1; j < result.length; j++) {
@@ -71,7 +75,7 @@ describe("shuffleMeetings", () => {
   })
 
   test("contains all original meetings", () => {
-    const result = shuffleMeetings(testMeetings)
+    const result = shuffleWithinTimeSlots(testMeetings)
     
     const originalSlugs = testMeetings.map(m => m.slug).sort()
     const resultSlugs = result.map(m => m.slug).sort()
@@ -80,7 +84,7 @@ describe("shuffleMeetings", () => {
 
   test("does not mutate original array", () => {
     const meetings = [...testMeetings] 
-    shuffleMeetings(meetings)
+    shuffleWithinTimeSlots(meetings)
     expect(meetings).toEqual(testMeetings)
   })
 
@@ -90,8 +94,8 @@ describe("shuffleMeetings", () => {
       { timeUTC: "2025-01-01T10:00:00Z", slug: "meeting-1" },
     ]
     
-    expect(() => shuffleMeetings(unsortedMeetings)).toThrow(
-      "shuffleMeetings requires meetings to be sorted by timeUTC"
+    expect(() => shuffleWithinTimeSlots(unsortedMeetings)).toThrow(
+      "shuffleWithinTimeSlots requires meetings to be sorted by timeUTC"
     )
   })
 })
