@@ -30,6 +30,17 @@ const fisherYatesShuffle = <T>(array: T[]): T[] => {
   return result
 }
 
+
+const assertSortedByTimeUTC = <T extends TimeSlotted>(items: T[]): void => {
+  for (let i = 1; i < items.length; i++) {
+    if (items[i].timeUTC < items[i - 1].timeUTC) {
+      throw new Error(
+        "Array must be sorted by timeUTC"
+      )
+    }
+  }
+}
+
 const groupByTimeSlot = <T extends TimeSlotted>(items: T[]): T[][] => {
   return items.reduce<T[][]>((acc, item) => {
     const lastGroup = acc[acc.length - 1]
@@ -49,15 +60,8 @@ const groupByTimeSlot = <T extends TimeSlotted>(items: T[]): T[][] => {
 export const shuffleWithinTimeSlots = <T extends TimeSlotted>(
   items: T[]
 ): T[] => {
-  const isSorted = items
-    .slice(1)
-    .every((item, i) => item.timeUTC >= items[i].timeUTC)
 
-  if (!isSorted) {
-    throw new Error(
-      "shuffleWithinTimeSlots requires meetings to be sorted by timeUTC"
-    )
-  }
+  assertSortedByTimeUTC(items)
 
   return groupByTimeSlot(items).flatMap((group) =>
     group.length > 1 ? fisherYatesShuffle(group) : group

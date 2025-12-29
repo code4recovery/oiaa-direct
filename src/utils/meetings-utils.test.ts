@@ -95,7 +95,7 @@ describe("shuffleWithinTimeSlots", () => {
     ]
     
     expect(() => shuffleWithinTimeSlots(unsortedMeetings)).toThrow(
-      "shuffleWithinTimeSlots requires meetings to be sorted by timeUTC"
+      "Array must be sorted by timeUTC"
     )
   })
 })
