@@ -63,7 +63,6 @@ export const shuffleWithinTimeSlots = <T extends TimeSlotted>(
 
   assertSortedByTimeUTC(items)
 
-  return groupByTimeSlot(items).flatMap((group) =>
-    group.length > 1 ? fisherYatesShuffle(group) : group
-  )
+  const timeSlotGroups = groupByTimeSlot(items)
+  return timeSlotGroups.flatMap(fisherYatesShuffle)
 }
