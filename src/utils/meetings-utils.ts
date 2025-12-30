@@ -43,10 +43,8 @@ const assertSortedByTimeUTC = <T extends TimeSlotted>(items: T[]): void => {
 
 const groupByTimeSlot = <T extends TimeSlotted>(items: T[]): T[][] => {
   return items.reduce<T[][]>((acc, item) => {
-    const lastGroup = acc[acc.length - 1]
+    const lastGroup = acc.at(-1)
     
-    // incorrect lint error on checking for lastGroup being defined
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (lastGroup && lastGroup[0]?.timeUTC === item.timeUTC) {
       lastGroup.push(item)
     } else {
