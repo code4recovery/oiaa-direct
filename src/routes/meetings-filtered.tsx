@@ -10,6 +10,8 @@ import { Filter } from "@/components/filters"
 import { Layout } from "@/components/Layout"
 import { MeetingsSummary } from "@/components/meetings"
 import { getMeetings } from "@/getData"
+import type { Meeting } from "@/meetingTypes"
+import { shuffleWithinTimeSlots } from "@/utils/meetings-utils"
 import {
   Box,
   Text,
@@ -18,12 +20,15 @@ import {
 
 import type { Route } from "./+types/meetings-filtered"
 
-let loaderCallCount = 0
-
 function buildMeetingsQueryString(searchParams: URLSearchParams): string {
-  if (![...searchParams.entries()].length) {
+  const hasParams = [...searchParams.entries()].length
+  console.log('🔍 Has search params:', hasParams, 'Params:', [...searchParams.entries()])
+  
+  if (!hasParams) {
+    const now = DateTime.now().toUTC().toISO()
+    console.log('⏰ Generated timestamp:', now)
     const params = new URLSearchParams({
-      start: DateTime.now().toUTC().toISO(),
+      start: now,
       hours: "1",
     })
     return `?${params.toString()}`
@@ -31,15 +36,56 @@ function buildMeetingsQueryString(searchParams: URLSearchParams): string {
   return `?${searchParams.toString()}`
 }
 
-export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+// Generate cache key from search params
+function getCacheKey(searchParams: URLSearchParams): string {
+  const hasParams = [...searchParams.entries()].length > 0
+  return !hasParams ? 'default' : searchParams.toString()
+}
+
+// Promise-based cache to deduplicate concurrent loader calls
+const loaderCache = new Map<string, { promise: Promise<{ meetings: Meeting[] }>, callId: string }>()
+
+let loaderCallCount = 0
+
+export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise<{ meetings: Meeting[] }> {
   const callId = String(++loaderCallCount)
   console.log(`🔵 #${callId} clientLoader called`, 'URL:', request.url)
   const { searchParams } = new URL(request.url)
   const qs = buildMeetingsQueryString(searchParams)
-  console.log(`📝 #${callId} Query string:`, qs)
-  const meetings = await getMeetings(qs)
-  console.log(`🟢 #${callId} returning`, meetings.length, 'meetings')
-  return { meetings }
+  console.log(`📝 #${callId} Query string :`, qs)
+  
+  const cacheKey = getCacheKey(searchParams)
+  console.log(`🔑 #${callId} Cache key :`, cacheKey)
+  
+  // Check cache - if exists, return it
+  const cachedEntry = loaderCache.get(cacheKey)
+  if (cachedEntry) {
+    console.log(`💾 #${callId} Using cached promise from call #${cachedEntry.callId}`)
+    return cachedEntry.promise
+  }
+  
+  // Create and store promise immediately (before awaiting) to prevent race conditions
+  const promise = (async () => {
+    const meetings = await getMeetings(qs)
+    const shuffled = shuffleWithinTimeSlots(meetings)
+    const firstThree = shuffled.slice(0, 3).map(m => m.slug)
+    console.log(`🟢 #${callId} returning`, shuffled.length, 'meetings (shuffled). First 3:', firstThree)
+    return { meetings: shuffled }
+  })()
+  
+  // Store in cache IMMEDIATELY (synchronously) so concurrent calls can see it
+  loaderCache.set(cacheKey, { promise, callId })
+  console.log(`📦 #${callId} Stored new promise in cache`)
+  
+  // Set up cache cleanup after promise resolves
+  void promise.finally(() => {
+    setTimeout(() => {
+      console.log(`🗑️ #${callId} Clearing cache for key: ${cacheKey}`)
+      loaderCache.delete(cacheKey)
+    }, 60000) // 60 seconds
+  })
+  
+  return promise
 }
 
 export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
