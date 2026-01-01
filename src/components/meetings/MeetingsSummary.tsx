@@ -30,7 +30,13 @@ export function MeetingsSummary({
           <Heading size="lg">
             Meetings
             {
-              <Text as="span" fontSize="md" color="gray.500" ml={2}>
+              <Text
+                as="span"
+                fontSize="md"
+                color="gray.500"
+                _dark={{ color: "gray.400" }}
+                ml={2}
+              >
                 ({totalMeetings} total results; {meetings.length} shown.)
               </Text>
             }
@@ -48,7 +54,12 @@ export function MeetingsSummary({
               />
             ))}
             {meetings.length === 0 && (
-              <Text color="gray.500" textAlign="center" py={8}>
+              <Text
+                color="gray.500"
+                _dark={{ color: "gray.400" }}
+                textAlign="center"
+                py={8}
+              >
                 No meetings found matching your criteria
               </Text>
             )}
