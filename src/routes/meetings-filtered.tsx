@@ -65,7 +65,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise
   }
   
   // Create and store promise immediately (before awaiting) to prevent race conditions
-  const promise = (async () => {
+  const promise: Promise<{ meetings: Meeting[] }> = (async () => {
     const meetings = await getMeetings(qs)
     const shuffled = shuffleWithinTimeSlots(meetings)
     const firstThree = shuffled.slice(0, 3).map(m => m.slug)
