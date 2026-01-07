@@ -1,0 +1,366 @@
+/**
+ * WordPress Theme Override Styles for OIAA Meetings Plugin
+ *
+ * Purpose: Isolate the React app from WordPress theme CSS conflicts
+ * Scope: All styles target #oiaa-meetings-root to increase specificity
+ *
+ * Key fixes:
+ * - Full-width container breaking out of theme constraints
+ * - Centered content layout
+ * - Typography reset (h1-h6 sizes)
+ * - Preserve Chakra UI styles
+ */
+
+/* ============================================================
+   PARENT CONTAINER RESETS - Allow full-width breakout
+   ============================================================ */
+
+/* CRITICAL: Reset ONLY parent containers that contain the plugin */
+/* Use :has() selector to target only when #oiaa-meetings-root is present */
+
+/* Foundation off-canvas wrapper - CRITICAL for full width breakout */
+.off-canvas-wrapper:has(#oiaa-meetings-root),
+.off-canvas-content:has(#oiaa-meetings-root) {
+  max-width: 100vw !important;
+  width: 100vw !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Main content wrapper - ONLY when it contains our plugin */
+.content:has(#oiaa-meetings-root),
+.content #oiaa-meetings-root {
+  max-width: 100vw !important;
+  overflow: visible !important;
+}
+
+.content:has(#oiaa-meetings-root) {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Inner content grid container - ONLY when it contains our plugin */
+.inner-content.grid-x:has(#oiaa-meetings-root),
+.inner-content.grid-x.grid-margin-x:has(#oiaa-meetings-root),
+.inner-content.grid-x.grid-margin-x.grid-padding-x:has(#oiaa-meetings-root) {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+/* Main content cell - ONLY when it contains our plugin */
+.main-content.cell:has(#oiaa-meetings-root),
+.main-content.small-12.cell:has(#oiaa-meetings-root) {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+/* Content body wrapper - ONLY when it contains our plugin */
+.content-body:has(#oiaa-meetings-root) {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+/* ============================================================
+   CONTAINER ISOLATION & FULL-WIDTH LAYOUT
+   ============================================================ */
+
+#oiaa-meetings-root {
+  /* Full viewport width */
+  width: 100vw !important;
+  max-width: none !important;
+
+  /* Calculate negative margins to break out of containers */
+  /* This finds the parent padding/margin and compensates */
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+
+  /* Reset WordPress theme spacing */
+  padding: 0 !important;
+
+  /* Ensure proper box sizing */
+  box-sizing: border-box !important;
+
+  /* Reset any WordPress theme display properties */
+  display: block !important;
+
+  /* Ensure no WordPress theme background bleeds through */
+  background: transparent !important;
+
+  /* Clear any floats from WordPress theme */
+  clear: both !important;
+}
+
+/* Ensure all children use border-box */
+#oiaa-meetings-root *,
+#oiaa-meetings-root *::before,
+#oiaa-meetings-root *::after {
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   TYPOGRAPHY RESET - Override WordPress Theme Headings
+   ============================================================ */
+
+/* Reset all headings within the app */
+#oiaa-meetings-root h1,
+#oiaa-meetings-root h2,
+#oiaa-meetings-root h3,
+#oiaa-meetings-root h4,
+#oiaa-meetings-root h5,
+#oiaa-meetings-root h6 {
+  /* Remove WordPress theme margins */
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+
+  /* Reset WordPress theme font weights */
+  font-weight: inherit !important;
+
+  /* Reset WordPress theme line heights */
+  line-height: inherit !important;
+
+  /* Reset WordPress theme letter spacing */
+  letter-spacing: inherit !important;
+
+  /* Reset WordPress theme text transform */
+  text-transform: none !important;
+}
+
+/* Specific heading sizes for the meeting guide */
+#oiaa-meetings-root h1 {
+  font-size: 2rem !important; /* 32px - Page title */
+}
+
+#oiaa-meetings-root h2 {
+  font-size: 1.75rem !important; /* 28px - Meeting card titles */
+}
+
+#oiaa-meetings-root h3 {
+  font-size: 1.5rem !important; /* 24px - Section headings */
+}
+
+#oiaa-meetings-root h4 {
+  font-size: 1.25rem !important; /* 20px - Subsection headings */
+}
+
+#oiaa-meetings-root h5 {
+  font-size: 1.125rem !important; /* 18px */
+}
+
+#oiaa-meetings-root h6 {
+  font-size: 1rem !important; /* 16px */
+}
+
+/* ============================================================
+   PARAGRAPH & TEXT RESET
+   ============================================================ */
+
+#oiaa-meetings-root p {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Reset WordPress theme link styles */
+#oiaa-meetings-root a {
+  text-decoration: none !important;
+}
+
+/* ============================================================
+   BUTTON RESET - Minimal reset, let Chakra UI handle styling
+   ============================================================ */
+
+#oiaa-meetings-root button {
+  /* Only reset properties that WordPress themes commonly override aggressively */
+  /* Do NOT reset padding, background, border - let Chakra UI control these */
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ============================================================
+   LIST RESET
+   ============================================================ */
+
+#oiaa-meetings-root ul,
+#oiaa-meetings-root ol {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#oiaa-meetings-root li {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ============================================================
+   INPUT & FORM RESET - Minimal reset, preserve inline/Chakra styles
+   ============================================================ */
+
+#oiaa-meetings-root input,
+#oiaa-meetings-root textarea,
+#oiaa-meetings-root select {
+  /* Only reset font properties - let component styles handle the rest */
+  /* Do NOT reset padding, background, border - these are set by components */
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   TABLE RESET (if used in future)
+   ============================================================ */
+
+#oiaa-meetings-root table {
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  width: 100% !important;
+}
+
+#oiaa-meetings-root th,
+#oiaa-meetings-root td {
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+/* ============================================================
+   IMAGE RESET
+   ============================================================ */
+
+#oiaa-meetings-root img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+}
+
+/* ============================================================
+   WORDPRESS ADMIN BAR COMPATIBILITY
+   ============================================================ */
+
+/* Adjust top spacing when WordPress admin bar is present */
+body.admin-bar #oiaa-meetings-root {
+  /* WordPress admin bar is 32px on desktop, 46px on mobile */
+  /* Chakra UI will handle internal spacing, just ensure no overlap */
+}
+
+/* ============================================================
+   WORDPRESS THEME SPECIFIC OVERRIDES
+   ============================================================ */
+
+/* Twenty Twenty-Five (2025) theme overrides */
+.wp-site-blocks #oiaa-meetings-root {
+  /* Override theme's content width constraints */
+  max-width: 100vw !important;
+}
+
+/* Twenty Twenty-Four (2024) theme overrides */
+.is-layout-constrained > #oiaa-meetings-root {
+  max-width: 100vw !important;
+}
+
+/* GeneratePress theme overrides */
+.site-content #oiaa-meetings-root {
+  padding: 0 !important;
+}
+
+/* Astra theme overrides */
+.ast-container #oiaa-meetings-root {
+  max-width: 100vw !important;
+  padding: 0 !important;
+}
+
+/* ============================================================
+   CHAKRA UI PRESERVATION
+   ============================================================ */
+
+/* Chakra UI uses CSS-in-JS (Emotion) which injects styles at runtime.
+   We intentionally do NOT use aggressive resets here - the minimal
+   resets above allow Chakra's styles to apply correctly. */
+
+/* ============================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================ */
+
+@media (max-width: 768px) {
+  #oiaa-meetings-root {
+    /* Maintain full width on mobile */
+    width: 100vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+  }
+}
+
+/* ============================================================
+   DARK MODE SUPPORT - Container-level text colors
+   ============================================================ */
+
+/*
+ * Set explicit text colors at container level so components using
+ * color="inherit" will get the correct color for the current theme.
+ * This prevents WordPress theme colors from bleeding into the app.
+ */
+
+/* Light mode (default) */
+#oiaa-meetings-root {
+  color: #1a202c; /* Chakra gray.800 - standard body text */
+  color-scheme: light;
+}
+
+/* Dark mode - Chakra UI uses .dark class on html/body */
+.dark #oiaa-meetings-root,
+.chakra-ui-dark #oiaa-meetings-root,
+[data-theme="dark"] #oiaa-meetings-root,
+#oiaa-meetings-root.dark {
+  color: rgba(255, 255, 255, 0.92); /* Chakra's dark mode body text */
+  color-scheme: dark;
+}
+
+/* Also handle when data-theme is on the root itself */
+#oiaa-meetings-root[data-theme="dark"] {
+  color: rgba(255, 255, 255, 0.92);
+  color-scheme: dark;
+}
+
+#oiaa-meetings-root[data-theme="light"] {
+  color: #1a202c;
+  color-scheme: light;
+}
+
+/* System preference fallback when no explicit theme is set */
+@media (prefers-color-scheme: dark) {
+  #oiaa-meetings-root:not([data-theme="light"]):not(.light) {
+    color: rgba(255, 255, 255, 0.92);
+    color-scheme: dark;
+  }
+}
+
+/* ============================================================
+   Z-INDEX MANAGEMENT
+   ============================================================ */
+
+/* Ensure modals/dialogs appear above WordPress elements */
+#oiaa-meetings-root [role="dialog"],
+#oiaa-meetings-root [role="alertdialog"] {
+  z-index: 999999 !important; /* Above WordPress admin bar (z-index: 99999) */
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+
+@media print {
+  #oiaa-meetings-root {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+}

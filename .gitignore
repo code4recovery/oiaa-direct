@@ -19,8 +19,9 @@ build
 .cache
 .next
 
-# WordPress plugin build outputs
+# WordPress plugin build outputs (except source CSS)
 wordpress-plugin/assets/
+!wordpress-plugin/assets/wordpress-overrides.css
 *.zip
 
 # Editor directories and files
