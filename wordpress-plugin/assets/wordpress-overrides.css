@@ -301,16 +301,47 @@ body.admin-bar #oiaa-meetings-root {
 }
 
 /* ============================================================
-   DARK MODE SUPPORT
+   DARK MODE SUPPORT - Container-level text colors
    ============================================================ */
 
-/* Ensure dark mode works regardless of WordPress theme */
+/*
+ * Set explicit text colors at container level so components using
+ * color="inherit" will get the correct color for the current theme.
+ * This prevents WordPress theme colors from bleeding into the app.
+ */
+
+/* Light mode (default) */
+#oiaa-meetings-root {
+  color: #1a202c; /* Chakra gray.800 - standard body text */
+  color-scheme: light;
+}
+
+/* Dark mode - Chakra UI uses .dark class on html/body */
+.dark #oiaa-meetings-root,
+.chakra-ui-dark #oiaa-meetings-root,
+[data-theme="dark"] #oiaa-meetings-root,
+#oiaa-meetings-root.dark {
+  color: rgba(255, 255, 255, 0.92); /* Chakra's dark mode body text */
+  color-scheme: dark;
+}
+
+/* Also handle when data-theme is on the root itself */
 #oiaa-meetings-root[data-theme="dark"] {
-  color-scheme: dark !important;
+  color: rgba(255, 255, 255, 0.92);
+  color-scheme: dark;
 }
 
 #oiaa-meetings-root[data-theme="light"] {
-  color-scheme: light !important;
+  color: #1a202c;
+  color-scheme: light;
+}
+
+/* System preference fallback when no explicit theme is set */
+@media (prefers-color-scheme: dark) {
+  #oiaa-meetings-root:not([data-theme="light"]):not(.light) {
+    color: rgba(255, 255, 255, 0.92);
+    color-scheme: dark;
+  }
 }
 
 /* ============================================================
