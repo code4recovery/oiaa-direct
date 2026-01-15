@@ -10,6 +10,11 @@ import { Link as RouterLink } from "react-router"
 
 import { Layout } from "@/components/Layout"
 import {
+  CalendarActions,
+  JoinMeetingButton,
+  MeetingItem,
+} from "@/components/meetings"
+import {
   getMeeting,
   getRelatedDetails,
 } from "@/getData"
@@ -32,7 +37,6 @@ import {
   Text,
 } from "@chakra-ui/react"
 
-import { JoinMeetingButton, MeetingItem, CalendarActions } from "@/components/meetings"
 import type { Route } from "./+types/group-info"
 
 const DESCRIPTIONS: Record<string, string> = {
@@ -83,6 +87,22 @@ const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
     originalTimezone: meetingTimezone,
     userTimezone,
   }
+}
+
+const TimeDisplay = ({ 
+  timeInfo, 
+  type = 'original' 
+}: { 
+  timeInfo: ReturnType<typeof formatMeetingTime>; 
+  type?: 'original' | 'user' 
+}) => {
+  const time = type === 'original' ? timeInfo.originalTime : timeInfo.userTime
+  const timezone = type === 'original' ? timeInfo.originalTimezone : timeInfo.userTimezone
+  return (
+    <>
+      {time} ({timezone.replace("_", " ")})
+    </>
+  )
 }
 
 const localDay = (timeStamp: string) =>
@@ -189,8 +209,9 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   const { meeting, group } = loaderData
   const { groupMeetings, groupInfo } = group
 
-  const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone)
-
+  const timeInfo = meeting.timeUTC && meeting.timezone ?
+    formatMeetingTime(meeting.timeUTC, meeting.timezone) :
+    undefined 
 
   const categories = [
     "features",
@@ -202,9 +223,6 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
 
 
   const websiteUrl = meeting.groupWebsite
-
-
-  groupMeetings.sort((a, b) => a.timeUTC.localeCompare(b.timeUTC))
 
   return (
     <Layout>
@@ -248,26 +266,31 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                   _dark={{ color: "gray.400" }}
                   fontWeight="medium"
                 >
-                  {localDay(meeting.timeUTC)} at {timeInfo.originalTime} (
-                  {timeInfo.originalTimezone.replace("_", " ")})
+                  {timeInfo
+                    ? `${localDay(meeting.timeUTC)} at ${timeInfo.originalTime} (${timeInfo.originalTimezone.replace("_", " ")})`
+                    : "Ongoing"}
                 </Text>
               </Flex>
-              <Flex align="center" mt={1}>
-                <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-                  <FaGlobeAmericas />
-                </Box>
-                <Text color="gray.600" _dark={{ color: "gray.400" }}>
-                  Your local time: {timeInfo.userTime} ({timeInfo.userTimezone})
-                </Text>
-              </Flex>
-              <Flex align="center" mt={1}>
-                <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-                  <FaClock />
-                </Box>
-                <Text color="gray.600" _dark={{ color: "gray.400" }}>
-                  {meeting.duration} minutes
-                </Text>
-              </Flex>
+              {timeInfo && (
+                <>
+                  <Flex align="center" mt={1}>
+                    <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
+                      <FaGlobeAmericas />
+                    </Box>
+                    <Text color="gray.600" _dark={{ color: "gray.400" }}>
+                      Your local time: <TimeDisplay timeInfo={timeInfo} type="user" />
+                    </Text>
+                  </Flex>
+                  <Flex align="center" mt={1}>
+                    <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
+                      <FaClock />
+                    </Box>
+                    <Text color="gray.600" _dark={{ color: "gray.400" }}>
+                      {meeting.duration} minutes
+                    </Text>
+                  </Flex>
+                </>
+              )}
             </Box>
 
             <Box mt={{ base: 4, md: 0 }}>
@@ -415,25 +438,28 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
               </Box>
             )}
 
-            <Box>
-              <Text fontWeight="bold">Day</Text>
-              <Text>{localDay(meeting.timeUTC)}</Text>
-            </Box>
+            {timeInfo && (
+              <>
+                <Box>
+                  <Text fontWeight="bold">Day</Text>
+                  <Text>{localDay(meeting.timeUTC)}</Text>
+                </Box>
 
-            <Box>
-              <Text fontWeight="bold">Meeting Time</Text>
-              <Text>
-                {timeInfo.originalTime} (
-                {timeInfo.originalTimezone.replace("_", " ")})
-              </Text>
-            </Box>
+                <Box>
+                  <Text fontWeight="bold">Meeting Time</Text>
+                  <Text>
+                    <TimeDisplay timeInfo={timeInfo} type="original" />
+                  </Text>
+                </Box>
 
-            <Box>
-              <Text fontWeight="bold">Your Local Time</Text>
-              <Text>
-                {timeInfo.userTime} ({timeInfo.userTimezone})
-              </Text>
-            </Box>
+                <Box>
+                  <Text fontWeight="bold">Your Local Time</Text>
+                  <Text>
+                    <TimeDisplay timeInfo={timeInfo} type="user" />
+                  </Text>
+                </Box>
+              </>
+            )}
 
             {meeting.conference_provider && (
               <Box>
@@ -524,7 +550,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
             </Flex>
           )}
         </Box>
-
+        
         <Box p={6}>
           <Flex direction="column" gap={4}>
             {groupMeetings.map((groupMeeting, index: number) => (

@@ -14,9 +14,9 @@ import {
 
 export interface MeetingTimeProps {
   /** UTC time string from the meeting data */
-  timeUTC: string
+  timeUTC?: string
   /** Meeting's original timezone */
-  timezone: string
+  timezone?: string
   /** Display format variant */
   format: 'short' | 'long' | 'relative' | 'compact'
   /** Whether to show user's local time conversion */
@@ -126,9 +126,6 @@ export const MeetingTime = ({
   showIcons = true,
   size,
 }: MeetingTimeProps) => {
-  const timeInfo = formatMeetingTime(timeUTC, timezone)
-  const relativeTime = getRelativeTimeDescription(timeUTC)
-  
   // Responsive size handling
   const responsiveSize = useBreakpointValue({
     base: size ?? 'sm',
@@ -151,6 +148,73 @@ export const MeetingTime = ({
     color: "gray.600",
     _dark: { color: "gray.400" },
   }
+
+  // Handle unscheduled meetings
+  const isScheduled = timeUTC && timezone
+
+  if (!isScheduled) {
+    if (format === 'compact') {
+      return (
+        <Text {...primaryTextProps} fontStyle="italic">
+          Ongoing
+        </Text>
+      )
+    }
+
+    if (format === 'short') {
+      return (
+        <Box>
+          <Flex align="center" gap={2}>
+            {showIcons && (
+              <Box color={iconColor} fontSize={iconSize}>
+                <FaCalendarAlt />
+              </Box>
+            )}
+            <Text {...primaryTextProps}>
+              Ongoing
+            </Text>
+          </Flex>
+        </Box>
+      )
+    }
+
+    if (format === 'relative') {
+      return (
+        <Box>
+          <Flex align="center" gap={2}>
+            {showIcons && (
+              <Box color={iconColor} fontSize={iconSize}>
+                <FaClock />
+              </Box>
+            )}
+            <Text {...primaryTextProps} fontStyle="italic">
+              Ongoing
+            </Text>
+          </Flex>
+        </Box>
+      )
+    }
+
+    // format === 'long' or default
+    return (
+      <Box>
+        <Flex align="center" gap={2}>
+          {showIcons && (
+            <Box color={iconColor} fontSize={iconSize}>
+              <FaCalendarAlt />
+            </Box>
+          )}
+          <Text {...primaryTextProps} fontStyle="italic">
+            Ongoing
+          </Text>
+        </Flex>
+      </Box>
+    )
+  }
+
+  // For scheduled meetings, format the time info
+  const timeInfo = formatMeetingTime(timeUTC, timezone)
+  const relativeTime = getRelativeTimeDescription(timeUTC)
 
   if (format === 'compact') {
     // Single line, minimal info for mobile lists - LOCAL TIME FIRST
