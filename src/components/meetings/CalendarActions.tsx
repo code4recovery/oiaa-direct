@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import type { Meeting } from "@/meetingTypes"
+import { isScheduledMeeting } from "@/utils/meetings-utils"
 import {
   Button,
   Flex,
@@ -28,6 +29,10 @@ export interface CalendarActionsProps {
 }
 
 const generateICS = (meeting: Meeting, isRecurring = false): string => {
+  if (!isScheduledMeeting(meeting)) {
+    throw new Error('Meeting must have timeUTC and timezone')
+  }
+  
   const startDate = DateTime.fromISO(meeting.timeUTC)
   const endDate = startDate.plus({ hours: 1 }) // Assume 1-hour meetings
   
@@ -94,6 +99,10 @@ const downloadICS = (meeting: Meeting, isRecurring = false) => {
 }
 
 const generateCalendarUrls = (meeting: Meeting, isRecurring = false) => {
+  if (!isScheduledMeeting(meeting)) {
+    throw new Error('Meeting must have timeUTC and timezone')
+  }
+  
   const startDate = DateTime.fromISO(meeting.timeUTC)
   const endDate = startDate.plus({ hours: 1 })
   
@@ -177,6 +186,10 @@ export const CalendarActions = ({
   layout = 'horizontal',
   forceMode,
 }: CalendarActionsProps) => {
+  // No-op for unscheduled meetings
+  if (!isScheduledMeeting(meeting)) {
+    return null
+  }
   
   const displayMode = forceMode ?? mode
 

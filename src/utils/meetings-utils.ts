@@ -64,3 +64,57 @@ export const shuffleWithinTimeSlots = <T extends TimeSlotted>(
   const timeSlotGroups = groupByTimeSlot(items)
   return timeSlotGroups.flatMap(fisherYatesShuffle)
 }
+
+export const isScheduledMeeting = <T extends { timeUTC?: string; timezone?: string }>(
+  meeting: T
+): meeting is T & { timeUTC: string; timezone: string } => {
+  return Boolean(meeting.timeUTC && meeting.timezone)
+}
+
+export interface MeetingTimeInfo {
+  timeUTC: string
+  timezone: string
+  originalTime: string
+  userTime: string
+  originalTimezone: string
+  userTimezone: string
+  duration?: number
+}
+
+/**
+ * Formats time information for a scheduled meeting
+ * Requires a meeting with timeUTC and timezone - use isScheduledMeeting() guard before calling
+ */
+export const formatMeetingTimeInfo = (
+  meeting: { timeUTC: string; timezone: string; duration?: number }
+): MeetingTimeInfo => {
+  const date = new Date(meeting.timeUTC)
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+  const originalTimeFormatter = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    timeZone: meeting.timezone,
+    hour12: true,
+  })
+
+  const userTimeFormatter = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    timeZone: userTimezone,
+    hour12: true,
+  })
+
+  const originalTime = originalTimeFormatter.format(date)
+  const userTime = userTimeFormatter.format(date)
+
+  return {
+    timeUTC: meeting.timeUTC,
+    timezone: meeting.timezone,
+    originalTime,
+    userTime,
+    originalTimezone: meeting.timezone,
+    userTimezone,
+    duration: meeting.duration,
+  }
+}

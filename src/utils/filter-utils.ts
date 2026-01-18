@@ -126,3 +126,24 @@ export function updateTimeParams(
   
   return next
 }
+
+export function isScheduledMode(params: URLSearchParams): boolean {
+  return params.get("scheduled") !== "false"
+}
+
+export function updateScheduledParam(
+  params: URLSearchParams,
+  isScheduled: boolean
+): URLSearchParams {
+  const next = new URLSearchParams(params)
+  
+  if (isScheduled) {
+    next.delete("scheduled")
+  } else {
+    next.set("scheduled", "false")
+    next.delete("start")
+    next.delete("hours")
+  }
+  
+  return next
+}

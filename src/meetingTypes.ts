@@ -109,10 +109,10 @@ export interface CategoryMap {
 export interface Meeting extends CategoryMap {
   slug: string
   name: string
-  timezone: string
-  timeUTC: string
+  timezone?: string
+  timeUTC?: string
   rtc: string
-  duration: Minutes
+  duration?: Minutes
   conference_provider?: string
   conference_url?: string
   conference_url_notes?: string
