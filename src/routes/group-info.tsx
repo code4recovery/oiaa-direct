@@ -29,6 +29,7 @@ import {
 import {
   formatMeetingTimeInfo,
   isScheduledMeeting,
+  type MeetingTimeInfo,
 } from "@/utils/meetings-utils"
 import {
   Badge,
@@ -63,7 +64,7 @@ const TimeDisplay = ({
   timeInfo, 
   type = 'original' 
 }: { 
-  timeInfo: ReturnType<typeof formatMeetingTimeInfo>; 
+  timeInfo: MeetingTimeInfo; 
   type?: 'original' | 'user' 
 }) => {
   const time = type === 'original' ? timeInfo.originalTime : timeInfo.userTime
@@ -90,7 +91,7 @@ const getCategoryFullName = (
 const MeetingTimeInfo = ({ 
   timeInfo 
 }: { 
-  timeInfo: ReturnType<typeof formatMeetingTimeInfo> | undefined
+  timeInfo: MeetingTimeInfo | undefined
 }) => {
   if (!timeInfo) {
     return (

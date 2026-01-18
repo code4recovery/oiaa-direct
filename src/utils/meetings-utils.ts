@@ -65,14 +65,20 @@ export const shuffleWithinTimeSlots = <T extends TimeSlotted>(
   return timeSlotGroups.flatMap(fisherYatesShuffle)
 }
 
-/**
- * Determines if a meeting has scheduled time information
- * Type guard that narrows the meeting type to guarantee timeUTC and timezone are defined
- */
 export const isScheduledMeeting = <T extends { timeUTC?: string; timezone?: string }>(
   meeting: T
 ): meeting is T & { timeUTC: string; timezone: string } => {
   return Boolean(meeting.timeUTC && meeting.timezone)
+}
+
+export interface MeetingTimeInfo {
+  timeUTC: string
+  timezone: string
+  originalTime: string
+  userTime: string
+  originalTimezone: string
+  userTimezone: string
+  duration?: number
 }
 
 /**
@@ -81,7 +87,7 @@ export const isScheduledMeeting = <T extends { timeUTC?: string; timezone?: stri
  */
 export const formatMeetingTimeInfo = (
   meeting: { timeUTC: string; timezone: string; duration?: number }
-) => {
+): MeetingTimeInfo => {
   const date = new Date(meeting.timeUTC)
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
