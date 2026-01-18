@@ -112,7 +112,7 @@ export interface Meeting extends CategoryMap {
   timezone?: string
   timeUTC?: string
   rtc: string
-  duration: Minutes
+  duration?: Minutes
   conference_provider?: string
   conference_url?: string
   conference_url_notes?: string

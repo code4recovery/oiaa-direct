@@ -26,7 +26,10 @@ import {
   type Meeting,
   TYPE,
 } from "@/meetingTypes"
-import { getTimeInfoFromMeeting } from "@/utils/meetings-utils"
+import {
+  formatMeetingTimeInfo,
+  isScheduledMeeting,
+} from "@/utils/meetings-utils"
 import {
   Badge,
   Box,
@@ -60,7 +63,7 @@ const TimeDisplay = ({
   timeInfo, 
   type = 'original' 
 }: { 
-  timeInfo: NonNullable<ReturnType<typeof getTimeInfoFromMeeting>>; 
+  timeInfo: ReturnType<typeof formatMeetingTimeInfo>; 
   type?: 'original' | 'user' 
 }) => {
   const time = type === 'original' ? timeInfo.originalTime : timeInfo.userTime
@@ -87,7 +90,7 @@ const getCategoryFullName = (
 const MeetingTimeInfo = ({ 
   timeInfo 
 }: { 
-  timeInfo: NonNullable<ReturnType<typeof getTimeInfoFromMeeting>> | undefined
+  timeInfo: ReturnType<typeof formatMeetingTimeInfo> | undefined
 }) => {
   if (!timeInfo) {
     return (
@@ -128,20 +131,22 @@ const MeetingTimeInfo = ({
           Your local time: <TimeDisplay timeInfo={timeInfo} type="user" />
         </Text>
       </Flex>
-      <Flex align="center" mt={1}>
-        <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-          <FaClock />
-        </Box>
-        <Text color="gray.600" _dark={{ color: "gray.400" }}>
-          {timeInfo.duration} minutes
-        </Text>
-      </Flex>
+      {timeInfo.duration && (
+        <Flex align="center" mt={1}>
+          <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
+            <FaClock />
+          </Box>
+          <Text color="gray.600" _dark={{ color: "gray.400" }}>
+            {timeInfo.duration} minutes
+          </Text>
+        </Flex>
+      )}
     </>
   )
 }
 
 const MeetingHeader = ({ meeting }: { meeting: Meeting }) => {
-  const timeInfo = getTimeInfoFromMeeting(meeting)
+  const timeInfo = isScheduledMeeting(meeting) ? formatMeetingTimeInfo(meeting) : undefined
   const websiteUrl = meeting.groupWebsite
 
   return (
@@ -319,7 +324,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   const { meeting, group } = loaderData
   const { groupMeetings, groupInfo } = group
 
-  const timeInfo = getTimeInfoFromMeeting(meeting) 
+  const timeInfo = isScheduledMeeting(meeting) ? formatMeetingTimeInfo(meeting) : undefined 
 
   const categories = [
     "features",

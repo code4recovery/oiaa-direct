@@ -76,16 +76,12 @@ export const isScheduledMeeting = <T extends { timeUTC?: string; timezone?: stri
 }
 
 /**
- * Gets formatted time information from a meeting if it has scheduled time
- * Returns undefined for unscheduled meetings
+ * Formats time information for a scheduled meeting
+ * Requires a meeting with timeUTC and timezone - use isScheduledMeeting() guard before calling
  */
-export const getTimeInfoFromMeeting = (
-  meeting: { timeUTC?: string; timezone?: string; duration: number }
+export const formatMeetingTimeInfo = (
+  meeting: { timeUTC: string; timezone: string; duration?: number }
 ) => {
-  if (!isScheduledMeeting(meeting)) {
-    return undefined
-  }
-
   const date = new Date(meeting.timeUTC)
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
