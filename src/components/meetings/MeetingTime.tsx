@@ -149,53 +149,15 @@ export const MeetingTime = ({
     _dark: { color: "gray.400" },
   }
 
-  // Handle unscheduled meetings
-  const isScheduled = timeUTC && timezone
-
-  if (!isScheduled) {
+  if (!timeUTC || !timezone) {
     if (format === 'compact') {
       return (
-        <Text {...primaryTextProps} fontStyle="italic">
-          Ongoing
+        <Text {...primaryTextProps}>
+          Ongoing ( Line 157) 
         </Text>
       )
     }
 
-    if (format === 'short') {
-      return (
-        <Box>
-          <Flex align="center" gap={2}>
-            {showIcons && (
-              <Box color={iconColor} fontSize={iconSize}>
-                <FaCalendarAlt />
-              </Box>
-            )}
-            <Text {...primaryTextProps}>
-              Ongoing
-            </Text>
-          </Flex>
-        </Box>
-      )
-    }
-
-    if (format === 'relative') {
-      return (
-        <Box>
-          <Flex align="center" gap={2}>
-            {showIcons && (
-              <Box color={iconColor} fontSize={iconSize}>
-                <FaClock />
-              </Box>
-            )}
-            <Text {...primaryTextProps} fontStyle="italic">
-              Ongoing
-            </Text>
-          </Flex>
-        </Box>
-      )
-    }
-
-    // format === 'long' or default
     return (
       <Box>
         <Flex align="center" gap={2}>
@@ -204,8 +166,8 @@ export const MeetingTime = ({
               <FaCalendarAlt />
             </Box>
           )}
-          <Text {...primaryTextProps} fontStyle="italic">
-            Ongoing
+          <Text {...primaryTextProps}>
+            Ongoing (Line 171)
           </Text>
         </Flex>
       </Box>

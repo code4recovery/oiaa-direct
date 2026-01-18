@@ -64,3 +64,45 @@ export const shuffleWithinTimeSlots = <T extends TimeSlotted>(
   const timeSlotGroups = groupByTimeSlot(items)
   return timeSlotGroups.flatMap(fisherYatesShuffle)
 }
+
+/**
+ * Gets formatted time information from a meeting if it has scheduled time
+ * Returns undefined for unscheduled meetings
+ */
+export const getTimeInfoFromMeeting = (
+  meeting: { timeUTC?: string; timezone?: string; duration: number }
+) => {
+  if (!meeting.timeUTC || !meeting.timezone) {
+    return undefined
+  }
+
+  const date = new Date(meeting.timeUTC)
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+  const originalTimeFormatter = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    timeZone: meeting.timezone,
+    hour12: true,
+  })
+
+  const userTimeFormatter = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    timeZone: userTimezone,
+    hour12: true,
+  })
+
+  const originalTime = originalTimeFormatter.format(date)
+  const userTime = userTimeFormatter.format(date)
+
+  return {
+    timeUTC: meeting.timeUTC,
+    timezone: meeting.timezone,
+    originalTime,
+    userTime,
+    originalTimezone: meeting.timezone,
+    userTimezone,
+    duration: meeting.duration,
+  }
+}
