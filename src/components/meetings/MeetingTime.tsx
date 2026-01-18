@@ -153,25 +153,25 @@ export const MeetingTime = ({
     if (format === 'compact') {
       return (
         <Text {...primaryTextProps}>
-          Ongoing ( Line 157) 
+          Ongoing
         </Text>
       )
+    } else {
+      return (
+        <Box>
+          <Flex align="center" gap={2}>
+            {showIcons && (
+              <Box color={iconColor} fontSize={iconSize}>
+                <FaCalendarAlt />
+              </Box>
+            )}
+            <Text {...primaryTextProps}>
+              Ongoing
+            </Text>
+          </Flex>
+        </Box>
+      )
     }
-
-    return (
-      <Box>
-        <Flex align="center" gap={2}>
-          {showIcons && (
-            <Box color={iconColor} fontSize={iconSize}>
-              <FaCalendarAlt />
-            </Box>
-          )}
-          <Text {...primaryTextProps}>
-            Ongoing (Line 171)
-          </Text>
-        </Flex>
-      </Box>
-    )
   }
 
   // For scheduled meetings, format the time info
