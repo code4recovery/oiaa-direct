@@ -66,13 +66,22 @@ export const shuffleWithinTimeSlots = <T extends TimeSlotted>(
 }
 
 /**
+ * Determines if a meeting has scheduled time information
+ */
+export const isScheduledMeeting = (
+  meeting: { timeUTC?: string; timezone?: string }
+): boolean => {
+  return Boolean(meeting.timeUTC && meeting.timezone)
+}
+
+/**
  * Gets formatted time information from a meeting if it has scheduled time
  * Returns undefined for unscheduled meetings
  */
 export const getTimeInfoFromMeeting = (
   meeting: { timeUTC?: string; timezone?: string; duration: number }
 ) => {
-  if (!meeting.timeUTC || !meeting.timezone) {
+  if (!isScheduledMeeting(meeting)) {
     return undefined
   }
 
