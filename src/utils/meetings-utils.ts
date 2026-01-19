@@ -81,10 +81,6 @@ export interface MeetingTimeInfo {
   duration?: number
 }
 
-/**
- * Formats time information for a scheduled meeting
- * Requires a meeting with timeUTC and timezone - use isScheduledMeeting() guard before calling
- */
 export const formatMeetingTimeInfo = (
   meeting: { timeUTC: string; timezone: string; duration?: number }
 ): MeetingTimeInfo => {

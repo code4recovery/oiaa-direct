@@ -88,7 +88,7 @@ const getCategoryFullName = (
    return DESCRIPTIONS[category] || category
 }
 
-const MeetingTimeInfo = ({ 
+const MeetingTimeDisplay = ({ 
   timeInfo 
 }: { 
   timeInfo: MeetingTimeInfo | undefined
@@ -160,7 +160,7 @@ const MeetingHeader = ({ meeting }: { meeting: Meeting }) => {
         <Heading size="lg" color="blue.600" _dark={{ color: "blue.300" }}>
           {meeting.name}
         </Heading>
-        <MeetingTimeInfo timeInfo={timeInfo} />
+        <MeetingTimeDisplay timeInfo={timeInfo} />
       </Box>
 
       <Box mt={{ base: 4, md: 0 }}>
