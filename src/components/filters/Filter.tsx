@@ -162,10 +162,12 @@ export function Filter({
           />
         )}
 
-        <ScheduledFilter
-          showScheduled={showScheduled}
-          onChange={handleScheduledChange}
-        />
+        {!isMobile && (
+          <ScheduledFilter
+            showScheduled={showScheduled}
+            onChange={handleScheduledChange}
+          />
+        )}
 
         {showClearButton && hasActiveFilters && (
           <Button
@@ -207,6 +209,10 @@ export function Filter({
             </Button>
             {filtersOpen && (
               <VStack gap={4} align="stretch">
+                <ScheduledFilter
+                  showScheduled={showScheduled}
+                  onChange={handleScheduledChange}
+                />
                 {renderFilterGroups({
                   filterParams,
                   selectedDay,
