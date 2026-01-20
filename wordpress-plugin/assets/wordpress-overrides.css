@@ -292,11 +292,120 @@ body.admin-bar #oiaa-meetings-root {
    ============================================================ */
 
 @media (max-width: 768px) {
+  /* CRITICAL: Reset body styles from oiaa-meetings.css that center content */
+  /* The bundled CSS has: body { display: flex; place-items: center; } */
+  body {
+    display: block !important;
+    place-items: unset !important;
+    min-width: unset !important;
+  }
+
   #oiaa-meetings-root {
-    /* Maintain full width on mobile */
-    width: 100vw !important;
-    margin-left: calc(-50vw + 50%) !important;
-    margin-right: calc(-50vw + 50%) !important;
+    /* On mobile, disable the full-bleed breakout technique */
+    /* Just fill the parent container width normally */
+    width: 100% !important;
+    max-width: 100% !important;
+
+    /* Reset the positioning that causes overflow */
+    position: relative !important;
+    left: 0 !important;
+    right: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* ============================================================
+     HIDE OFF-CANVAS SIDEBAR ON MOBILE
+     Foundation framework's off-canvas menu takes up space on right
+     Note: This CSS only loads when plugin is present, so safe to
+     target these elements directly without :has() on body
+     ============================================================ */
+
+  .off-canvas.position-right,
+  .off-canvas[data-off-canvas],
+  #off-canvas {
+    display: none !important;
+    width: 0 !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+  }
+
+  /* Make the off-canvas-content fill the full width */
+  .off-canvas-content,
+  .off-canvas-content[data-off-canvas-content] {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Force the off-canvas-wrapper to not reserve space for sidebar */
+  .off-canvas-wrapper {
+    overflow: hidden !important;
+  }
+
+  /* Relax parent container constraints on mobile */
+  .off-canvas-wrapper:has(#oiaa-meetings-root),
+  .off-canvas-content:has(#oiaa-meetings-root),
+  .content:has(#oiaa-meetings-root),
+  .inner-content.grid-x:has(#oiaa-meetings-root),
+  .main-content.cell:has(#oiaa-meetings-root),
+  .content-body:has(#oiaa-meetings-root) {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  /* ============================================================
+     MOBILE-FIRST: Full-width cards & compact typography
+     ============================================================ */
+
+  /* Target the main content container - reduce padding */
+  #oiaa-meetings-root > [class*="css-"] > [class*="css-"] {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* Full-width meeting cards - extend edge-to-edge */
+  #oiaa-meetings-root a[href*="group-info"] > [class*="css-"],
+  #oiaa-meetings-root a[href^="/group-info"] > [class*="css-"],
+  #oiaa-meetings-root a[href^="#/group-info"] > [class*="css-"] {
+    border-radius: 0 !important;
+    border-left-width: 0 !important;
+    border-right-width: 0 !important;
+    margin-left: -8px !important;
+    margin-right: -8px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Smaller heading font sizes for mobile */
+  #oiaa-meetings-root h1 {
+    font-size: 1.5rem !important; /* 24px - Page title */
+  }
+
+  #oiaa-meetings-root h2 {
+    font-size: 1.25rem !important; /* 20px - Meeting card titles */
+  }
+
+  #oiaa-meetings-root h3 {
+    font-size: 1.125rem !important; /* 18px - Section headings */
+  }
+
+  #oiaa-meetings-root h4 {
+    font-size: 1rem !important; /* 16px - Subsection headings */
+  }
+
+  #oiaa-meetings-root h5,
+  #oiaa-meetings-root h6 {
+    font-size: 0.875rem !important; /* 14px */
+  }
+
+  /* Compact secondary text (times, counts, etc.) */
+  #oiaa-meetings-root span[class*="css-"] {
+    font-size: 0.8125rem; /* 13px */
   }
 }
 
@@ -342,6 +451,17 @@ body.admin-bar #oiaa-meetings-root {
     color: rgba(255, 255, 255, 0.92);
     color-scheme: dark;
   }
+}
+
+/* ============================================================
+   HIDE WPML LANGUAGE SELECTOR
+   ============================================================ */
+
+/* Hide WPML language switcher when plugin is active */
+.wpml-ls-slot-footer,
+ul.wpml-ls-legacy-list-horizontal,
+.wpml-ls-statics-footer {
+  display: none !important;
 }
 
 /* ============================================================

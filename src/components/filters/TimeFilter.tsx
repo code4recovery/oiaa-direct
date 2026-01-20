@@ -1,5 +1,3 @@
-import type React from "react"
-
 import { DateTime } from "luxon"
 
 import {
@@ -59,24 +57,20 @@ const SelectField = ({
           {label}:
         </Text>
       )}
-      <Box
-        as="select"
+      <select
         value={value}
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+        onChange={(e) => {
           onChange(e.target.value)
         }}
-        width="100%"
-        padding="8px"
-        border="1px solid"
-        borderColor="gray.200"
-        borderRadius="6px"
-        fontSize="14px"
-        bg="white"
-        color="gray.800"
-        _dark={{
-          borderColor: "gray.600",
-          bg: "gray.700",
-          color: "white",
+        style={{
+          width: "100%",
+          padding: "8px",
+          border: "1px solid",
+          borderColor: "var(--chakra-colors-gray-200)",
+          borderRadius: "6px",
+          fontSize: "14px",
+          backgroundColor: "var(--chakra-colors-chakra-body-bg)",
+          color: "var(--chakra-colors-chakra-body-text)",
         }}
       >
         {options.map((option) => (
@@ -99,7 +93,7 @@ const SelectField = ({
             })}
           </>
         )}
-      </Box>
+      </select>
     </Box>
   )
 }
