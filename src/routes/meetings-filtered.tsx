@@ -11,7 +11,7 @@ import { Layout } from "@/components/Layout"
 import { MeetingsSummary } from "@/components/meetings"
 import { getMeetings } from "@/getData"
 import type { Meeting } from "@/meetingTypes"
-import { isScheduledMeeting, shuffleWithinTimeSlots } from "@/utils/meetings-utils"
+import { shuffleWithinTimeSlots } from "@/utils/meetings-utils"
 import {
   Box,
   Text,
@@ -67,9 +67,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise
   // Create and store promise immediately (before awaiting) to prevent race conditions
   const promise = (async () => {
     const meetings = await getMeetings(qs)
-    // Filter to only scheduled meetings (those with timeUTC) for shuffling
-    const scheduledMeetings = meetings.filter(isScheduledMeeting)
-    const shuffled = shuffleWithinTimeSlots(scheduledMeetings)
+    const shuffled = shuffleWithinTimeSlots(meetings)
     const firstThree = shuffled.slice(0, 3).map(m => m.slug)
     console.log(`🟢 #${callId} returning`, shuffled.length, 'meetings (shuffled). First 3:', firstThree)
     return { meetings: shuffled }

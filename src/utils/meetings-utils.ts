@@ -55,14 +55,22 @@ const groupByTimeSlot = <T extends TimeSlotted>(items: T[]): T[][] => {
   }, [])
 }
 
-export const shuffleWithinTimeSlots = <T extends TimeSlotted>(
+export const shuffleWithinTimeSlots = <T extends Partial<TimeSlotted>>(
   items: T[]
 ): T[] => {
-
-  assertSortedByTimeUTC(items)
-
-  const timeSlotGroups = groupByTimeSlot(items)
-  return timeSlotGroups.flatMap(fisherYatesShuffle)
+  const scheduled = items.filter((item): item is T & TimeSlotted => Boolean(item.timeUTC))
+  const unscheduled = items.filter(item => !item.timeUTC)
+  
+  const shuffledUnscheduled = fisherYatesShuffle(unscheduled)
+  
+  let shuffledScheduled: T[] = []
+  if (scheduled.length > 0) {
+    assertSortedByTimeUTC(scheduled)
+    const timeSlotGroups = groupByTimeSlot(scheduled)
+    shuffledScheduled = timeSlotGroups.flatMap(fisherYatesShuffle)
+  }
+  
+  return [...shuffledUnscheduled, ...shuffledScheduled]
 }
 
 export const isScheduledMeeting = <T extends { timeUTC?: string; timezone?: string }>(
