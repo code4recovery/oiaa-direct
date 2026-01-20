@@ -10,6 +10,11 @@ import { Link as RouterLink } from "react-router"
 
 import { Layout } from "@/components/Layout"
 import {
+  CalendarActions,
+  JoinMeetingButton,
+  MeetingItem,
+} from "@/components/meetings"
+import {
   getMeeting,
   getRelatedDetails,
 } from "@/getData"
@@ -22,6 +27,11 @@ import {
   TYPE,
 } from "@/meetingTypes"
 import {
+  formatMeetingTimeInfo,
+  isScheduledMeeting,
+  type MeetingTimeInfo,
+} from "@/utils/meetings-utils"
+import {
   Badge,
   Box,
   Button,
@@ -32,7 +42,6 @@ import {
   Text,
 } from "@chakra-ui/react"
 
-import { JoinMeetingButton, MeetingItem, CalendarActions } from "@/components/meetings"
 import type { Route } from "./+types/group-info"
 
 const DESCRIPTIONS: Record<string, string> = {
@@ -51,38 +60,20 @@ const CATEGORY_COLORS = {
   type: "cyan",
 }
 
-
-const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
-
-  const date = new Date(timeUTC)
-
-
-  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-
-  const originalTimeFormatter = new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    timeZone: meetingTimezone,
-    hour12: true,
-  })
-
-
-  const userTimeFormatter = new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    timeZone: userTimezone,
-    hour12: true,
-  })
-
-  const originalTime = originalTimeFormatter.format(date)
-  const userTime = userTimeFormatter.format(date)
-
-  return {
-    originalTime,
-    userTime,
-    originalTimezone: meetingTimezone,
-    userTimezone,
-  }
+const TimeDisplay = ({ 
+  timeInfo, 
+  type = 'original' 
+}: { 
+  timeInfo: MeetingTimeInfo; 
+  type?: 'original' | 'user' 
+}) => {
+  const time = type === 'original' ? timeInfo.originalTime : timeInfo.userTime
+  const timezone = type === 'original' ? timeInfo.originalTimezone : timeInfo.userTimezone
+  return (
+    <>
+      {time} ({timezone.replace("_", " ")})
+    </>
+  )
 }
 
 const localDay = (timeStamp: string) =>
@@ -97,6 +88,151 @@ const getCategoryFullName = (
    return DESCRIPTIONS[category] || category
 }
 
+const MeetingTimeDisplay = ({ 
+  timeInfo 
+}: { 
+  timeInfo: MeetingTimeInfo | undefined
+}) => {
+  if (!timeInfo) {
+    return (
+      <Flex align="center" mt={2}>
+        <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
+          <FaCalendarAlt />
+        </Box>
+        <Text
+          color="gray.600"
+          _dark={{ color: "gray.400" }}
+          fontWeight="medium"
+        >
+          Ongoing
+        </Text>
+      </Flex>
+    )
+  }
+
+  return (
+    <>
+      <Flex align="center" mt={2}>
+        <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
+          <FaCalendarAlt />
+        </Box>
+        <Text
+          color="gray.600"
+          _dark={{ color: "gray.400" }}
+          fontWeight="medium"
+        >
+          {localDay(timeInfo.timeUTC)} at {timeInfo.originalTime} ({timeInfo.originalTimezone.replace("_", " ")})
+        </Text>
+      </Flex>
+      <Flex align="center" mt={1}>
+        <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
+          <FaGlobeAmericas />
+        </Box>
+        <Text color="gray.600" _dark={{ color: "gray.400" }}>
+          Your local time: <TimeDisplay timeInfo={timeInfo} type="user" />
+        </Text>
+      </Flex>
+      {timeInfo.duration && (
+        <Flex align="center" mt={1}>
+          <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
+            <FaClock />
+          </Box>
+          <Text color="gray.600" _dark={{ color: "gray.400" }}>
+            {timeInfo.duration} minutes
+          </Text>
+        </Flex>
+      )}
+    </>
+  )
+}
+
+const MeetingHeader = ({ meeting }: { meeting: Meeting }) => {
+  const timeInfo = isScheduledMeeting(meeting) ? formatMeetingTimeInfo(meeting) : undefined
+  const websiteUrl = meeting.groupWebsite
+
+  return (
+    <Flex
+      justifyContent="space-between"
+      alignItems="flex-start"
+      flexWrap="wrap"
+    >
+      <Box>
+        <Heading size="lg" color="blue.600" _dark={{ color: "blue.300" }}>
+          {meeting.name}
+        </Heading>
+        <MeetingTimeDisplay timeInfo={timeInfo} />
+      </Box>
+
+      <Box mt={{ base: 4, md: 0 }}>
+        {meeting.conference_url && (
+          <Box
+            as="span"
+            display="inline-block"
+            mr={2}
+            verticalAlign="middle"
+          >
+            <JoinMeetingButton joinUrl={meeting.conference_url} />
+          </Box>
+        )}
+
+        {websiteUrl && (
+          <Link
+            href={websiteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            _hover={{ textDecoration: "none" }}
+            display="inline-block"
+            mr={2}
+          >
+            <Button
+              bg="purple.600"
+              color="white"
+              _hover={{
+                bg: "purple.700",
+              }}
+              _dark={{
+                bg: "purple.600",
+                _hover: {
+                  bg: "purple.700",
+                },
+              }}
+              size="md"
+            >
+              <FaGlobeAmericas style={{ marginRight: "8px" }} />
+              Website
+            </Button>
+          </Link>
+        )}
+
+        {meeting.groupEmail && (
+          <Link
+            href={`mailto:${meeting.groupEmail}`}
+            _hover={{ textDecoration: "none" }}
+            display="inline-block"
+          >
+            <Button
+              bg="teal.600"
+              color="white"
+              _hover={{
+                bg: "teal.700",
+              }}
+              _dark={{
+                bg: "teal.600",
+                _hover: {
+                  bg: "teal.700",
+                },
+              }}
+              size="md"
+            >
+              <FaEnvelope style={{ marginRight: "8px" }} />
+              Email
+            </Button>
+          </Link>
+        )}
+      </Box>
+    </Flex>
+  )
+}
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const meeting = await getMeeting(params.slug)
@@ -189,8 +325,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   const { meeting, group } = loaderData
   const { groupMeetings, groupInfo } = group
 
-  const timeInfo = formatMeetingTime(meeting.timeUTC, meeting.timezone)
-
+  const timeInfo = isScheduledMeeting(meeting) ? formatMeetingTimeInfo(meeting) : undefined 
 
   const categories = [
     "features",
@@ -199,12 +334,6 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
     "communities",
     "type",
   ] as const
-
-
-  const websiteUrl = meeting.groupWebsite
-
-
-  groupMeetings.sort((a, b) => a.timeUTC.localeCompare(b.timeUTC))
 
   return (
     <Layout>
@@ -230,114 +359,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
         boxShadow="md"
       >
         <Box bg="blue.50" _dark={{ bg: "blue.900" }} p={4}>
-          <Flex
-            justifyContent="space-between"
-            alignItems="flex-start"
-            flexWrap="wrap"
-          >
-            <Box>
-              <Heading size="lg" color="blue.600" _dark={{ color: "blue.300" }}>
-                {meeting.name}
-              </Heading>
-              <Flex align="center" mt={2}>
-                <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-                  <FaCalendarAlt />
-                </Box>
-                <Text
-                  color="gray.600"
-                  _dark={{ color: "gray.400" }}
-                  fontWeight="medium"
-                >
-                  {localDay(meeting.timeUTC)} at {timeInfo.originalTime} (
-                  {timeInfo.originalTimezone.replace("_", " ")})
-                </Text>
-              </Flex>
-              <Flex align="center" mt={1}>
-                <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-                  <FaGlobeAmericas />
-                </Box>
-                <Text color="gray.600" _dark={{ color: "gray.400" }}>
-                  Your local time: {timeInfo.userTime} ({timeInfo.userTimezone})
-                </Text>
-              </Flex>
-              <Flex align="center" mt={1}>
-                <Box mr={2} color="gray.600" _dark={{ color: "gray.400" }}>
-                  <FaClock />
-                </Box>
-                <Text color="gray.600" _dark={{ color: "gray.400" }}>
-                  {meeting.duration} minutes
-                </Text>
-              </Flex>
-            </Box>
-
-            <Box mt={{ base: 4, md: 0 }}>
-              {meeting.conference_url && (
-                <Box
-                  as="span"
-                  display="inline-block"
-                  mr={2}
-                  verticalAlign="middle"
-                >
-                  <JoinMeetingButton joinUrl={meeting.conference_url} />
-                </Box>
-              )}
-
-              {websiteUrl && (
-                <Link
-                  href={websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  _hover={{ textDecoration: "none" }}
-                  display="inline-block"
-                  mr={2}
-                >
-                  <Button
-                    bg="purple.600"
-                    color="white"
-                    _hover={{
-                      bg: "purple.700",
-                    }}
-                    _dark={{
-                      bg: "purple.600",
-                      _hover: {
-                        bg: "purple.700",
-                      },
-                    }}
-                    size="md"
-                  >
-                    <FaGlobeAmericas style={{ marginRight: "8px" }} />
-                    Website
-                  </Button>
-                </Link>
-              )}
-
-              {meeting.groupEmail && (
-                <Link
-                  href={`mailto:${meeting.groupEmail}`}
-                  _hover={{ textDecoration: "none" }}
-                  display="inline-block"
-                >
-                  <Button
-                    bg="teal.600"
-                    color="white"
-                    _hover={{
-                      bg: "teal.700",
-                    }}
-                    _dark={{
-                      bg: "teal.600",
-                      _hover: {
-                        bg: "teal.700",
-                      },
-                    }}
-                    size="md"
-                  >
-                    <FaEnvelope style={{ marginRight: "8px" }} />
-                    Email
-                  </Button>
-                </Link>
-              )}
-            </Box>
-          </Flex>
+          <MeetingHeader meeting={meeting} />
         </Box>
       </Box>
 
@@ -415,25 +437,28 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
               </Box>
             )}
 
-            <Box>
-              <Text fontWeight="bold">Day</Text>
-              <Text>{localDay(meeting.timeUTC)}</Text>
-            </Box>
+            {timeInfo && (
+              <>
+                <Box>
+                  <Text fontWeight="bold">Day</Text>
+                  <Text>{localDay(timeInfo.timeUTC)}</Text>
+                </Box>
 
-            <Box>
-              <Text fontWeight="bold">Meeting Time</Text>
-              <Text>
-                {timeInfo.originalTime} (
-                {timeInfo.originalTimezone.replace("_", " ")})
-              </Text>
-            </Box>
+                <Box>
+                  <Text fontWeight="bold">Meeting Time</Text>
+                  <Text>
+                    <TimeDisplay timeInfo={timeInfo} type="original" />
+                  </Text>
+                </Box>
 
-            <Box>
-              <Text fontWeight="bold">Your Local Time</Text>
-              <Text>
-                {timeInfo.userTime} ({timeInfo.userTimezone})
-              </Text>
-            </Box>
+                <Box>
+                  <Text fontWeight="bold">Your Local Time</Text>
+                  <Text>
+                    <TimeDisplay timeInfo={timeInfo} type="user" />
+                  </Text>
+                </Box>
+              </>
+            )}
 
             {meeting.conference_provider && (
               <Box>
@@ -524,7 +549,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
             </Flex>
           )}
         </Box>
-
+        
         <Box p={6}>
           <Flex direction="column" gap={4}>
             {groupMeetings.map((groupMeeting, index: number) => (

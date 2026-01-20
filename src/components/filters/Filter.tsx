@@ -15,7 +15,9 @@ import { useFacets } from "@/hooks/useFacets"
 import {
   getCurrentDay,
   getCurrentTimeFrame,
+  isScheduledMode,
   updateQueryParams,
+  updateScheduledParam,
   updateTimeParams,
 } from "@/utils/filter-utils"
 import { toggleArrayElement } from "@/utils/meetings-utils"
@@ -31,6 +33,7 @@ import {
 } from "@chakra-ui/react"
 
 import { renderFilterGroups } from "./filterGroup"
+import { ScheduledFilter } from "./ScheduledFilter"
 import { SearchFilter } from "./SearchFilter"
 
 interface FilterProps {
@@ -59,6 +62,9 @@ export function Filter({
   const [selectedDay, setSelectedDay] = useState<string>(defaultDay)
   const [selectedTimeFrame, setSelectedTimeFrame] =
     useState<string>(defaultTimeFrame)
+  const [showScheduled, setShowScheduled] = useState<boolean>(
+    isScheduledMode(filterParams)
+  )
 
   const { open: filtersOpen, onToggle: onFiltersToggle } = useDisclosure({
     defaultOpen: false,
@@ -132,9 +138,17 @@ export function Filter({
     })
   }
 
+  const handleScheduledChange = (isScheduled: boolean) => {
+    setShowScheduled(isScheduled)
+    sendFilterSelectionsToParent((prev: URLSearchParams) =>
+      updateScheduledParam(prev, isScheduled)
+    )
+  }
+
   const clearAllFilters = () => {
     setSelectedDay(defaultDay)
     setSelectedTimeFrame(defaultTimeFrame)
+    setShowScheduled(true)
     sendFilterSelectionsToParent(new URLSearchParams())
   }
 
@@ -145,6 +159,13 @@ export function Filter({
           <SearchFilter
             initialValue={filterParams.get("nameQuery") ?? ""}
             onQueryChange={handleQueryChange}
+          />
+        )}
+
+        {!isMobile && (
+          <ScheduledFilter
+            showScheduled={showScheduled}
+            onChange={handleScheduledChange}
           />
         )}
 
@@ -188,6 +209,10 @@ export function Filter({
             </Button>
             {filtersOpen && (
               <VStack gap={4} align="stretch">
+                <ScheduledFilter
+                  showScheduled={showScheduled}
+                  onChange={handleScheduledChange}
+                />
                 {renderFilterGroups({
                   filterParams,
                   selectedDay,
@@ -195,7 +220,7 @@ export function Filter({
                   handleTimeChange,
                   handleToggle,
                   handleExclusiveToggle,
-                  showTimeFilter,
+                  showTimeFilter: showTimeFilter && showScheduled,
                   isMobile,
                   disclosureStates,
                   facetOptions,
@@ -215,7 +240,7 @@ export function Filter({
               handleTimeChange,
               handleToggle,
               handleExclusiveToggle,
-              showTimeFilter,
+              showTimeFilter: showTimeFilter && showScheduled,
               isMobile,
               facetOptions,
             })}
@@ -235,10 +260,12 @@ function getActiveFiltersStatus(
 ) {
   const filterKeys = ["features", "formats", "type", "communities", "languages"]
   const filterCounts = filterKeys.map((key) => filterParams.getAll(key).length)
+  const isScheduled = isScheduledMode(filterParams)
   const totalCount =
     (filterParams.get("nameQuery") ? 1 : 0) +
-    (selectedDay !== defaultDay ? 1 : 0) +
-    (selectedTimeFrame !== defaultTimeFrame ? 1 : 0) +
+    (!isScheduled ? 1 : 0) +
+    (isScheduled && selectedDay !== defaultDay ? 1 : 0) +
+    (isScheduled && selectedTimeFrame !== defaultTimeFrame ? 1 : 0) +
     filterCounts.reduce((a, b) => a + b, 0)
   return {
     count: totalCount,
