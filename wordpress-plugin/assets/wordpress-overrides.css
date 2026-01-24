@@ -178,14 +178,35 @@
 }
 
 /* ============================================================
-   BUTTON RESET - Minimal reset, let Chakra UI handle styling
+   BUTTON RESET - Override WordPress theme button styles
    ============================================================ */
 
 #oiaa-meetings-root button {
-  /* Only reset properties that WordPress themes commonly override aggressively */
-  /* Do NOT reset padding, background, border - let Chakra UI control these */
+  /* Reset WordPress theme button overrides */
   cursor: pointer;
   font-family: inherit;
+  /* Prevent WordPress from adding unwanted padding/margins */
+  line-height: normal;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Ensure Chakra buttons get proper styling - high specificity to override WP */
+#oiaa-meetings-root button[class*="css-"] {
+  /* Reset any WordPress theme button styles */
+  box-shadow: none;
+  text-shadow: none;
+}
+
+/* Fix outline/ghost button text visibility in light mode */
+#oiaa-meetings-root button[data-variant="outline"],
+#oiaa-meetings-root button[data-variant="ghost"] {
+  color: #1a202c;
+}
+
+/* Ensure solid buttons have white text */
+#oiaa-meetings-root button[data-variant="solid"] {
+  color: white;
 }
 
 /* ============================================================
@@ -410,47 +431,63 @@ body.admin-bar #oiaa-meetings-root {
 }
 
 /* ============================================================
-   DARK MODE SUPPORT - Container-level text colors
+   THEME COLORS - Force light mode for WordPress plugin
    ============================================================ */
 
 /*
- * Set explicit text colors at container level so components using
- * color="inherit" will get the correct color for the current theme.
- * This prevents WordPress theme colors from bleeding into the app.
+ * The plugin is built with VITE_COLOR_MODE=light which adds
+ * forcedTheme="light" to next-themes. We need CSS to match.
+ * DO NOT use @media (prefers-color-scheme) as it ignores forced theme.
  */
 
-/* Light mode (default) */
+/* Light mode - always applied for WordPress plugin */
+#oiaa-meetings-root,
+#oiaa-meetings-root *,
+.light #oiaa-meetings-root,
+.light #oiaa-meetings-root * {
+  color-scheme: light;
+}
+
 #oiaa-meetings-root {
   color: #1a202c; /* Chakra gray.800 - standard body text */
-  color-scheme: light;
 }
 
-/* Dark mode - Chakra UI uses .dark class on html/body */
+/* Ensure all text elements have proper dark text in light mode */
+#oiaa-meetings-root span,
+#oiaa-meetings-root p,
+#oiaa-meetings-root label,
+#oiaa-meetings-root div {
+  color: inherit;
+}
+
+/* Fix select/dropdown text colors */
+#oiaa-meetings-root select,
+#oiaa-meetings-root select option,
+#oiaa-meetings-root [role="listbox"],
+#oiaa-meetings-root [role="option"] {
+  color: #1a202c !important;
+  background-color: #ffffff !important;
+}
+
+/* Fix filter chip/tag buttons - ensure dark text on light background */
+#oiaa-meetings-root button[class*="css-"] {
+  /* Let Chakra handle colors, but ensure no white-on-white */
+}
+
+/* Dark mode - only when explicitly set via class */
 .dark #oiaa-meetings-root,
-.chakra-ui-dark #oiaa-meetings-root,
-[data-theme="dark"] #oiaa-meetings-root,
-#oiaa-meetings-root.dark {
-  color: rgba(255, 255, 255, 0.92); /* Chakra's dark mode body text */
+.dark #oiaa-meetings-root * {
   color-scheme: dark;
 }
 
-/* Also handle when data-theme is on the root itself */
-#oiaa-meetings-root[data-theme="dark"] {
+.dark #oiaa-meetings-root {
   color: rgba(255, 255, 255, 0.92);
-  color-scheme: dark;
 }
 
-#oiaa-meetings-root[data-theme="light"] {
-  color: #1a202c;
-  color-scheme: light;
-}
-
-/* System preference fallback when no explicit theme is set */
-@media (prefers-color-scheme: dark) {
-  #oiaa-meetings-root:not([data-theme="light"]):not(.light) {
-    color: rgba(255, 255, 255, 0.92);
-    color-scheme: dark;
-  }
+.dark #oiaa-meetings-root select,
+.dark #oiaa-meetings-root select option {
+  color: rgba(255, 255, 255, 0.92) !important;
+  background-color: #1a202c !important;
 }
 
 /* ============================================================
