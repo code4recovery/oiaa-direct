@@ -9,9 +9,24 @@ import { LuMoon, LuSun } from "react-icons/lu"
 
 export interface ColorModeProviderProps extends ThemeProviderProps {}
 
+// Read color mode from environment variable at build time
+// If set to "light" or "dark", it forces that theme and overrides user preference
+// If set to "system" or unset, allows user/system preference
+const envColorMode = import.meta.env.VITE_COLOR_MODE as string | undefined
+
 export function ColorModeProvider(props: ColorModeProviderProps) {
+  // Determine if we should force a specific theme
+  const forcedTheme = envColorMode === "light" || envColorMode === "dark"
+    ? envColorMode
+    : undefined
+
   return (
-    <ThemeProvider attribute="class" disableTransitionOnChange {...props} />
+    <ThemeProvider
+      attribute="class"
+      disableTransitionOnChange
+      forcedTheme={forcedTheme}
+      {...props}
+    />
   )
 }
 
