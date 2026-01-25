@@ -209,8 +209,11 @@ export const MeetingCategories = ({
             background: 'transparent',
           },
           '&::-webkit-scrollbar-thumb': {
-            background: '#CBD5E0',
+            background: 'var(--chakra-colors-gray-300)',
             borderRadius: '4px',
+          },
+          '.dark &::-webkit-scrollbar-thumb': {
+            background: 'var(--chakra-colors-gray-600)',
           },
         }}
       >

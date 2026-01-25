@@ -35,6 +35,17 @@ const TIME_FRAME_OPTIONS = [
   { value: "night", label: "Night (9 PM-4 AM)" },
 ]
 
+// Styled select with Chakra-compatible theming
+const selectStyles = {
+  width: "100%",
+  padding: "8px 12px",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderRadius: "6px",
+  fontSize: "14px",
+  cursor: "pointer",
+} as const
+
 const SelectField = ({
   label,
   value,
@@ -57,43 +68,48 @@ const SelectField = ({
           {label}:
         </Text>
       )}
-      <select
-        value={value}
-        onChange={(e) => {
-          onChange(e.target.value)
-        }}
-        style={{
-          width: "100%",
-          padding: "8px",
-          border: "1px solid",
-          borderColor: "var(--chakra-colors-gray-200)",
-          borderRadius: "6px",
-          fontSize: "14px",
-          backgroundColor: "var(--chakra-colors-chakra-body-bg)",
-          color: "var(--chakra-colors-chakra-body-text)",
+      <Box
+        borderWidth="1px"
+        borderColor="gray.200"
+        borderRadius="md"
+        bg="white"
+        _dark={{
+          bg: "gray.800",
+          borderColor: "gray.600",
         }}
       >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-        {includeHourlyOptions && (
-          <>
-            <option disabled>──────────</option>
-            {Array.from({ length: 24 }).map((_, hour) => {
-              const dt = DateTime.fromObject({ hour, minute: 0 })
-              const label = dt.toLocaleString(DateTime.TIME_SIMPLE)
-              const value = dt.toFormat("HH:mm")
-              return (
-                <option value={value} key={value}>
-                  {label}
-                </option>
-              )
-            })}
-          </>
-        )}
-      </select>
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          style={{
+            ...selectStyles,
+            border: "none",
+            background: "transparent",
+            color: "inherit",
+          }}
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+          {includeHourlyOptions && (
+            <>
+              <option disabled>──────────</option>
+              {Array.from({ length: 24 }).map((_, hour) => {
+                const dt = DateTime.fromObject({ hour, minute: 0 })
+                const optionLabel = dt.toLocaleString(DateTime.TIME_SIMPLE)
+                const optionValue = dt.toFormat("HH:mm")
+                return (
+                  <option value={optionValue} key={optionValue}>
+                    {optionLabel}
+                  </option>
+                )
+              })}
+            </>
+          )}
+        </select>
+      </Box>
     </Box>
   )
 }

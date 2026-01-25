@@ -14,6 +14,8 @@ import type { Meeting } from "@/meetingTypes"
 import { shuffleWithinTimeSlots } from "@/utils/meetings-utils"
 import {
   Box,
+  Button,
+  Flex,
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react"
@@ -131,47 +133,26 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
   }
 
   const PaginationButtons = () => (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        marginTop: "16px",
-        marginBottom: "16px",
-      }}
-    >
-      <button
+    <Flex justify="center" my={4} gap={2}>
+      <Button
         onClick={handlePreviousPage}
         disabled={currentPage === 0}
-        style={{
-          marginRight: "8px",
-          padding: "8px 16px",
-          backgroundColor: "#3182ce",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor: currentPage === 0 ? "not-allowed" : "pointer",
-        }}
+        colorScheme="blue"
+        size="md"
+        _disabled={{ opacity: 0.6, cursor: "not-allowed" }}
       >
         Previous
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={handleNextPage}
         disabled={(currentPage + 1) * meetingsPerPage >= meetings.length}
-        style={{
-          padding: "8px 16px",
-          backgroundColor: "#3182ce",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor:
-            (currentPage + 1) * meetingsPerPage >= meetings.length
-              ? "not-allowed"
-              : "pointer",
-        }}
+        colorScheme="blue"
+        size="md"
+        _disabled={{ opacity: 0.6, cursor: "not-allowed" }}
       >
         Next
-      </button>
-    </div>
+      </Button>
+    </Flex>
   )
 
   return (

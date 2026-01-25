@@ -39,6 +39,9 @@ export function Layout({ children, sidebar }: LayoutProps) {
                     background: 'var(--chakra-colors-gray-300)',
                     borderRadius: '24px',
                   },
+                  '.dark &::-webkit-scrollbar-thumb': {
+                    background: 'var(--chakra-colors-gray-600)',
+                  },
                 }}
               >
                 {sidebar}
