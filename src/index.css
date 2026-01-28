@@ -22,11 +22,27 @@
   background-color: #ffffff;
 }
 
+/* Dark mode */
+.dark {
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
 /* Dark mode - applied via class by next-themes */
 .dark {
   color-scheme: dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
+}
+.light a:hover {
+  color: #747bff;
 }
 
 /* Minimal body reset */
@@ -34,6 +50,11 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
 }
 
 /* Minimal button reset - let Chakra UI handle all button styling */
