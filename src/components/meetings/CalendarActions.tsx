@@ -33,15 +33,16 @@ const generateICS = (meeting: Meeting, isRecurring = false): string => {
     throw new Error('Meeting must have timeUTC and timezone')
   }
   
-  const startDate = DateTime.fromISO(meeting.timeUTC)
+  const startDate = DateTime.fromISO(meeting.timeUTC, { zone: 'utc' })
+  .setZone(meeting.timezone)
   const endDate = startDate.plus({ hours: 1 }) // Assume 1-hour meetings
   
-  const formatICSDate = (date: DateTime): string => 
-    date.toUTC().toFormat("yyyyMMdd'T'HHmmss'Z'")
+  const formatICSDate = (date: DateTime): string =>
+  date.toFormat("yyyyMMdd'T'HHmmss")
 
   const startDateICS = formatICSDate(startDate)
   const endDateICS = formatICSDate(endDate)
-  const now = formatICSDate(DateTime.now())
+  const now = formatICSDate(DateTime.now().toUTC())
 
   const uid = `${meeting.slug}-${startDateICS}@oiaa-direct.com`
 
@@ -65,9 +66,9 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
 UID:${uid}
-DTSTART:${startDateICS}
-DTEND:${endDateICS}
-DTSTAMP:${now}
+DTSTART;TZID=${meeting.timezone}:${startDateICS}
+DTEND;TZID=${meeting.timezone}:${endDateICS}
+DTSTAMP:${now}Z
 SUMMARY:${meeting.name}
 DESCRIPTION:${description}
 LOCATION:${location}${recurrenceRule}
@@ -103,7 +104,7 @@ const generateCalendarUrls = (meeting: Meeting, isRecurring = false) => {
     throw new Error('Meeting must have timeUTC and timezone')
   }
   
-  const startDate = DateTime.fromISO(meeting.timeUTC)
+  const startDate = DateTime.fromISO(meeting.timeUTC, { zone: 'utc' })
   const endDate = startDate.plus({ hours: 1 })
   
   const googleStartDate = startDate.toUTC().toFormat("yyyyMMdd'T'HHmmss'Z'")
@@ -121,7 +122,7 @@ const generateCalendarUrls = (meeting: Meeting, isRecurring = false) => {
   const recurrence = isRecurring ? '&recur=RRULE:FREQ=WEEKLY' : ''
 
   return {
-    google: `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(meeting.name)}&dates=${googleStartDate}/${googleEndDate}&details=${googleDetails}&location=${googleLocation}${recurrence}`,
+    google:`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(meeting.name)}&dates=${googleStartDate}/${googleEndDate}&details=${googleDetails}&location=${googleLocation}&ctz=${encodeURIComponent(meeting.timezone)}${recurrence}`,
     outlook: `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(meeting.name)}&startdt=${startDate.toISO() ?? ''}&enddt=${endDate.toISO() ?? ''}&body=${googleDetails}&location=${googleLocation}`,
     yahoo: `https://calendar.yahoo.com/?v=60&view=d&type=20&title=${encodeURIComponent(meeting.name)}&st=${googleStartDate}&et=${googleEndDate}&desc=${googleDetails}&in_loc=${googleLocation}`,
   }
