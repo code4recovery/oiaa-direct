@@ -9,6 +9,7 @@ import { Tooltip } from "@/components/ui/tooltip"
 import type { Meeting } from "@/meetingTypes"
 import { getServiceProviderNameFromUrl } from "@/utils/videoServices"
 import {
+  Box,
   Button,
   Flex,
   IconButton,
@@ -96,7 +97,9 @@ const JoinButton = ({
   
   return (
     <Button {...buttonProps}>
-      <IconComponent style={{ marginRight: mode === 'compact' ? '4px' : '8px' }} />
+      <Box as="span" mr={mode === 'compact' ? 1 : 2} display="inline-flex">
+        <IconComponent />
+      </Box>
       {label}
     </Button>
   )
@@ -143,7 +146,9 @@ const EmailButton = ({
 
   return (
     <Button {...buttonProps}>
-      <FaEnvelope style={{ marginRight: mode === 'compact' ? '4px' : '8px' }} />
+      <Box as="span" mr={mode === 'compact' ? 1 : 2} display="inline-flex">
+        <FaEnvelope />
+      </Box>
       {label}
     </Button>
   )
@@ -189,7 +194,9 @@ const WebsiteButton = ({
 
   return (
     <Button {...buttonProps}>
-      <FaLink style={{ marginRight: mode === 'compact' ? '4px' : '8px' }} />
+      <Box as="span" mr={mode === 'compact' ? 1 : 2} display="inline-flex">
+        <FaLink />
+      </Box>
       {label}
     </Button>
   )
