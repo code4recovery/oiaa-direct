@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "react-router dev",
     "typecheck": "react-router typegen && tsc -b",
-    "build": "tsc -b && react-router build",
+    "build:react-router": "tsc -b && react-router build",
     "build:wordpress": "vite build --config vite.config-wordpress.ts",
     "build:wordpress-plugin": "node scripts/build-wordpress-plugin.js",
     "test": "vitest",
