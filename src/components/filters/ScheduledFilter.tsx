@@ -1,6 +1,7 @@
 import {
-  Button,
   Flex,
+  Switch,
+  Text,
 } from "@chakra-ui/react"
 
 interface ScheduledFilterProps {
@@ -10,39 +11,39 @@ interface ScheduledFilterProps {
 
 export function ScheduledFilter({ showScheduled, onChange }: ScheduledFilterProps) {
   return (
-    <Flex gap={2}>
-      <Button
-        size="sm"
-        onClick={() => { onChange(true) }}
-        flex={1}
-        bg={showScheduled ? "#3182ce" : "transparent"}
-        color={showScheduled ? "white" : "gray.600"}
-        borderWidth={showScheduled ? "0" : "1px"}
-        borderColor="gray.300"
-        _hover={{ opacity: 0.8 }}
+    <Flex gap={8} alignItems="center" justifyContent="center" px={3}>
+      <Text
+        fontSize="sm"
+        fontWeight="medium"
+        color={showScheduled ? "gray.900" : "gray.500"}
         _dark={{
-          color: showScheduled ? "white" : "gray.400",
-          borderColor: "gray.600",
+          color: showScheduled ? "gray.100" : "gray.500",
         }}
       >
         Scheduled
-      </Button>
-      <Button
-        size="sm"
-        onClick={() => { onChange(false) }}
-        flex={1}
-        bg={showScheduled ? "transparent" : "#3182ce"}
-        color={showScheduled ? "gray.600" : "white"}
-        borderWidth={showScheduled ? "1px" : "0"}
-        borderColor="gray.300"
-        _hover={{ opacity: 0.8 }}
+      </Text>
+      <Switch.Root
+        size="lg"
+        checked={showScheduled}
+        onCheckedChange={(e) => { onChange(e.checked); }}
+        colorPalette="blue"
+        css={{ transform: 'scaleX(-1)' }}
+      >
+        <Switch.HiddenInput />
+        <Switch.Control>
+          <Switch.Thumb />
+        </Switch.Control>
+      </Switch.Root>
+      <Text
+        fontSize="sm"
+        fontWeight="medium"
+        color={showScheduled ? "gray.500" : "gray.900"}
         _dark={{
-          color: showScheduled ? "gray.400" : "white",
-          borderColor: "gray.600",
+          color: showScheduled ? "gray.500" : "gray.100",
         }}
       >
-        Unscheduled
-      </Button>
+        Ongoing
+      </Text>
     </Flex>
   )
 }
