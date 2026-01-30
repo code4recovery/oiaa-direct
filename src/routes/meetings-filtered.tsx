@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import { DateTime } from "luxon"
 import {
@@ -14,8 +14,6 @@ import type { Meeting } from "@/meetingTypes"
 import { shuffleWithinTimeSlots } from "@/utils/meetings-utils"
 import {
   Box,
-  Button,
-  Flex,
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react"
@@ -95,8 +93,7 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
   const [filterParams, setFilterParams] = useSearchParams()
   const { meetings } = loaderData
   const totalMeetings = meetings.length
-  const [currentPage, setCurrentPage] = useState(0)
-  const meetingsPerPage = 25
+  const [visibleMeetingsCount, setVisibleMeetingsCount] = useState(25)
 
   const filterVariant =
     useBreakpointValue<"mobile" | "desktop">({
@@ -104,10 +101,7 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
       md: "desktop",
     }) ?? "mobile"
 
-  const paginatedMeetings = meetings.slice(
-    currentPage * meetingsPerPage,
-    (currentPage + 1) * meetingsPerPage
-  )
+  const visibleMeetings = meetings.slice(0, visibleMeetingsCount)
 
   const filterComponent = (
     <Filter
@@ -120,40 +114,22 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
     />
   )
 
-  const handleNextPage = () => {
-    if ((currentPage + 1) * meetingsPerPage < meetings.length) {
-      setCurrentPage((prev) => prev + 1)
-    }
+  const handleLoadMore = () => {
+    setVisibleMeetingsCount((prev) => prev + 25)
   }
 
-  const handlePreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage((prev) => prev - 1)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        if (visibleMeetingsCount < meetings.length) {
+          handleLoadMore()
+        }
+      }
     }
-  }
 
-  const PaginationButtons = () => (
-    <Flex justify="center" my={4} gap={2}>
-      <Button
-        onClick={handlePreviousPage}
-        disabled={currentPage === 0}
-        colorScheme="blue"
-        size="md"
-        _disabled={{ opacity: 0.6, cursor: "not-allowed" }}
-      >
-        Previous
-      </Button>
-      <Button
-        onClick={handleNextPage}
-        disabled={(currentPage + 1) * meetingsPerPage >= meetings.length}
-        colorScheme="blue"
-        size="md"
-        _disabled={{ opacity: 0.6, cursor: "not-allowed" }}
-      >
-        Next
-      </Button>
-    </Flex>
-  )
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [visibleMeetingsCount, meetings.length])
 
   return (
     <>
@@ -164,12 +140,10 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
 
         {meetings.length > 0 ? (
           <>
-            <PaginationButtons />
             <MeetingsSummary
-              meetings={paginatedMeetings}
+              meetings={visibleMeetings}
               totalMeetings={totalMeetings}
             />
-            <PaginationButtons />
           </>
         ) : (
           <Text textAlign="center" py={8} color="gray.500">
