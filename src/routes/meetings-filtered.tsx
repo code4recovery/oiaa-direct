@@ -1,4 +1,7 @@
-import { useState, useEffect } from "react"
+import {
+  useEffect,
+  useState,
+} from "react"
 
 import { DateTime } from "luxon"
 import {
@@ -8,7 +11,10 @@ import {
 
 import { Filter } from "@/components/filters"
 import { Layout } from "@/components/Layout"
-import { MeetingsSummary } from "@/components/meetings"
+import {
+  MeetingList,
+  MeetingsSummary,
+} from "@/components/meetings"
 import { getMeetings } from "@/getData"
 import type { Meeting } from "@/meetingTypes"
 import { shuffleWithinTimeSlots } from "@/utils/meetings-utils"
@@ -141,9 +147,10 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
         {meetings.length > 0 ? (
           <>
             <MeetingsSummary
-              meetings={visibleMeetings}
+              shownCount={visibleMeetings.length}
               totalMeetings={totalMeetings}
             />
+            <MeetingList meetings={visibleMeetings} />
           </>
         ) : (
           <Text textAlign="center" py={8} color="gray.500">
