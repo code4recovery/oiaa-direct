@@ -11,7 +11,7 @@ OIAA Direct is a React + TypeScript + Vite application for browsing online AA me
 ```bash
 npm run dev          # Start development server (react-router dev)
 npm run typecheck    # Generate route types + TypeScript check
-npm run build        # TypeScript build + react-router build
+npm run build:react-router  # TypeScript build + react-router build
 npm test             # Run Vitest tests
 npm run lint         # ESLint
 npm test -- --run src/utils/someFile.test.ts  # Run a single test file
