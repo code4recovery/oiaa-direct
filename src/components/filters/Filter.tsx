@@ -45,6 +45,35 @@ interface FilterProps {
   showClearButton?: boolean
 }
 
+interface FacetsErrorBoxProps {
+  onRetry: () => void
+}
+
+function FacetsErrorBox({ onRetry }: FacetsErrorBoxProps) {
+  return (
+    <Box
+      p={3}
+      borderRadius="md"
+      bg="orange.50"
+      color="orange.800"
+      _dark={{ bg: "orange.900", color: "orange.100" }}
+    >
+      <Text fontSize="sm">
+        Filters are temporarily unavailable. Please try again in a moment.
+      </Text>
+      <Button
+        mt={3}
+        size="sm"
+        variant="outline"
+        colorScheme="orange"
+        onClick={onRetry}
+      >
+        Retry
+      </Button>
+    </Box>
+  )
+}
+
 export function Filter({
   filterParams,
   sendFilterSelectionsToParent,
@@ -55,7 +84,12 @@ export function Filter({
 }: FilterProps) {
   const isMobile = variant === "mobile"
 
-  const { facetOptions } = useFacets()
+  const {
+    scheduledFacets,
+    unscheduledFacets,
+    error: facetsError,
+    retry: retryFacets,
+  } = useFacets()
   const defaultDay = getCurrentDay()
   const defaultTimeFrame = getCurrentTimeFrame()
 
@@ -65,6 +99,8 @@ export function Filter({
   const [showScheduled, setShowScheduled] = useState<boolean>(
     isScheduledMode(filterParams)
   )
+
+  const facetOptions = showScheduled ? scheduledFacets : unscheduledFacets
 
   const { open: filtersOpen, onToggle: onFiltersToggle } = useDisclosure({
     defaultOpen: false,
@@ -140,8 +176,10 @@ export function Filter({
 
   const handleScheduledChange = (isScheduled: boolean) => {
     setShowScheduled(isScheduled)
-    sendFilterSelectionsToParent((prev: URLSearchParams) =>
-      updateScheduledParam(prev, isScheduled)
+    setSelectedDay(defaultDay)
+    setSelectedTimeFrame(defaultTimeFrame)
+    sendFilterSelectionsToParent(
+      updateScheduledParam(new URLSearchParams(), isScheduled)
     )
   }
 
@@ -213,18 +251,22 @@ export function Filter({
                   showScheduled={showScheduled}
                   onChange={handleScheduledChange}
                 />
-                {renderFilterGroups({
-                  filterParams,
-                  selectedDay,
-                  selectedTimeFrame,
-                  handleTimeChange,
-                  handleToggle,
-                  handleExclusiveToggle,
-                  showTimeFilter: showTimeFilter && showScheduled,
-                  isMobile,
-                  disclosureStates,
-                  facetOptions,
-                })}
+                {facetsError ? (
+                  <FacetsErrorBox onRetry={retryFacets} />
+                ) : (
+                  renderFilterGroups({
+                    filterParams,
+                    selectedDay,
+                    selectedTimeFrame,
+                    handleTimeChange,
+                    handleToggle,
+                    handleExclusiveToggle,
+                    showTimeFilter: showTimeFilter && showScheduled,
+                    isMobile,
+                    disclosureStates,
+                    facetOptions,
+                  })
+                )}
               </VStack>
             )}
           </>
@@ -233,17 +275,21 @@ export function Filter({
             <Heading size="md" color="inherit">
               Filters
             </Heading>
-            {renderFilterGroups({
-              filterParams,
-              selectedDay,
-              selectedTimeFrame,
-              handleTimeChange,
-              handleToggle,
-              handleExclusiveToggle,
-              showTimeFilter: showTimeFilter && showScheduled,
-              isMobile,
-              facetOptions,
-            })}
+            {facetsError ? (
+              <FacetsErrorBox onRetry={retryFacets} />
+            ) : (
+              renderFilterGroups({
+                filterParams,
+                selectedDay,
+                selectedTimeFrame,
+                handleTimeChange,
+                handleToggle,
+                handleExclusiveToggle,
+                showTimeFilter: showTimeFilter && showScheduled,
+                isMobile,
+                facetOptions,
+              })
+            )}
           </>
         )}
       </VStack>
