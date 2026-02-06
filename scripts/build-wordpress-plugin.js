@@ -9,10 +9,10 @@
  * 3. Creates a distributable .zip file
  */
 
-import { execSync } from 'child_process';
-import * as fs from 'fs';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
+import { execSync } from "child_process"
+import * as fs from "fs"
+import * as path from "path"
+import { fileURLToPath } from "url"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,7 +22,17 @@ const rootDir = path.resolve(__dirname, '..');
 const packageJson = JSON.parse(
   fs.readFileSync(path.join(rootDir, 'package.json'), 'utf-8')
 );
-const version = packageJson.version;
+const baseVersion = packageJson.version;
+
+// Generate version with date and commit hash
+const buildDate = new Date().toISOString().split('T')[0].replace(/-/g, '');
+let commitHash = 'dev';
+try {
+  commitHash = execSync('git rev-parse --short HEAD', { encoding: 'utf-8' }).trim();
+} catch (error) {
+  console.warn('⚠️  Could not get git commit hash, using "dev"');
+}
+const version = process.env.PLUGIN_VERSION || `${baseVersion}-${buildDate}.${commitHash}`;
 
 console.log('🚀 Building OIAA Meetings WordPress Plugin...\n');
 
@@ -70,8 +80,40 @@ function copyRecursive(src, dest) {
 copyRecursive(distDir, pluginAssetsDir);
 console.log('✅ Files copied\n');
 
-// Step 3: Create .zip file
-console.log('🗜️  Step 3: Creating plugin .zip file...');
+// Step 3: Create staging directory for zip
+console.log('📦 Step 3: Creating staging directory for zip...');
+const stagingDir = path.join(rootDir, 'dist', 'plugin-staging');
+if (fs.existsSync(stagingDir)) {
+  fs.rmSync(stagingDir, { recursive: true, force: true });
+}
+fs.mkdirSync(stagingDir, { recursive: true });
+
+// Copy wordpress-plugin directory to staging
+const pluginSourceDir = path.join(rootDir, 'wordpress-plugin');
+copyRecursive(pluginSourceDir, stagingDir);
+
+// Step 3.5: Update version in the copied plugin PHP file
+console.log('📝 Step 3.5: Updating version in copied plugin file...');
+const stagedPluginPhpPath = path.join(stagingDir, 'oiaa-meetings-plugin.php');
+let pluginPhpContent = fs.readFileSync(stagedPluginPhpPath, 'utf-8');
+
+// Update Version header
+pluginPhpContent = pluginPhpContent.replace(
+  /(\* Version:\s+)[\d\.\-a-z]+/i,
+  `$1${version}`
+);
+
+// Update OIAA_MEETINGS_VERSION constant
+pluginPhpContent = pluginPhpContent.replace(
+  /(define\('OIAA_MEETINGS_VERSION',\s*')[\d\.\-a-z]+('\);)/i,
+  `$1${version}$2`
+);
+
+fs.writeFileSync(stagedPluginPhpPath, pluginPhpContent);
+console.log(`✅ Version updated to ${version}\n`);
+
+// Step 4: Create .zip file
+console.log('🗜️  Step 4: Creating plugin .zip file...');
 const distOutputDir = path.join(rootDir, 'dist');
 if (!fs.existsSync(distOutputDir)) {
   fs.mkdirSync(distOutputDir);
@@ -87,7 +129,7 @@ if (fs.existsSync(zipFilePath)) {
 
 // Create zip (using system zip command)
 try {
-  execSync(`cd wordpress-plugin && zip -r "../dist/${zipFileName}" . -x "*.DS_Store"`, {
+  execSync(`cd "${stagingDir}" && zip -r "../${zipFileName}" . -x "*.DS_Store"`, {
     cwd: rootDir,
     stdio: 'inherit',
   });
@@ -98,7 +140,10 @@ try {
   process.exit(1);
 }
 
-// Step 4: Summary
+// Clean up staging directory
+fs.rmSync(stagingDir, { recursive: true, force: true });
+
+// Step 5: Summary
 console.log('✨ WordPress Plugin Build Complete!\n');
 console.log('📊 Summary:');
 console.log(`   Version: ${version}`);

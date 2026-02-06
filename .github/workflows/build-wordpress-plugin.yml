@@ -1,0 +1,46 @@
+name: Build WordPress Plugin
+
+on:
+  release:
+    types: [published]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm install
+
+      - name: Set release version
+        if: github.event_name == 'release'
+        run: echo "PLUGIN_VERSION=${{ github.event.release.tag_name }}" | sed 's/=v/=/' >> $GITHUB_ENV
+
+      - run: npm run build:wordpress-plugin
+
+      - name: Find built zip
+        id: find-zip
+        run: |
+          ZIP_PATH=$(ls dist/oiaa-meetings-wordpress-plugin-*.zip)
+          echo "path=$ZIP_PATH" >> $GITHUB_OUTPUT
+          echo "name=$(basename $ZIP_PATH)" >> $GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.find-zip.outputs.name }}
+          path: ${{ steps.find-zip.outputs.path }}
+
+      - name: Upload release asset
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.find-zip.outputs.path }}
