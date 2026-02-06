@@ -32,7 +32,7 @@ try {
 } catch (error) {
   console.warn('⚠️  Could not get git commit hash, using "dev"');
 }
-const version = `${baseVersion}-${buildDate}.${commitHash}`;
+const version = process.env.PLUGIN_VERSION || `${baseVersion}-${buildDate}.${commitHash}`;
 
 console.log('🚀 Building OIAA Meetings WordPress Plugin...\n');
 

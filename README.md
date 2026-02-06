@@ -78,6 +78,26 @@ package.json
 
 ---
 
+## WordPress Plugin
+
+### Building locally
+
+```bash
+npm run build:wordpress-plugin
+```
+
+### Releasing
+
+1. [Create a new GitHub release](https://github.com/code4recovery/oiaa-direct/releases/new) with a version tag (e.g. `v1.1.0-beta.1`)
+2. The workflow automatically builds the plugin zip with that version stamped into the PHP file
+3. The zip is attached as a release asset — download from the release page
+
+### Automated builds
+
+The build workflow also runs on every push to `main`. These dev builds have a date+hash version suffix (e.g. `1.1.0-beta.1-20260205.abc1234`) and are available as artifacts in the [Actions tab](https://github.com/code4recovery/oiaa-direct/actions).
+
+---
+
 ## Testing
 
 To run tests (if available):

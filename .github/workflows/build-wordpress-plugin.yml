@@ -1,46 +1,46 @@
-# test 
 name: Build WordPress Plugin
 
 on:
   release:
     types: [published]
-  workflow_dispatch:
   push:
-    branches:
-      - feature/wordpress-plugin-action$
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - run: npm install
 
-      - name: Build WordPress plugin
-        run: npm run build:wordpress-plugin
+      - name: Set release version
+        if: github.event_name == 'release'
+        run: echo "PLUGIN_VERSION=${{ github.event.release.tag_name }}" | sed 's/=v/=/' >> $GITHUB_ENV
 
-      - name: Get version from package.json
-        id: version
-        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      - run: npm run build:wordpress-plugin
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Find built zip
+        id: find-zip
+        run: |
+          ZIP_PATH=$(ls dist/oiaa-meetings-wordpress-plugin-*.zip)
+          echo "path=$ZIP_PATH" >> $GITHUB_OUTPUT
+          echo "name=$(basename $ZIP_PATH)" >> $GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v4
         with:
-          name: oiaa-meetings-wordpress-plugin-v${{ steps.version.outputs.version }}
-          path: dist/oiaa-meetings-wordpress-plugin-v${{ steps.version.outputs.version }}.zip
+          name: ${{ steps.find-zip.outputs.name }}
+          path: ${{ steps.find-zip.outputs.path }}
 
       - name: Upload release asset
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/oiaa-meetings-wordpress-plugin-v${{ steps.version.outputs.version }}.zip
+          files: ${{ steps.find-zip.outputs.path }}
