@@ -1,5 +1,6 @@
 import {
   Box,
+  Heading,
   Text,
 } from "@chakra-ui/react"
 
@@ -22,7 +23,7 @@ export function MeetingsSummary({
       py={4}
       mb={4}
     >
-      <Text fontSize="xl" fontWeight="bold">
+      <Heading as="h2" size="lg">
         Meetings
         <Text
           as="span"
@@ -34,7 +35,7 @@ export function MeetingsSummary({
         >
           ({totalMeetings} total results; {shownCount} loaded.)
         </Text>
-      </Text>
+      </Heading>
     </Box>
   )
 }
