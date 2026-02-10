@@ -235,10 +235,10 @@ const MeetingHeader = ({ meeting }: { meeting: Meeting }) => {
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  const meeting = await getMeeting(params.slug)
-  const group = await getRelatedDetails(`${params.slug}/related-group-info`)
-  console.log("meeting", meeting)
-  console.log("group", group)
+  const [meeting, group] = await Promise.all([
+    getMeeting(params.slug),
+    getRelatedDetails(`${params.slug}/related-group-info`)
+  ])
   return { meeting, group }
 }
 

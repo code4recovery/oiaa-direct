@@ -1,3 +1,4 @@
+import { useNavigation } from "react-router"
 import {
   Box,
   Container,
@@ -10,8 +11,29 @@ interface LayoutProps {
 }
 
 export function Layout({ children, sidebar }: LayoutProps) {
+  const navigation = useNavigation()
+  const isLoading = navigation.state === "loading"
+
   return (
     <Box width="100%" display="flex" justifyContent="center" minH="100vh">
+      {isLoading && (
+        <Box
+          position="fixed"
+          top={0}
+          left={0}
+          right={0}
+          height="2px"
+          bg="blue.500"
+          zIndex={9999}
+          animation="pulse 1.5s ease-in-out infinite"
+          css={{
+            "@keyframes pulse": {
+              "0%, 100%": { opacity: 1 },
+              "50%": { opacity: 0.5 },
+            },
+          }}
+        />
+      )}
       <Container maxW="7xl" mx="auto" px={{ base: 4, md: 8 }} width="100%">
         <Box maxW="1200px" mx="auto" width="100%" position="relative">
           <Grid
