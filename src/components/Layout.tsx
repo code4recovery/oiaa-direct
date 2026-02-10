@@ -41,7 +41,7 @@ export function Layout({ children, sidebar }: LayoutProps) {
             gap={8}
             py={8}
           >
-            <Box overflowY="auto">
+            <Box>
               {children}
             </Box>
             {sidebar && (
