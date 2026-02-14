@@ -201,7 +201,7 @@ function oiaa_meetings_color_mode_render() {
  * Assets settings section description
  */
 function oiaa_meetings_assets_section_callback() {
-    echo __('Configure how the meetings JS and CSS are loaded. By default, assets are loaded from GitHub release assets.', 'oiaa-meetings');
+    echo __('Configure how the meetings JS and CSS are loaded. By default, assets are served via jsDelivr CDN from the GitHub cdn branch.', 'oiaa-meetings');
 }
 
 /**
@@ -217,11 +217,12 @@ function oiaa_meetings_asset_version_render() {
         name="oiaa_asset_version"
         value="<?php echo esc_attr($value); ?>"
         class="regular-text"
+        readonly
     />
     <p class="description">
-        <?php _e('The release version to load (e.g., 1.1.0-beta.1). Assets are loaded from:', 'oiaa-meetings'); ?>
+        <?php _e('Plugin version (for reference). Assets are loaded from jsDelivr CDN:', 'oiaa-meetings'); ?>
         <br />
-        <code>https://github.com/<?php echo esc_html($github_owner); ?>/<?php echo esc_html($github_repo); ?>/releases/download/v<?php echo esc_html($value); ?>/</code>
+        <code>https://cdn.jsdelivr.net/gh/<?php echo esc_html($github_owner); ?>/<?php echo esc_html($github_repo); ?>@cdn/</code>
     </p>
     <?php
 }

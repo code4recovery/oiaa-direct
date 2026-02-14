@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -34,6 +36,28 @@ jobs:
           echo "zip_path=$ZIP_PATH" >> $GITHUB_OUTPUT
           echo "zip_name=$(basename $ZIP_PATH)" >> $GITHUB_OUTPUT
 
+      - name: Deploy to cdn branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create orphan cdn branch if it doesn't exist
+          git fetch origin cdn || git checkout --orphan cdn
+          git checkout cdn 2>/dev/null || git checkout --orphan cdn
+
+          # Remove all files except dist-wordpress
+          git rm -rf . 2>/dev/null || true
+
+          # Copy built assets to root
+          cp -r dist-wordpress/* .
+
+          # Stage and commit
+          git add *.js *.css
+          git commit -m "Deploy assets from ${{ github.sha }}" || echo "No changes to commit"
+
+          # Push to cdn branch
+          git push origin cdn --force
+
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.find-files.outputs.zip_name }}
@@ -45,6 +69,3 @@ jobs:
         with:
           files: |
             ${{ steps.find-files.outputs.zip_path }}
-            dist-wordpress/oiaa-meetings.js
-            dist-wordpress/oiaa-meetings.css
-            dist-wordpress/wordpress-overrides.css
