@@ -15,7 +15,7 @@ build
 *.local
 .react-router
 build
-.github
+# .github
 .cache
 .next
 

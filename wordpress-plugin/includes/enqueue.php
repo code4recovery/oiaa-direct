@@ -20,63 +20,62 @@ function oiaa_meetings_enqueue_scripts() {
     }
     $enqueued = true;
 
-    $asset_path = OIAA_MEETINGS_PLUGIN_DIR . 'assets/';
-    $asset_url = OIAA_MEETINGS_PLUGIN_URL . 'assets/';
+    // Get settings
+    $asset_version = get_option('oiaa_asset_version', OIAA_MEETINGS_VERSION);
+    $github_owner = get_option('oiaa_github_owner', 'code4recovery');
+    $github_repo = get_option('oiaa_github_repo', 'oiaa-direct');
+    $use_local = get_option('oiaa_use_local_assets', false);
 
-    // Check if assets exist
-    $js_file = $asset_path . 'oiaa-meetings.js';
-    $css_file = $asset_path . 'oiaa-meetings.css';
+    // Local fallback paths
+    $local_asset_path = OIAA_MEETINGS_PLUGIN_DIR . 'assets/';
+    $local_asset_url = OIAA_MEETINGS_PLUGIN_URL . 'assets/';
 
-    if (!file_exists($js_file)) {
-        add_action('admin_notices', function() {
-            echo '<div class="notice notice-error"><p>';
-            echo '<strong>OIAA Meetings:</strong> Plugin assets not found. Please rebuild the plugin.';
-            echo '</p></div>';
-        });
-        return;
+    if ($use_local && file_exists($local_asset_path . 'oiaa-meetings.js')) {
+        // Use local assets
+        $js_url = $local_asset_url . 'oiaa-meetings.js';
+        $css_url = $local_asset_url . 'oiaa-meetings.css';
+        $override_css_url = $local_asset_url . 'wordpress-overrides.css';
+        $version = file_exists($local_asset_path . 'oiaa-meetings.js')
+            ? filemtime($local_asset_path . 'oiaa-meetings.js')
+            : OIAA_MEETINGS_VERSION;
+    } else {
+        // Use GitHub release assets
+        $release_base = sprintf(
+            'https://github.com/%s/%s/releases/download/v%s/',
+            esc_attr($github_owner),
+            esc_attr($github_repo),
+            esc_attr($asset_version)
+        );
+        $js_url = $release_base . 'oiaa-meetings.js';
+        $css_url = $release_base . 'oiaa-meetings.css';
+        $override_css_url = $release_base . 'wordpress-overrides.css';
+        $version = $asset_version;
     }
-
-    // Get file modification time for cache busting
-    $js_version = file_exists($js_file) ? filemtime($js_file) : OIAA_MEETINGS_VERSION;
-    $css_version = file_exists($css_file) ? filemtime($css_file) : OIAA_MEETINGS_VERSION;
 
     // Enqueue base CSS
-    if (file_exists($css_file)) {
-        wp_enqueue_style(
-            'oiaa-meetings-style',
-            $asset_url . 'oiaa-meetings.css',
-            array(),
-            $css_version
-        );
-    }
+    wp_enqueue_style(
+        'oiaa-meetings-style',
+        $css_url,
+        array(),
+        $version
+    );
 
     // Enqueue WordPress override CSS with higher priority
-    $override_css_file = $asset_path . 'wordpress-overrides.css';
-    if (file_exists($override_css_file)) {
-        // Use file hash for aggressive cache busting
-        $override_version = md5_file($override_css_file);
-
-        wp_enqueue_style(
-            'oiaa-meetings-wordpress-overrides',
-            $asset_url . 'wordpress-overrides.css',
-            array('oiaa-meetings-style'), // Load after base styles
-            $override_version, // Hash changes = cache bust
-            'all'
-        );
-
-        // Add inline comment for debugging
-        add_action('wp_head', function() use ($override_version) {
-            echo "<!-- OIAA Meetings Override CSS Version: {$override_version} -->\n";
-        });
-    }
+    wp_enqueue_style(
+        'oiaa-meetings-wordpress-overrides',
+        $override_css_url,
+        array('oiaa-meetings-style'),
+        $version,
+        'all'
+    );
 
     // Enqueue JavaScript as ES module
     wp_enqueue_script(
         'oiaa-meetings-app',
-        $asset_url . 'oiaa-meetings.js',
-        array(), // No dependencies - React is bundled
-        $js_version,
-        true // Load in footer
+        $js_url,
+        array(),
+        $version,
+        true
     );
 
     // Mark script as ES module (type="module")

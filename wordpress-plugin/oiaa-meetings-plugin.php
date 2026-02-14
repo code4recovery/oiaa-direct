@@ -41,6 +41,15 @@ function oiaa_meetings_activate() {
     if (get_option('oiaa_api_url') === false) {
         add_option('oiaa_api_url', 'https://central-query.apps.code4recovery.org/api/v1/meetings');
     }
+    if (get_option('oiaa_asset_version') === false) {
+        add_option('oiaa_asset_version', OIAA_MEETINGS_VERSION);
+    }
+    if (get_option('oiaa_github_owner') === false) {
+        add_option('oiaa_github_owner', 'code4recovery');
+    }
+    if (get_option('oiaa_github_repo') === false) {
+        add_option('oiaa_github_repo', 'oiaa-direct');
+    }
 }
 register_activation_hook(__FILE__, 'oiaa_meetings_activate');
 
@@ -58,5 +67,9 @@ register_deactivation_hook(__FILE__, 'oiaa_meetings_deactivate');
 function oiaa_meetings_uninstall() {
     // Remove options
     delete_option('oiaa_api_url');
+    delete_option('oiaa_asset_version');
+    delete_option('oiaa_use_local_assets');
+    delete_option('oiaa_github_owner');
+    delete_option('oiaa_github_repo');
 }
 register_uninstall_hook(__FILE__, 'oiaa_meetings_uninstall');
