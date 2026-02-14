@@ -11,10 +11,10 @@ function copyWordPressOverrides() {
     name: "copy-wordpress-overrides",
     closeBundle() {
       const src = resolve(__dirname, "wordpress-plugin/assets/wordpress-overrides.css")
-      const dest = resolve(__dirname, "dist-wordpress/wordpress-overrides.css")
+      const dest = resolve(__dirname, "dist/wordpress-overrides.css")
       try {
         copyFileSync(src, dest)
-        console.log("✅ Copied wordpress-overrides.css to dist-wordpress/")
+        console.log("✅ Copied wordpress-overrides.css to dist/")
       } catch (error) {
         console.warn("⚠️  Could not copy wordpress-overrides.css:", error.message)
       }
@@ -30,8 +30,8 @@ export default defineConfig({
   base: "./",
 
   build: {
-    // Output to dedicated WordPress directory
-    outDir: "dist-wordpress",
+    // Output to dist directory for CDN serving via jsDelivr
+    outDir: "dist",
     emptyOutDir: true,
 
     // Single entry point for WordPress
