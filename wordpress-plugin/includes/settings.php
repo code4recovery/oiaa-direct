@@ -41,7 +41,7 @@ function oiaa_meetings_settings_init() {
     register_setting('oiaa_meetings', 'oiaa_asset_version', array(
         'type' => 'string',
         'sanitize_callback' => 'sanitize_text_field',
-        'default' => OIAA_MEETINGS_VERSION
+        'default' => 'latest'
     ));
 
     register_setting('oiaa_meetings', 'oiaa_use_local_assets', array(
@@ -208,21 +208,32 @@ function oiaa_meetings_assets_section_callback() {
  * Render asset version input field
  */
 function oiaa_meetings_asset_version_render() {
-    $value = get_option('oiaa_asset_version', OIAA_MEETINGS_VERSION);
+    $value = get_option('oiaa_asset_version', 'latest');
     $github_owner = get_option('oiaa_github_owner', 'code4recovery');
     $github_repo = get_option('oiaa_github_repo', 'oiaa-direct');
+
+    // Build version ref (add 'v' prefix for semver, but not for 'latest' or 'main')
+    $version_ref = ($value === 'latest' || $value === 'main') ? $value : 'v' . $value;
     ?>
     <input
         type="text"
         name="oiaa_asset_version"
         value="<?php echo esc_attr($value); ?>"
         class="regular-text"
-        placeholder="<?php echo esc_attr(OIAA_MEETINGS_VERSION); ?>"
+        placeholder="latest"
     />
     <p class="description">
-        <?php _e('Asset version to load from jsDelivr CDN. Leave empty to use plugin version. Assets are loaded from:', 'oiaa-meetings'); ?>
+        <?php _e('Asset version to load from jsDelivr CDN. Options:', 'oiaa-meetings'); ?>
         <br />
-        <code>https://cdn.jsdelivr.net/gh/<?php echo esc_html($github_owner); ?>/<?php echo esc_html($github_repo); ?>@v<?php echo esc_html($value); ?>/dist/</code>
+        • <code>latest</code> <?php _e('(default) - Auto-updates to newest release', 'oiaa-meetings'); ?>
+        <br />
+        • <code>main</code> <?php _e('- Bleeding edge from main branch', 'oiaa-meetings'); ?>
+        <br />
+        • <code>1.2.0</code> <?php _e('- Pin to specific version (e.g., 1.2.0)', 'oiaa-meetings'); ?>
+        <br /><br />
+        <?php _e('Current CDN URL:', 'oiaa-meetings'); ?>
+        <br />
+        <code>https://cdn.jsdelivr.net/gh/<?php echo esc_html($github_owner); ?>/<?php echo esc_html($github_repo); ?>@<?php echo esc_html($version_ref); ?>/dist/</code>
     </p>
     <?php
 }

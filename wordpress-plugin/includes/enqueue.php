@@ -23,7 +23,7 @@ function oiaa_meetings_enqueue_scripts() {
     // Get settings
     $github_owner = get_option('oiaa_github_owner', 'code4recovery');
     $github_repo = get_option('oiaa_github_repo', 'oiaa-direct');
-    $asset_version = get_option('oiaa_asset_version', OIAA_MEETINGS_VERSION);
+    $asset_version = get_option('oiaa_asset_version', 'latest');
     $use_local = get_option('oiaa_use_local_assets', false);
 
     // Local fallback paths
@@ -40,11 +40,16 @@ function oiaa_meetings_enqueue_scripts() {
             : OIAA_MEETINGS_VERSION;
     } else {
         // Use jsDelivr CDN with versioned GitHub tags
+        // For 'latest' or 'main', don't add 'v' prefix. For semver, add 'v' prefix.
+        $version_ref = ($asset_version === 'latest' || $asset_version === 'main')
+            ? $asset_version
+            : 'v' . $asset_version;
+
         $cdn_base = sprintf(
-            'https://cdn.jsdelivr.net/gh/%s/%s@v%s/dist/',
+            'https://cdn.jsdelivr.net/gh/%s/%s@%s/dist/',
             esc_attr($github_owner),
             esc_attr($github_repo),
-            esc_attr($asset_version)
+            esc_attr($version_ref)
         );
         $js_url = $cdn_base . 'oiaa-meetings.js';
         $css_url = $cdn_base . 'oiaa-meetings.css';
