@@ -24,6 +24,10 @@ function oiaa_meetings_enqueue_scripts() {
     $github_owner = get_option('oiaa_github_owner', 'code4recovery');
     $github_repo = get_option('oiaa_github_repo', 'oiaa-direct');
     $asset_version = get_option('oiaa_asset_version', 'latest');
+    // Handle empty or whitespace-only values
+    if (empty(trim($asset_version))) {
+        $asset_version = 'latest';
+    }
     $use_local = get_option('oiaa_use_local_assets', false);
 
     // Local fallback paths
