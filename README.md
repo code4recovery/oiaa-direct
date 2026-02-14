@@ -78,6 +78,41 @@ package.json
 
 ---
 
+## WordPress Plugin
+
+OIAA Direct includes a WordPress plugin that loads the app via CDN.
+
+### Building the Plugin
+
+```bash
+npm run build:wordpress-plugin
+```
+
+Creates `dist/oiaa-meetings-wordpress-plugin-v{version}.zip` for WordPress installation.
+
+### Asset Delivery
+
+Assets are served via jsDelivr CDN from committed `dist/` files:
+
+- **Default:** `cdn.jsdelivr.net/gh/code4recovery/oiaa-direct@latest/dist/`
+- **Specific version:** `@v1.2.0/dist/`
+- **Main branch:** `@main/dist/`
+
+**WordPress Settings** (Settings → OIAA Meetings):
+- **Asset Version:** `latest` (auto-updates), `main` (bleeding edge), or `1.2.0` (pinned)
+- **Use Local Assets:** Toggle for local development
+
+### Releasing Updates
+
+1. Build: `npm run build:wordpress`
+2. Commit `dist/` files
+3. Tag: `git tag v1.2.0 && git push origin v1.2.0`
+4. Sites using `latest` auto-update via jsDelivr
+
+**Note:** Follows the same pattern as [tsml-ui](https://github.com/code4recovery/tsml-ui).
+
+---
+
 ## Testing
 
 To run tests (if available):
