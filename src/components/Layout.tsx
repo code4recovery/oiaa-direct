@@ -4,6 +4,12 @@ import {
   Container,
   Grid,
 } from "@chakra-ui/react"
+import { keyframes } from "@emotion/react"
+
+const pulse = keyframes`
+  0%, 100% { opacity: 1 }
+  50% { opacity: 0.5 }
+`
 
 interface LayoutProps {
   children: React.ReactNode
@@ -25,13 +31,7 @@ export function Layout({ children, sidebar }: LayoutProps) {
           height="2px"
           bg="blue.500"
           zIndex={9999}
-          animation="pulse 1.5s ease-in-out infinite"
-          css={{
-            "@keyframes pulse": {
-              "0%, 100%": { opacity: 1 },
-              "50%": { opacity: 0.5 },
-            },
-          }}
+          animation={`${pulse} 1.5s ease-in-out infinite`}
         />
       )}
       <Container maxW="7xl" mx="auto" px={{ base: 4, md: 8 }} width="100%">
