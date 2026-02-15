@@ -1,5 +1,9 @@
 import { useNavigation } from "react-router"
-import { Box, Container, Grid } from "@chakra-ui/react"
+import {
+  Box,
+  Container,
+  Grid,
+} from "@chakra-ui/react"
 import { keyframes } from "@emotion/react"
 
 const pulse = keyframes`
