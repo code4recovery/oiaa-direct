@@ -28,6 +28,9 @@ function oiaa_meetings_shortcode($atts) {
     // Get color mode from settings
     $color_mode = get_option('oiaa_color_mode', 'system');
 
+    // Get base path from settings
+    $base_path = get_option('oiaa_base_path', '/meetings');
+
     // Output the container and configuration
     ob_start();
     ?>
@@ -35,7 +38,8 @@ function oiaa_meetings_shortcode($atts) {
     <script>
         window.OIAA_CONFIG = {
             apiUrl: <?php echo wp_json_encode($api_url); ?>,
-            colorMode: <?php echo wp_json_encode($color_mode); ?>
+            colorMode: <?php echo wp_json_encode($color_mode); ?>,
+            basePath: <?php echo wp_json_encode($base_path); ?>
         };
     </script>
     <?php

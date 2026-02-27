@@ -1,12 +1,12 @@
 // @ts-nocheck
 // TypeScript checking disabled for WordPress entry point
-// This file uses hash router which has different type signatures than React Router v7's data router
+// This file uses createBrowserRouter with runtime basename which differs from React Router v7's build-time routing
 
 import "./index.css"
 
 import React from "react"
 import ReactDOM from "react-dom/client"
-import { createHashRouter, RouterProvider, useLoaderData } from "react-router"
+import { createBrowserRouter, RouterProvider, useLoaderData } from "react-router"
 
 import { Provider } from "@/components/ui/provider"
 import MeetingsFiltered, { clientLoader as meetingsClientLoader } from "@/routes/meetings-filtered"
@@ -18,6 +18,7 @@ declare global {
     OIAA_CONFIG?: {
       apiUrl?: string
       colorMode?: "light" | "dark" | "system"
+      basePath?: string
     }
   }
 }
@@ -45,25 +46,31 @@ function GroupInfoWrapper() {
   return <GroupInfo loaderData={loaderData} />
 }
 
-// Create hash-based router with same routes as standard build
-const router = createHashRouter([
+// Get base path from WordPress config (e.g., "/meetings" or "/" for homepage)
+// Default to "/meetings" if not configured
+const basePath = window.OIAA_CONFIG?.basePath || "/meetings"
+
+// Create browser-based router with basename support
+const router = createBrowserRouter([
   {
     path: "/",
     element: <MeetingsFilteredWrapper />,
     loader: async ({ request }) => {
-      // Adapt clientLoader to work with hash router's loader signature
+      // Adapt clientLoader to work with browser router's loader signature
       return meetingsClientLoader({ request, params: {}, serverLoader: async () => undefined })
     },
   },
   {
     path: "/group-info/:slug",
     element: <GroupInfoWrapper />,
-    loader: async ({ params }) => {
-      // Adapt clientLoader to work with hash router's loader signature
-      return groupInfoClientLoader({ request: new Request('/'), params: params, serverLoader: async () => undefined })
+    loader: async ({ params, request }) => {
+      // Adapt clientLoader to work with browser router's loader signature
+      return groupInfoClientLoader({ request, params: params, serverLoader: async () => undefined })
     },
   },
-])
+], {
+  basename: basePath,
+})
 
 /**
  * Initialize the OIAA Meetings app in WordPress
