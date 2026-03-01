@@ -45,3 +45,12 @@ jobs:
         with:
           files: |
             ${{ steps.find-files.outputs.zip_path }}
+
+      - name: Purge jsDelivr cache
+        if: github.event_name == 'release'
+        uses: egad13/purge-jsdelivr-cache@v1
+        with:
+          url: |
+            https://cdn.jsdelivr.net/gh/${{ github.repository }}@latest/dist/oiaa-meetings.js
+            https://cdn.jsdelivr.net/gh/${{ github.repository }}@latest/dist/oiaa-meetings.css
+            https://cdn.jsdelivr.net/gh/${{ github.repository }}@latest/dist/wordpress-overrides.css
