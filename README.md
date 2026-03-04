@@ -36,6 +36,30 @@ VITE_CQ_URL="https://central-query.apps.code4recovery.org/api/v1/meetings"
 
 ---
 
+## WordPress Plugin Development
+
+To test the WordPress plugin locally in an environment that matches production:
+
+```bash
+# Start WordPress + MySQL
+docker-compose up -d
+
+# Clone the JointsWP theme (same theme used on aa-intergroup.org)
+git clone https://github.com/JeremyEnglert/JointsWP.git
+```
+
+Then:
+1. Visit http://localhost:8080/wp-admin (user: auto-created on first visit)
+2. Activate the JointsWP theme under Appearance → Themes
+3. The oiaa-meetings plugin is auto-mounted — activate it under Plugins
+
+After making changes to the plugin, rebuild with:
+```bash
+npm run build:wordpress-plugin
+```
+
+---
+
 ## Recommended VS Code Extensions
 
 - [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
