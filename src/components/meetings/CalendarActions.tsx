@@ -150,13 +150,13 @@ const CalendarOption: React.FC<CalendarOptionProps> = ({
     <HStack gap={2}>
       <Button
         size="xs"
-        variant="outline"
+        variant="ghost"
         colorScheme={colorScheme}
         onClick={() => { downloadICS(meeting, isRecurring); }}
         flex="1"
       >
         {isRecurring ? <FaCalendarCheck style={{ marginRight: '4px' }} /> : <FaCalendarPlus style={{ marginRight: '4px' }} />}
-        Download .ics
+        .ics (mac)
       </Button>
       <Button
         size="xs"
@@ -255,7 +255,7 @@ export const CalendarActions = ({
                 }}
               >
                 <FaCalendarPlus style={{ marginRight: '8px' }} />
-                Single Event (.ics)
+                Single Event (.ics (mac))
               </Button>
               
               <Button
@@ -267,7 +267,7 @@ export const CalendarActions = ({
                 }}
               >
                 <FaCalendarCheck style={{ marginRight: '8px' }} />
-                Recurring Series (.ics)
+                Recurring Series (.ics (mac))
               </Button>
               
               <Text fontSize="xs" color="gray.500" mt={2} mb={1}>
