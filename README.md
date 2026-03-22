@@ -78,6 +78,12 @@ package.json
 
 ---
 
+## WordPress Plugin
+
+OIAA Direct includes a WordPress plugin that loads the app via CDN using the `[oiaa_meetings]` shortcode. See **[WORDPRESS.md](WORDPRESS.md)** for full documentation — installation, settings, updating, troubleshooting, and developer build/release workflow.
+
+---
+
 ## Testing
 
 To run tests (if available):

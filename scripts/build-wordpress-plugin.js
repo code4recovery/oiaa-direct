@@ -41,7 +41,7 @@ try {
 
 // Step 2: Copy built files to plugin assets directory
 console.log('📁 Step 2: Copying files to wordpress-plugin/assets/...');
-const distDir = path.join(rootDir, 'dist-wordpress');
+const distDir = path.join(rootDir, 'dist');
 const pluginAssetsDir = path.join(rootDir, 'wordpress-plugin', 'assets');
 
 // Clean assets directory
