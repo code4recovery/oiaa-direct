@@ -64,14 +64,15 @@ central-query API → getData.ts (createFetcher<T>) → Route clientLoaders → 
 ### WordPress Integration
 
 The WordPress build uses a separate entry point (`src/entry-wordpress.tsx`) that:
-- Uses hash router instead of browser history (works without server config)
-- Reads config from `window.OIAA_CONFIG` (set by PHP shortcode)
-- Has `@ts-nocheck` due to hash router type incompatibilities
+- Uses `createBrowserRouter` with `basename` from `window.OIAA_CONFIG.basePath`
+- Reads config from `window.OIAA_CONFIG` (injected by template redirect rendering)
+- Has `@ts-nocheck` due to runtime router configuration differences
 
 Plugin structure in `wordpress-plugin/`:
 - `oiaa-meetings-plugin.php` - Main plugin file
-- `includes/shortcode.php` - `[oiaa_meetings]` shortcode handler
+- `includes/template-redirect.php` - Template redirect rendering and base path detection
 - `includes/settings.php` - Admin settings page
+- `templates/` - Block-theme compatible header/footer templates
 - `assets/` - Built React app (copied by build script)
 
 ### Testing

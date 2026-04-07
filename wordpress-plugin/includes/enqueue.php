@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Enqueue plugin scripts and styles
- * Called by shortcode handler when shortcode is used
+ * Called by template redirect renderer when plugin output is served
  */
 function oiaa_meetings_enqueue_scripts() {
     // Prevent double-enqueueing
