@@ -135,12 +135,12 @@ function oiaa_meetings_is_base_page_request() {
         return false;
     }
 
-    $base_page_id = oiaa_meetings_get_base_page_id();
-    if ($base_page_id <= 0) {
+    $base_page_ids = oiaa_meetings_get_base_page_ids();
+    if (empty($base_page_ids)) {
         return false;
     }
 
-    return $query_object_id === $base_page_id;
+    return in_array($query_object_id, $base_page_ids, true);
 }
 
 /**
@@ -156,4 +156,114 @@ function oiaa_meetings_get_base_page_id() {
 
     $page = get_page_by_path($page_path, OBJECT, 'page');
     return is_null($page) ? 0 : (int) $page->ID;
+}
+
+/**
+ * Whether WPML integration hooks are available.
+ */
+function oiaa_meetings_has_wpml() {
+    return defined('ICL_SITEPRESS_VERSION') || has_filter('wpml_object_id') || has_filter('wpml_original_element_id');
+}
+
+/**
+ * Resolve canonical + translated page IDs for the configured base page.
+ */
+function oiaa_meetings_get_base_page_ids() {
+    static $cached_ids = null;
+
+    if (!is_null($cached_ids)) {
+        return $cached_ids;
+    }
+
+    $canonical_page_id = oiaa_meetings_get_base_page_id();
+    if ($canonical_page_id <= 0) {
+        $cached_ids = array();
+        return $cached_ids;
+    }
+
+    $ids = array($canonical_page_id);
+
+    if (oiaa_meetings_has_wpml()) {
+        $trid = (int) apply_filters('wpml_element_trid', null, $canonical_page_id, 'post_page');
+        if ($trid > 0) {
+            $translations = apply_filters('wpml_get_element_translations', null, $trid, 'post_page');
+            if (is_array($translations)) {
+                foreach ($translations as $translation) {
+                    if (!empty($translation->element_id)) {
+                        $ids[] = (int) $translation->element_id;
+                    }
+                }
+            }
+        }
+
+        if (has_filter('wpml_active_languages') && has_filter('wpml_object_id')) {
+            $languages = apply_filters('wpml_active_languages', null, array('skip_missing' => 0));
+            if (is_array($languages)) {
+                foreach ($languages as $language_code => $language_data) {
+                    if (!is_string($language_code) || $language_code === '') {
+                        continue;
+                    }
+
+                    $translated_id = (int) apply_filters('wpml_object_id', $canonical_page_id, 'page', false, $language_code);
+                    if ($translated_id > 0) {
+                        $ids[] = $translated_id;
+                    }
+                }
+            }
+        }
+    }
+
+    $cached_ids = array_values(array_unique(array_filter($ids)));
+    return $cached_ids;
+}
+
+/**
+ * Resolve path map for canonical + translated meetings pages.
+ * Returns [page_id => path_without_leading_slash].
+ */
+function oiaa_meetings_get_base_page_paths() {
+    $page_path = oiaa_meetings_get_base_slug();
+
+    // Homepage mode has no nested path rewrites.
+    if ($page_path === '') {
+        return array();
+    }
+
+    $paths = array();
+
+    foreach (oiaa_meetings_get_base_page_ids() as $base_page_id) {
+        $permalink = get_permalink($base_page_id);
+
+        if (!is_string($permalink) || $permalink === '') {
+            continue;
+        }
+
+        $path = wp_parse_url($permalink, PHP_URL_PATH);
+        if (!is_string($path) || $path === '') {
+            continue;
+        }
+
+        $trimmed_path = trim($path, '/');
+        if ($trimmed_path === '') {
+            continue;
+        }
+
+        $home_path = (string) wp_parse_url((string) get_option('home'), PHP_URL_PATH);
+        $home_path = trim($home_path, '/');
+
+        if ($home_path !== '') {
+            if ($trimmed_path === $home_path) {
+                continue;
+            }
+
+            $prefix = $home_path . '/';
+            if (strpos($trimmed_path, $prefix) === 0) {
+                $trimmed_path = substr($trimmed_path, strlen($prefix));
+            }
+        }
+
+        $paths[(int) $base_page_id] = $trimmed_path;
+    }
+
+    return $paths;
 }

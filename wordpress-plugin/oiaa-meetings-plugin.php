@@ -43,18 +43,32 @@ add_action('plugins_loaded', 'oiaa_meetings_init');
  * Add rewrite rules to support browser-router history sub-routes.
  */
 function oiaa_meetings_add_rewrite_rules() {
-    $page_slug = oiaa_meetings_get_base_slug();
+    $page_paths = oiaa_meetings_get_base_page_paths();
 
-    // Homepage mode does not need a rewrite rule.
-    if ($page_slug === '') {
-        return;
+    foreach ($page_paths as $page_id => $page_path) {
+        $path_regex = preg_quote((string) $page_path, '/');
+        add_rewrite_rule(
+            '^' . $path_regex . '(?:/(.*))?/?$',
+            'index.php?page_id=' . (int) $page_id,
+            'top'
+        );
     }
 
-    add_rewrite_rule(
-        '^' . preg_quote($page_slug, '/') . '(/.*)?$',
-        'index.php?pagename=' . $page_slug,
-        'top'
-    );
+    // Fallback for initial setup before a base page ID can be resolved.
+    if (empty($page_paths)) {
+        $page_slug = oiaa_meetings_get_base_slug();
+
+        // Homepage mode does not need a rewrite rule.
+        if ($page_slug === '') {
+            return;
+        }
+
+        add_rewrite_rule(
+            '^' . preg_quote($page_slug, '/') . '(?:/(.*))?/?$',
+            'index.php?pagename=' . $page_slug,
+            'top'
+        );
+    }
 }
 
 /**
