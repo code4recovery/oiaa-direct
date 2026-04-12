@@ -38,6 +38,12 @@ function oiaa_meetings_settings_init() {
         'default' => 'system'
     ));
 
+    register_setting('oiaa_meetings', 'oiaa_base_path', array(
+        'type' => 'string',
+        'sanitize_callback' => 'oiaa_meetings_sanitize_base_path',
+        'default' => OIAA_MEETINGS_DEFAULT_BASE_PATH
+    ));
+
     register_setting('oiaa_meetings', 'oiaa_asset_version', array(
         'type' => 'string',
         'sanitize_callback' => 'sanitize_text_field',
@@ -97,6 +103,21 @@ function oiaa_meetings_settings_init() {
         __('Asset Settings', 'oiaa-meetings'),
         'oiaa_meetings_assets_section_callback',
         'oiaa_meetings'
+    );
+
+    add_settings_section(
+        'oiaa_meetings_routing_section',
+        __('Routing Configuration', 'oiaa-meetings'),
+        'oiaa_meetings_routing_section_callback',
+        'oiaa_meetings'
+    );
+
+    add_settings_field(
+        'oiaa_base_path',
+        __('Base Path', 'oiaa-meetings'),
+        'oiaa_meetings_base_path_render',
+        'oiaa_meetings',
+        'oiaa_meetings_routing_section'
     );
 
     add_settings_field(
@@ -167,11 +188,39 @@ function oiaa_meetings_appearance_section_callback() {
 }
 
 /**
+ * Routing settings section description
+ */
+function oiaa_meetings_routing_section_callback() {
+    echo __('Configure URL routing for the meetings application. This must match the WordPress page slug used to host the meetings app.', 'oiaa-meetings');
+}
+
+/**
  * Sanitize color mode input
  */
 function oiaa_meetings_sanitize_color_mode($input) {
     $valid_modes = array('light', 'dark', 'system');
     return in_array($input, $valid_modes, true) ? $input : 'system';
+}
+
+/**
+ * Sanitize base path input.
+ */
+function oiaa_meetings_sanitize_base_path($input) {
+    $input = trim((string) $input);
+
+    if ($input === '') {
+        return OIAA_MEETINGS_DEFAULT_BASE_PATH;
+    }
+
+    if ($input[0] !== '/') {
+        $input = '/' . $input;
+    }
+
+    if (strlen($input) > 1) {
+        $input = rtrim($input, '/');
+    }
+
+    return $input;
 }
 
 /**
@@ -193,6 +242,29 @@ function oiaa_meetings_color_mode_render() {
     </select>
     <p class="description">
         <?php _e('Choose the color theme for the meetings application. "System" will automatically match the user\'s browser/OS preference. Users can still toggle between light and dark mode using the theme switcher button.', 'oiaa-meetings'); ?>
+    </p>
+    <?php
+}
+
+/**
+ * Render base path input field.
+ */
+function oiaa_meetings_base_path_render() {
+    $value = oiaa_meetings_get_base_path();
+    ?>
+    <input
+        type="text"
+        name="oiaa_base_path"
+        value="<?php echo esc_attr($value); ?>"
+        class="regular-text"
+        placeholder="/meetings"
+        required
+    />
+    <p class="description">
+        <?php _e('URL path where the meetings page lives. Example: <code>/meetings</code>. Use <code>/</code> for homepage mode.', 'oiaa-meetings'); ?>
+    </p>
+    <p class="description" style="color: #d63638;">
+        <strong><?php _e('Important:', 'oiaa-meetings'); ?></strong> <?php _e('This should match your WordPress page slug. After changing it, re-save permalinks (Settings → Permalinks).', 'oiaa-meetings'); ?>
     </p>
     <?php
 }
@@ -312,12 +384,14 @@ function oiaa_meetings_options_page() {
 
         <hr />
 
-        <h2><?php _e('Usage', 'oiaa-meetings'); ?></h2>
-        <p><?php _e('Add the following shortcode to any page or post where you want to display the OIAA Meetings application:', 'oiaa-meetings'); ?></p>
-        <code>[oiaa_meetings]</code>
-
-        <h3><?php _e('Example', 'oiaa-meetings'); ?></h3>
-        <p><?php _e('Create a new page and add this shortcode to the content area. The meetings application will render at that location.', 'oiaa-meetings'); ?></p>
+        <h2><?php _e('Setup Instructions', 'oiaa-meetings'); ?></h2>
+        <ol>
+            <li><?php _e('Ensure WordPress is using the "Post name" permalink structure (Settings → Permalinks).', 'oiaa-meetings'); ?></li>
+            <li><?php _e('Set Base Path above (for example, <code>/meetings</code>).', 'oiaa-meetings'); ?></li>
+            <li><?php _e('Activate the plugin to auto-create the page if it does not already exist.', 'oiaa-meetings'); ?></li>
+            <li><?php _e('If you changed Base Path, visit Settings → Permalinks and click "Save Changes".', 'oiaa-meetings'); ?></li>
+            <li><?php _e('Sub-routes like <code>/meetings/group-info/some-group</code> are handled by the meetings app.', 'oiaa-meetings'); ?></li>
+        </ol>
 
         <h3><?php _e('Plugin Information', 'oiaa-meetings'); ?></h3>
         <ul>

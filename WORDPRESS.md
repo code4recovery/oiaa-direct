@@ -1,6 +1,6 @@
 # WordPress Plugin
 
-The OIAA Meetings WordPress plugin embeds the meeting list app on any WordPress page using the `[oiaa_meetings]` shortcode. The app's JS/CSS loads from a CDN so the plugin rarely needs updating — new app releases are picked up by changing a setting in wordpress.
+The OIAA Meetings WordPress plugin renders the meeting list app at a configurable WordPress base path (for example, `/meetings`) using `template_redirect`. The app's JS/CSS can be loaded from jsDelivr CDN or from local plugin assets.
 
 ## How It Works
 
@@ -26,7 +26,7 @@ This is the same pattern used by [tsml-ui](https://github.com/code4recovery/tsml
 1. Download the latest `.zip` from [GitHub Releases](https://github.com/code4recovery/oiaa-direct/releases).
 2. In WordPress, go to **Plugins → Add New → Upload Plugin** and upload the zip.
 3. Activate the plugin.
-4. Add the `[oiaa_meetings]` shortcode to any page.
+4. Configure **Base Path** (for example `/meetings`) and ensure a matching page exists.
 
 ## Settings
 
