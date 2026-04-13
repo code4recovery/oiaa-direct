@@ -4,6 +4,7 @@ import {
 } from "react"
 
 import { DateTime } from "luxon"
+import { useTranslation } from "react-i18next"
 import {
   Outlet,
   useSearchParams,
@@ -96,6 +97,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise
 
 export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
   console.log('🔴 Component render')
+  const { t } = useTranslation()
   const [filterParams, setFilterParams] = useSearchParams()
   const { meetings } = loaderData
   const totalMeetings = meetings.length
@@ -154,7 +156,7 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
           </>
         ) : (
           <Text textAlign="center" py={8} color="gray.500">
-            No meetings found matching your criteria.
+            {t("no_results")}
           </Text>
         )}
       </Layout>

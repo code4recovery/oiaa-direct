@@ -1,5 +1,7 @@
 import React from "react"
 
+import { useTranslation } from "react-i18next"
+
 import type { FacetOptions } from "@/hooks/useFacets"
 import type {
   Community,
@@ -38,6 +40,35 @@ export function renderFilterGroups({
   disclosureStates,
   facetOptions,
 }: RenderFilterGroupsProps) {
+  return (
+    <FilterGroupsInner
+      filterParams={filterParams}
+      selectedDay={selectedDay}
+      selectedTimeFrame={selectedTimeFrame}
+      handleTimeChange={handleTimeChange}
+      handleToggle={handleToggle}
+      handleExclusiveToggle={handleExclusiveToggle}
+      showTimeFilter={showTimeFilter}
+      isMobile={isMobile}
+      disclosureStates={disclosureStates}
+      facetOptions={facetOptions}
+    />
+  )
+}
+
+function FilterGroupsInner({
+  filterParams,
+  selectedDay,
+  selectedTimeFrame,
+  handleTimeChange,
+  handleToggle,
+  handleExclusiveToggle,
+  showTimeFilter,
+  isMobile,
+  disclosureStates,
+  facetOptions,
+}: RenderFilterGroupsProps) {
+  const { t } = useTranslation()
   const groups: React.ReactNode[] = []
 
   if (showTimeFilter) {
@@ -45,7 +76,7 @@ export function renderFilterGroups({
       isMobile ? (
         <FilterSection
           key="time"
-          title="Day & Time"
+          title={t("filter_day_time")}
           isOpen={disclosureStates?.time.open ?? false}
           onToggle={
             disclosureStates?.time.onToggle ??
@@ -86,35 +117,35 @@ export function renderFilterGroups({
   const categories = [
     {
       key: "type",
-      title: "Meeting Type",
+      title: t("filter_meeting_type"),
       options: facetOptions.types,
       selected: filterParams.getAll("type") as Type[],
       onToggle: handleExclusiveToggle("type"),
     },
     {
       key: "formats",
-      title: "Formats",
+      title: t("filter_formats"),
       options: facetOptions.formats,
       selected: filterParams.getAll("formats") as Format[],
       onToggle: handleToggle("formats"),
     },
     {
       key: "features",
-      title: "Features",
+      title: t("filter_features"),
       options: facetOptions.features,
       selected: filterParams.getAll("features") as Feature[],
       onToggle: handleToggle("features"),
     },
     {
       key: "communities",
-      title: "Communities",
+      title: t("filter_communities"),
       options: facetOptions.communities,
       selected: filterParams.getAll("communities") as Community[],
       onToggle: handleToggle("communities"),
     },
     {
       key: "languages",
-      title: "Languages",
+      title: t("filter_languages"),
       options: facetOptions.languages,
       selected: filterParams.getAll("languages") as Language[],
       onToggle: handleToggle("languages"),

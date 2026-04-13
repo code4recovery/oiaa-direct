@@ -4,6 +4,7 @@ import {
   FaCalendarPlus,
   FaChevronDown,
 } from "react-icons/fa"
+import { useTranslation } from "react-i18next"
 
 import {
   PopoverBody,
@@ -11,6 +12,7 @@ import {
   PopoverRoot,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import i18n from "@/i18n"
 import type { Meeting } from "@/meetingTypes"
 import { isScheduledMeeting } from "@/utils/meetings-utils"
 import {
@@ -48,13 +50,13 @@ const generateICS = (meeting: Meeting, isRecurring = false): string => {
 
   const description = [
     (meeting.notes ?? ''),
-    meeting.conference_url ? `Join Meeting: ${meeting.conference_url}` : '',
-    meeting.conference_phone ? `Phone: ${meeting.conference_phone}` : '',
-    meeting.groupEmail ? `Contact: ${meeting.groupEmail}` : '',
-    meeting.groupWebsite ? `Website: ${meeting.groupWebsite}` : '',
+    meeting.conference_url ? i18n.t("ics_join", { url: meeting.conference_url }) : '',
+    meeting.conference_phone ? i18n.t("ics_phone", { phone: meeting.conference_phone }) : '',
+    meeting.groupEmail ? i18n.t("ics_contact", { email: meeting.groupEmail }) : '',
+    meeting.groupWebsite ? i18n.t("ics_website", { url: meeting.groupWebsite }) : '',
   ].filter(Boolean).join('\\n\\n')
 
-  const location = meeting.conference_url ?? 'Online Meeting'
+  const location = meeting.conference_url ?? i18n.t("online_meeting")
 
   const recurrenceRule = isRecurring ? '\nRRULE:FREQ=WEEKLY;BYDAY=' + 
     ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'][startDate.weekday % 7] : ''
@@ -77,7 +79,7 @@ TRANSP:OPAQUE
 BEGIN:VALARM
 TRIGGER:-PT15M
 ACTION:DISPLAY
-DESCRIPTION:Meeting reminder
+DESCRIPTION:${i18n.t("meeting_reminder")}
 END:VALARM
 END:VEVENT
 END:VCALENDAR`
@@ -116,7 +118,7 @@ const generateCalendarUrls = (meeting: Meeting, isRecurring = false) => {
   ].filter(Boolean).join('\n\n'))
   
   const googleLocation = encodeURIComponent(
-    meeting.conference_url ?? 'Online Meeting'
+    meeting.conference_url ?? i18n.t("online_meeting")
   )
 
   const recurrence = isRecurring ? '&recur=RRULE:FREQ=WEEKLY' : ''
@@ -142,43 +144,46 @@ const CalendarOption: React.FC<CalendarOptionProps> = ({
   meeting,
   calendarUrls,
   colorScheme,
-}) => (
-  <Flex direction="column" gap={2}>
-    <Text fontSize="xs" fontWeight="medium" color="gray.600" _dark={{ color: "gray.400" }}>
-      {label}
-    </Text>
-    <HStack gap={2}>
-      <Button
-        size="xs"
-        variant="ghost"
-        colorScheme={colorScheme}
-        onClick={() => { downloadICS(meeting, isRecurring); }}
-        flex="1"
-      >
-        {isRecurring ? <FaCalendarCheck style={{ marginRight: '4px' }} /> : <FaCalendarPlus style={{ marginRight: '4px' }} />}
-        .ics (mac)
-      </Button>
-      <Button
-        size="xs"
-        variant="ghost"
-        colorScheme={colorScheme}
-        flex="1"
-        onClick={() => window.open(calendarUrls.google, '_blank')}
-      >
-        Google
-      </Button>
-      <Button
-        size="xs"
-        variant="ghost"
-        colorScheme={colorScheme}
-        flex="1"
-        onClick={() => window.open(calendarUrls.outlook, '_blank')}
-      >
-        Outlook
-      </Button>
-    </HStack>
-  </Flex>
-)
+}) => {
+  const { t } = useTranslation()
+  return (
+    <Flex direction="column" gap={2}>
+      <Text fontSize="xs" fontWeight="medium" color="gray.600" _dark={{ color: "gray.400" }}>
+        {label}
+      </Text>
+      <HStack gap={2}>
+        <Button
+          size="xs"
+          variant="ghost"
+          colorScheme={colorScheme}
+          onClick={() => { downloadICS(meeting, isRecurring); }}
+          flex="1"
+        >
+          {isRecurring ? <FaCalendarCheck style={{ marginRight: '4px' }} /> : <FaCalendarPlus style={{ marginRight: '4px' }} />}
+          {t("ics_mac")}
+        </Button>
+        <Button
+          size="xs"
+          variant="ghost"
+          colorScheme={colorScheme}
+          flex="1"
+          onClick={() => window.open(calendarUrls.google, '_blank')}
+        >
+          {t("google")}
+        </Button>
+        <Button
+          size="xs"
+          variant="ghost"
+          colorScheme={colorScheme}
+          flex="1"
+          onClick={() => window.open(calendarUrls.outlook, '_blank')}
+        >
+          {t("outlook")}
+        </Button>
+      </HStack>
+    </Flex>
+  )
+}
 
 export const CalendarActions = ({
   meeting,
@@ -192,6 +197,7 @@ export const CalendarActions = ({
     return null
   }
   
+  const { t } = useTranslation()
   const displayMode = forceMode ?? mode
 
   const calendarUrls = generateCalendarUrls(meeting, false)
@@ -206,15 +212,15 @@ export const CalendarActions = ({
       return (
         <Flex align="center" gap={2}>
           <FaCalendarPlus />
-          <Text>{isMain ? 'Calendar' : 'Add'}</Text>
+          <Text>{isMain ? t("calendar") : t("add")}</Text>
         </Flex>
       )
     }
-    
+
     return (
       <Flex align="center" gap={2}>
         <FaCalendarPlus />
-        <Text>{isMain ? 'Add to Calendar' : 'Add Event'}</Text>
+        <Text>{isMain ? t("add_to_calendar") : t("add_event")}</Text>
       </Flex>
     )
   }
@@ -234,7 +240,7 @@ export const CalendarActions = ({
             size={size}
             variant="outline"
             colorScheme="green"
-            title="Add to Calendar"
+            title={t("add_to_calendar")}
           >
             <FaCalendarPlus />
           </Button>
@@ -243,9 +249,9 @@ export const CalendarActions = ({
           <PopoverBody>
             <Flex direction="column" gap={2}>
               <Text fontSize="sm" fontWeight="medium" mb={2}>
-                Add to Calendar
+                {t("add_to_calendar")}
               </Text>
-              
+
               <Button
                 size="xs"
                 variant="ghost"
@@ -255,9 +261,9 @@ export const CalendarActions = ({
                 }}
               >
                 <FaCalendarPlus style={{ marginRight: '8px' }} />
-                Single Event (.ics (mac))
+                {t("single_event_ics")}
               </Button>
-              
+
               <Button
                 size="xs"
                 variant="ghost"
@@ -267,13 +273,13 @@ export const CalendarActions = ({
                 }}
               >
                 <FaCalendarCheck style={{ marginRight: '8px' }} />
-                Recurring Series (.ics (mac))
+                {t("recurring_series_ics")}
               </Button>
-              
+
               <Text fontSize="xs" color="gray.500" mt={2} mb={1}>
-                Quick Add:
+                {t("quick_add")}
               </Text>
-              
+
               <Button
                 as="a"
                 size="xs"
@@ -282,9 +288,9 @@ export const CalendarActions = ({
                 colorScheme="blue"
                 onClick={() => window.open(calendarUrls.google, '_blank')}
               >
-                Google Calendar
+                {t("google_calendar")}
               </Button>
-              
+
               <Button
                 as="a"
                 size="xs"
@@ -293,7 +299,7 @@ export const CalendarActions = ({
                 colorScheme="blue"
                 onClick={() => window.open(calendarUrls.outlook, '_blank')}
               >
-                Outlook
+                {t("outlook")}
               </Button>
             </Flex>
           </PopoverBody>
@@ -321,27 +327,27 @@ export const CalendarActions = ({
           <PopoverBody>
             <Flex direction="column" gap={3}>
               <Text fontSize="sm" fontWeight="medium">
-                Add to Calendar
+                {t("add_to_calendar")}
               </Text>
-              
+
               <CalendarOption
-                label="Single Event"
+                label={t("single_event")}
                 isRecurring={false}
                 meeting={meeting}
                 calendarUrls={calendarUrls}
                 colorScheme="blue"
               />
-              
+
               <CalendarOption
-                label="Recurring Series (Weekly)"
+                label={t("recurring_series")}
                 isRecurring={true}
                 meeting={meeting}
                 calendarUrls={recurringUrls}
                 colorScheme="purple"
               />
-              
+
               <Text fontSize="xs" color="gray.500" _dark={{ color: "gray.400" }}>
-                Events include meeting links, phone numbers, and reminders.
+                {t("calendar_events_note")}
               </Text>
             </Flex>
           </PopoverBody>

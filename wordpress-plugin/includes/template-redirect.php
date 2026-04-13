@@ -32,7 +32,8 @@ function oiaa_meetings_template_redirect() {
         window.OIAA_CONFIG = {
             apiUrl: <?php echo wp_json_encode(esc_url_raw($api_url)); ?>,
             colorMode: <?php echo wp_json_encode($color_mode); ?>,
-            basePath: <?php echo wp_json_encode($base_path); ?>
+            basePath: <?php echo wp_json_encode($base_path); ?>,
+            language: <?php echo wp_json_encode(oiaa_meetings_detect_language()); ?>
         };
     </script>
     <?php
@@ -156,6 +157,20 @@ function oiaa_meetings_get_base_page_id() {
 
     $page = get_page_by_path($page_path, OBJECT, 'page');
     return is_null($page) ? 0 : (int) $page->ID;
+}
+
+/**
+ * Detect the current language for the React SPA.
+ * Uses WPML if available, otherwise falls back to WordPress locale.
+ */
+function oiaa_meetings_detect_language() {
+    if (oiaa_meetings_has_wpml()) {
+        $lang = apply_filters('wpml_current_language', null);
+        if (is_string($lang) && $lang !== '') {
+            return $lang;
+        }
+    }
+    return substr(get_locale(), 0, 2);
 }
 
 /**

@@ -9,6 +9,7 @@ import {
   FaFilter,
   FaTimesCircle,
 } from "react-icons/fa"
+import { useTranslation } from "react-i18next"
 import type { SetURLSearchParams } from "react-router"
 
 import { useFacets } from "@/hooks/useFacets"
@@ -50,6 +51,7 @@ interface FacetsErrorBoxProps {
 }
 
 function FacetsErrorBox({ onRetry }: FacetsErrorBoxProps) {
+  const { t } = useTranslation()
   return (
     <Box
       p={3}
@@ -59,7 +61,7 @@ function FacetsErrorBox({ onRetry }: FacetsErrorBoxProps) {
       _dark={{ bg: "orange.900", color: "orange.100" }}
     >
       <Text fontSize="sm">
-        Filters are temporarily unavailable. Please try again in a moment.
+        {t("filters_unavailable")}
       </Text>
       <Button
         mt={3}
@@ -68,7 +70,7 @@ function FacetsErrorBox({ onRetry }: FacetsErrorBoxProps) {
         colorScheme="orange"
         onClick={onRetry}
       >
-        Retry
+        {t("retry")}
       </Button>
     </Box>
   )
@@ -82,6 +84,7 @@ export function Filter({
   showTimeFilter = true,
   showClearButton = true,
 }: FilterProps) {
+  const { t } = useTranslation()
   const isMobile = variant === "mobile"
 
   const {
@@ -221,7 +224,7 @@ export function Filter({
           >
             <Flex align="center" gap={2}>
               <FaTimesCircle />
-              <Text>Clear Filters</Text>
+              <Text>{t("clear_filters")}</Text>
             </Flex>
           </Button>
         )}
@@ -238,7 +241,7 @@ export function Filter({
             >
               <Flex align="center" gap={2}>
                 <FaFilter />
-                <Text>Filters</Text>
+                <Text>{t("filters")}</Text>
                 <Badge colorScheme="blue" variant="solid" borderRadius="full">
                   {activeFilterCount}
                 </Badge>
@@ -273,7 +276,7 @@ export function Filter({
         ) : (
           <>
             <Heading size="md" color="inherit">
-              Filters
+              {t("filters")}
             </Heading>
             {facetsError ? (
               <FacetsErrorBox onRetry={retryFacets} />

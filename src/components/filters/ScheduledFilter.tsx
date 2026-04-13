@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next"
+
 import {
   Flex,
   Switch,
@@ -10,6 +12,7 @@ interface ScheduledFilterProps {
 }
 
 export function ScheduledFilter({ showScheduled, onChange }: ScheduledFilterProps) {
+  const { t } = useTranslation()
   return (
     <Flex gap={8} alignItems="center" justifyContent="center" px={3}>
       <Text
@@ -20,7 +23,7 @@ export function ScheduledFilter({ showScheduled, onChange }: ScheduledFilterProp
           color: showScheduled ? "gray.100" : "gray.500",
         }}
       >
-        Scheduled
+        {t("scheduled")}
       </Text>
       <Switch.Root
         size="lg"
@@ -42,7 +45,7 @@ export function ScheduledFilter({ showScheduled, onChange }: ScheduledFilterProp
           color: showScheduled ? "gray.500" : "gray.100",
         }}
       >
-        Ongoing
+        {t("ongoing")}
       </Text>
     </Flex>
   )

@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next"
+
 import {
   Box,
   Heading,
@@ -13,6 +15,7 @@ export function MeetingsSummary({
   shownCount,
   totalMeetings,
 }: MeetingsSummaryProps) {
+  const { t } = useTranslation()
   return (
     <Box
       position="sticky"
@@ -24,7 +27,7 @@ export function MeetingsSummary({
       mb={4}
     >
       <Heading as="h2" size="lg">
-        Meetings
+        {t("meetings")}
         <Text
           as="span"
           fontSize="md"
@@ -33,7 +36,7 @@ export function MeetingsSummary({
           ml={2}
           fontWeight="normal"
         >
-          ({totalMeetings} total results; {shownCount} loaded.)
+          {t("meetings_summary", { total: totalMeetings, shown: shownCount })}
         </Text>
       </Heading>
     </Box>
