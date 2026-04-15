@@ -170,7 +170,7 @@ function oiaa_meetings_detect_language() {
             return $lang;
         }
     }
-    return substr(get_locale(), 0, 2);
+    return null;
 }
 
 /**
