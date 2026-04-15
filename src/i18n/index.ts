@@ -23,15 +23,18 @@ const resources: Resource = {
 }
 
 function detectLanguage(): string {
-  // WordPress/WPML provides language via global config
-  const wpLang = window.OIAA_CONFIG?.language
-  if (wpLang && wpLang in resources) return wpLang
+  if (typeof window !== "undefined") {
+    // WordPress/WPML provides language via global config
+    const wpLang = window.OIAA_CONFIG?.language
+    if (wpLang && wpLang in resources) return wpLang
+  }
 
-  // Fall back to browser language detection
-  const browserLangs = navigator.languages
-  for (const lang of browserLangs) {
-    const code = lang.split("-")[0].toLowerCase()
-    if (code in resources) return code
+  if (typeof navigator !== "undefined") {
+    // Fall back to browser language detection
+    for (const lang of navigator.languages) {
+      const code = lang.split("-")[0].toLowerCase()
+      if (code in resources) return code
+    }
   }
 
   return "en"
