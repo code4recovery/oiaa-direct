@@ -74,7 +74,7 @@ const TimeDisplay = ({
 }
 
 const localDay = (timeStamp: string) =>
-  new Date(timeStamp).toLocaleString(undefined, {
+  new Date(timeStamp).toLocaleString(i18n.language, {
     weekday: "long",
   })
 
@@ -404,8 +404,8 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
 
                 return (
                   <Box key={categoryType}>
-                    <Text fontWeight="bold" mb={2} textTransform="capitalize">
-                      {categoryType}:
+                    <Text fontWeight="bold" mb={2}>
+                      {t(`filter_${categoryType === "type" ? "meeting_type" : categoryType}`)}:
                     </Text>
                     <Flex flexWrap="wrap" gap={2}>
                       {items
