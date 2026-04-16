@@ -35,11 +35,11 @@ const en: TranslationResource = {
 
   // Time frames
   time: "Time",
-  morning: "Morning (4-11 AM)",
-  midday: "Midday (11 AM-1 PM)",
-  afternoon: "Afternoon (1-5 PM)",
-  evening: "Evening (5-9 PM)",
-  night: "Night (9 PM-4 AM)",
+  morning: "Morning (4–11 AM)",
+  midday: "Midday (11 AM–1 PM)",
+  afternoon: "Afternoon (1–5 PM)",
+  evening: "Evening (5–9 PM)",
+  night: "Night (9 PM–4 AM)",
 
   // Meeting list
   meetings: "Meetings",
