@@ -71,6 +71,17 @@ function FilterGroupsInner({
   const { t } = useTranslation()
   const groups: React.ReactNode[] = []
 
+  const translateOptions = (
+    category: string,
+    options: Record<string, string>
+  ): Record<string, string> =>
+    Object.fromEntries(
+      Object.entries(options).map(([code, desc]) => [
+        code,
+        t(`${category}.${code}`, { defaultValue: desc }),
+      ])
+    )
+
   if (showTimeFilter) {
     groups.push(
       isMobile ? (
@@ -118,35 +129,35 @@ function FilterGroupsInner({
     {
       key: "type",
       title: t("filter_meeting_type"),
-      options: facetOptions.types,
+      options: translateOptions("types", facetOptions.types),
       selected: filterParams.getAll("type") as Type[],
       onToggle: handleExclusiveToggle("type"),
     },
     {
       key: "formats",
       title: t("filter_formats"),
-      options: facetOptions.formats,
+      options: translateOptions("formats", facetOptions.formats),
       selected: filterParams.getAll("formats") as Format[],
       onToggle: handleToggle("formats"),
     },
     {
       key: "features",
       title: t("filter_features"),
-      options: facetOptions.features,
+      options: translateOptions("features", facetOptions.features),
       selected: filterParams.getAll("features") as Feature[],
       onToggle: handleToggle("features"),
     },
     {
       key: "communities",
       title: t("filter_communities"),
-      options: facetOptions.communities,
+      options: translateOptions("communities", facetOptions.communities),
       selected: filterParams.getAll("communities") as Community[],
       onToggle: handleToggle("communities"),
     },
     {
       key: "languages",
       title: t("filter_languages"),
-      options: facetOptions.languages,
+      options: translateOptions("languages", facetOptions.languages),
       selected: filterParams.getAll("languages") as Language[],
       onToggle: handleToggle("languages"),
     },
