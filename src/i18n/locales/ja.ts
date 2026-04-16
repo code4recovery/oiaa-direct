@@ -96,10 +96,7 @@ const ja: TranslationStrings = {
   single_event_ics: "単発イベント（.ics（mac））",
   recurring_series: "定期シリーズ（毎週）",
   recurring_series_ics: "定期シリーズ（.ics（mac））",
-  ics_mac: ".ics（mac）",
-  google: "Google",
   google_calendar: "Googleカレンダー",
-  outlook: "Outlook",
   quick_add: "クイック追加：",
   calendar_events_note:
     "イベントにはミーティングリンク、電話番号、リマインダーが含まれます。",

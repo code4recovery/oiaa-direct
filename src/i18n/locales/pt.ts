@@ -96,10 +96,7 @@ const pt: TranslationStrings = {
   single_event_ics: "Evento único (.ics (mac))",
   recurring_series: "Série recorrente (semanal)",
   recurring_series_ics: "Série recorrente (.ics (mac))",
-  ics_mac: ".ics (mac)",
-  google: "Google",
   google_calendar: "Google Agenda",
-  outlook: "Outlook",
   quick_add: "Adição rápida:",
   calendar_events_note:
     "Os eventos incluem links de reunião, números de telefone e lembretes.",

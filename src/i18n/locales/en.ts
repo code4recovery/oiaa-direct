@@ -96,10 +96,7 @@ const en: TranslationResource = {
   single_event_ics: "Single Event (.ics (mac))",
   recurring_series: "Recurring Series (Weekly)",
   recurring_series_ics: "Recurring Series (.ics (mac))",
-  ics_mac: ".ics (mac)",
-  google: "Google",
   google_calendar: "Google Calendar",
-  outlook: "Outlook",
   quick_add: "Quick Add:",
   calendar_events_note:
     "Events include meeting links, phone numbers, and reminders.",

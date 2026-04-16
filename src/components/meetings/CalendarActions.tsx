@@ -160,7 +160,7 @@ const CalendarOption: React.FC<CalendarOptionProps> = ({
           flex="1"
         >
           {isRecurring ? <FaCalendarCheck style={{ marginRight: '4px' }} /> : <FaCalendarPlus style={{ marginRight: '4px' }} />}
-          {t("ics_mac")}
+          .ics (mac)
         </Button>
         <Button
           size="xs"
@@ -169,7 +169,7 @@ const CalendarOption: React.FC<CalendarOptionProps> = ({
           flex="1"
           onClick={() => window.open(calendarUrls.google, '_blank')}
         >
-          {t("google")}
+          Google
         </Button>
         <Button
           size="xs"
@@ -178,7 +178,7 @@ const CalendarOption: React.FC<CalendarOptionProps> = ({
           flex="1"
           onClick={() => window.open(calendarUrls.outlook, '_blank')}
         >
-          {t("outlook")}
+          Outlook
         </Button>
       </HStack>
     </Flex>
@@ -299,7 +299,7 @@ export const CalendarActions = ({
                 colorScheme="blue"
                 onClick={() => window.open(calendarUrls.outlook, '_blank')}
               >
-                {t("outlook")}
+                Outlook
               </Button>
             </Flex>
           </PopoverBody>

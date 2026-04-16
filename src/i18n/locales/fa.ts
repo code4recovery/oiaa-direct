@@ -98,10 +98,7 @@ const fa: TranslationStrings = {
   single_event_ics: "رویداد تکی (.ics (mac))",
   recurring_series: "سری تکراری (هفتگی)",
   recurring_series_ics: "سری تکراری (.ics (mac))",
-  ics_mac: ".ics (mac)",
-  google: "گوگل",
   google_calendar: "گوگل کلندر",
-  outlook: "Outlook",
   quick_add: "افزودن سریع:",
   calendar_events_note:
     "رویدادها شامل لینک جلسه، شماره تلفن و یادآورها می‌شوند.",

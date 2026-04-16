@@ -96,10 +96,7 @@ const ru: TranslationStrings = {
   single_event_ics: "Разовое событие (.ics (mac))",
   recurring_series: "Повторяющаяся серия (еженедельно)",
   recurring_series_ics: "Повторяющаяся серия (.ics (mac))",
-  ics_mac: ".ics (mac)",
-  google: "Google",
   google_calendar: "Google Календарь",
-  outlook: "Outlook",
   quick_add: "Быстрое добавление:",
   calendar_events_note:
     "События содержат ссылки на встречу, номера телефонов и напоминания.",
