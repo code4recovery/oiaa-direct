@@ -8,7 +8,7 @@ const ru: TranslationStrings = {
   // Search & Filters
   filters: "Фильтры",
   clear_filters: "Очистить фильтры",
-  search_placeholder: "Поиск",
+  search_placeholder: "Поиск собраний...",
   search_min_chars: "Введите не менее 3 символов.",
   scheduled: "Запланировано",
   filters_unavailable:

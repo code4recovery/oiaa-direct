@@ -10,7 +10,7 @@ const fa: TranslationStrings = {
   // Search & Filters
   filters: "فیلترها",
   clear_filters: "پاک کردن فیلترها",
-  search_placeholder: "جستجو",
+  search_placeholder: "جستجوی جلسات...",
   search_min_chars: "حداقل ۳ کاراکتر وارد کنید.",
   scheduled: "برنامه‌ریزی شده",
   filters_unavailable:
