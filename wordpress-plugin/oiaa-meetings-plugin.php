@@ -3,7 +3,7 @@
  * Plugin Name: OIAA Direct Meetings
  * Plugin URI: https://github.com/code4recovery/oiaa-direct
  * Description: Embeds the OIAA Direct online meetings application on a configured base path
- * Version: 1.2.0
+ * Version: 1.3.0
  * Author: Code for Recovery
  * Author URI: https://github.com/code4recovery
  * License: MIT
@@ -80,7 +80,7 @@ function oiaa_meetings_activate() {
         add_option('oiaa_api_url', 'https://central-query.apps.code4recovery.org/api/v1/meetings');
     }
     if (get_option('oiaa_asset_version') === false) {
-        add_option('oiaa_asset_version', OIAA_MEETINGS_VERSION);
+        add_option('oiaa_asset_version', 'latest');
     }
     if (get_option('oiaa_base_path') === false) {
         add_option('oiaa_base_path', OIAA_MEETINGS_DEFAULT_BASE_PATH);

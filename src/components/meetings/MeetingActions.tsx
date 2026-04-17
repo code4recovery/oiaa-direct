@@ -4,6 +4,7 @@ import {
   FaLink,
   FaVideo,
 } from "react-icons/fa"
+import { useTranslation } from "react-i18next"
 
 import { Tooltip } from "@/components/ui/tooltip"
 import type { Meeting } from "@/meetingTypes"
@@ -38,7 +39,7 @@ const getVideoServiceInfo = (url: string) => {
     }
   }
   return {
-    name: 'Join Meeting',
+    name: '',
     icon: FaVideo,
   }
 }
@@ -55,10 +56,15 @@ const JoinButton = ({
   size?: 'xs' | 'sm' | 'md'
   variant?: 'solid' | 'outline' | 'ghost'
 }) => {
+  const { t } = useTranslation()
   if (!meeting.conference_url) return null
 
   const videoInfo = getVideoServiceInfo(meeting.conference_url)
   const IconComponent = videoInfo.icon
+
+  const tooltipLabel = videoInfo.name
+    ? t("join_service", { service: videoInfo.name })
+    : t("join_meeting")
 
   const buttonProps = {
     colorScheme: 'blue',
@@ -82,10 +88,10 @@ const JoinButton = ({
 
   if (mode === 'icon-only') {
     return (
-      <Tooltip content={`Join ${videoInfo.name}`}>
+      <Tooltip content={tooltipLabel}>
         <IconButton
           {...buttonProps}
-          aria-label={`Join ${videoInfo.name}`}
+          aria-label={tooltipLabel}
         >
           <IconComponent />
         </IconButton>
@@ -93,7 +99,11 @@ const JoinButton = ({
     )
   }
 
-  const label = mode === 'compact' ? 'Join' : `Join ${videoInfo.name}`
+  const label = mode === 'compact'
+    ? t("join")
+    : videoInfo.name
+      ? t("join_service", { service: videoInfo.name })
+      : t("join_meeting")
   
   return (
     <Button {...buttonProps}>
@@ -117,6 +127,7 @@ const EmailButton = ({
   size?: 'xs' | 'sm' | 'md'
   variant?: 'outline' | 'ghost'
 }) => {
+  const { t } = useTranslation()
   const buttonProps = {
     colorScheme: 'gray',
     variant,
@@ -124,17 +135,17 @@ const EmailButton = ({
     minH: size === 'xs' ? '32px' : size === 'sm' ? '40px' : '44px',
     onClick: () => window.location.href = `mailto:${email}`,
     color: 'gray.600',
-    _dark: { 
-      color: 'gray.300' 
+    _dark: {
+      color: 'gray.300'
     },
   }
 
   if (mode === 'icon-only') {
     return (
-      <Tooltip content="Send Email">
+      <Tooltip content={t("send_email")}>
         <IconButton
           {...buttonProps}
-          aria-label="Send Email"
+          aria-label={t("send_email")}
         >
           <FaEnvelope />
         </IconButton>
@@ -142,7 +153,7 @@ const EmailButton = ({
     )
   }
 
-  const label = mode === 'compact' ? 'Email' : 'Email Group'
+  const label = mode === 'compact' ? t("email") : t("email_group")
 
   return (
     <Button {...buttonProps}>
@@ -157,7 +168,7 @@ const EmailButton = ({
 const WebsiteButton = ({
   url,
   mode,
-  size = 'md', 
+  size = 'md',
   variant = 'outline',
 }: {
   url: string
@@ -165,6 +176,7 @@ const WebsiteButton = ({
   size?: 'xs' | 'sm' | 'md'
   variant?: 'outline' | 'ghost'
 }) => {
+  const { t } = useTranslation()
   const buttonProps = {
     colorScheme: 'gray',
     variant,
@@ -172,17 +184,17 @@ const WebsiteButton = ({
     minH: size === 'xs' ? '32px' : size === 'sm' ? '40px' : '44px',
     onClick: () => window.open(url, '_blank', 'noopener,noreferrer'),
     color: 'gray.600',
-    _dark: { 
-      color: 'gray.300' 
+    _dark: {
+      color: 'gray.300'
     },
   }
 
   if (mode === 'icon-only') {
     return (
-      <Tooltip content="Visit Website">
+      <Tooltip content={t("visit_website")}>
         <IconButton
           {...buttonProps}
-          aria-label="Visit Website"
+          aria-label={t("visit_website")}
         >
           <FaExternalLinkAlt />
         </IconButton>
@@ -190,7 +202,7 @@ const WebsiteButton = ({
     )
   }
 
-  const label = mode === 'compact' ? 'Website' : 'Visit Website'
+  const label = mode === 'compact' ? t("website") : t("visit_website")
 
   return (
     <Button {...buttonProps}>

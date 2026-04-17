@@ -1,4 +1,5 @@
 import { FaPlus } from "react-icons/fa"
+import { useTranslation } from "react-i18next"
 
 import {
   PopoverBody,
@@ -6,14 +7,8 @@ import {
   PopoverRoot,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import i18n from "@/i18n"
 import type { Meeting } from "@/meetingTypes"
-import {
-  COMMUNITIES,
-  FEATURES,
-  FORMATS,
-  LANGUAGES,
-  TYPE,
-} from "@/meetingTypes"
 import {
   Badge,
   Box,
@@ -23,12 +18,12 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react"
 
-const DESCRIPTIONS: Record<string, string> = {
-  ...TYPE,
-  ...FORMATS,
-  ...FEATURES,
-  ...COMMUNITIES,
-  ...LANGUAGES,
+const CATEGORY_NAMESPACES: Record<string, string> = {
+  type: "types",
+  formats: "formats",
+  features: "features",
+  communities: "communities",
+  languages: "languages",
 }
 
 const CATEGORY_COLORS = {
@@ -61,20 +56,20 @@ const getCategoryItems = (meeting: Meeting) => {
     fullName: string
   }[] = []
 
-
   const categories = ["type", "formats", "features", "communities", "languages"] as const
-  
+
   categories.forEach((category) => {
     const value = meeting[category]
     if (!value) return
-    
+
+    const ns = CATEGORY_NAMESPACES[category]
     const items_array = Array.isArray(value) ? value : [value]
     items_array.forEach((item: string) => {
       items.push({
         key: `${category}-${item}`,
         value: item,
         category,
-        fullName: DESCRIPTIONS[item] || item.toUpperCase(),
+        fullName: i18n.t(`${ns}.${item}`, { defaultValue: item.toUpperCase() }),
       })
     })
   })
@@ -108,13 +103,14 @@ const CategoryBadge = ({
 }
 
 
-const OverflowIndicator = ({ 
-  hiddenItems, 
+const OverflowIndicator = ({
+  hiddenItems,
   size = 'sm',
-}: { 
+}: {
   hiddenItems: ReturnType<typeof getCategoryItems>
   size?: 'sm' | 'md'
 }) => {
+  const { t } = useTranslation()
   return (
     <PopoverRoot positioning={{ placement: "top" }}>
       <PopoverTrigger asChild>
@@ -138,7 +134,7 @@ const OverflowIndicator = ({
       <PopoverContent width="auto" maxW="300px">
         <PopoverBody p={3}>
           <Text fontSize="sm" fontWeight="medium" mb={2}>
-            Additional Categories:
+            {t("additional_categories")}
           </Text>
           <Flex wrap="wrap" gap={1}>
             {hiddenItems.map((item) => (

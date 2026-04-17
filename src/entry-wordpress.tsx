@@ -2,6 +2,7 @@
 // TypeScript checking disabled for WordPress entry point
 // This file uses createBrowserRouter with runtime basename from WordPress config
 
+import "./i18n"
 import "./index.css"
 
 import React from "react"
@@ -19,6 +20,7 @@ declare global {
       apiUrl?: string
       colorMode?: "light" | "dark" | "system"
       basePath?: string
+      language?: string
     }
   }
 }

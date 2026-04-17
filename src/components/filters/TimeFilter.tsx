@@ -1,4 +1,5 @@
 import { DateTime } from "luxon"
+import { useTranslation } from "react-i18next"
 
 import {
   Box,
@@ -17,23 +18,23 @@ export interface TimeFilterProps {
   showLabels?: boolean
 }
 
-const DAY_OPTIONS = [
-  { value: "monday", label: "Monday" },
-  { value: "tuesday", label: "Tuesday" },
-  { value: "wednesday", label: "Wednesday" },
-  { value: "thursday", label: "Thursday" },
-  { value: "friday", label: "Friday" },
-  { value: "saturday", label: "Saturday" },
-  { value: "sunday", label: "Sunday" },
-]
+const DAY_KEYS = [
+  { value: "monday", key: "monday" },
+  { value: "tuesday", key: "tuesday" },
+  { value: "wednesday", key: "wednesday" },
+  { value: "thursday", key: "thursday" },
+  { value: "friday", key: "friday" },
+  { value: "saturday", key: "saturday" },
+  { value: "sunday", key: "sunday" },
+] as const
 
-const TIME_FRAME_OPTIONS = [
-  { value: "morning", label: "Morning (4-11 AM)" },
-  { value: "midday", label: "Midday (11 AM-1 PM)" },
-  { value: "afternoon", label: "Afternoon (1-5 PM)" },
-  { value: "evening", label: "Evening (5-9 PM)" },
-  { value: "night", label: "Night (9 PM-4 AM)" },
-]
+const TIME_FRAME_KEYS = [
+  { value: "morning", key: "morning" },
+  { value: "midday", key: "midday" },
+  { value: "afternoon", key: "afternoon" },
+  { value: "evening", key: "evening" },
+  { value: "night", key: "night" },
+] as const
 
 // Styled select with Chakra-compatible theming
 const selectStyles = {
@@ -130,23 +131,27 @@ const TimeFilterFields = ({
   showLabels: boolean
   variant: TimeFilterVariant
 }) => {
+  const { t } = useTranslation()
   const gap = variant === "mobile" ? 3 : 4
+
+  const dayOptions = DAY_KEYS.map(({ value, key }) => ({ value, label: t(key) }))
+  const timeFrameOptions = TIME_FRAME_KEYS.map(({ value, key }) => ({ value, label: t(key) }))
 
   return (
     <VStack gap={gap} align="stretch">
       <SelectField
-        label="Day"
+        label={t("day")}
         value={selectedDay}
         onChange={onDayChange}
-        options={DAY_OPTIONS}
+        options={dayOptions}
         showLabel={showLabels}
         includeHourlyOptions={false}
       />
       <SelectField
-        label={"Time"}
+        label={t("time")}
         value={selectedTimeFrame}
         onChange={onTimeFrameChange}
-        options={TIME_FRAME_OPTIONS}
+        options={timeFrameOptions}
         showLabel={showLabels}
 
       />

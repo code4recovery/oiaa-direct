@@ -39,9 +39,7 @@ function oiaa_meetings_enqueue_scripts() {
         $js_url = $local_asset_url . 'oiaa-meetings.js';
         $css_url = $local_asset_url . 'oiaa-meetings.css';
         $override_css_url = $local_asset_url . 'wordpress-overrides.css';
-        $version = file_exists($local_asset_path . 'oiaa-meetings.js')
-            ? filemtime($local_asset_path . 'oiaa-meetings.js')
-            : OIAA_MEETINGS_VERSION;
+        $version = filemtime($local_asset_path . 'oiaa-meetings.js');
     } else {
         // Use jsDelivr CDN with versioned GitHub tags
         // For 'latest' or 'main', don't add 'v' prefix. For semver, add 'v' prefix.

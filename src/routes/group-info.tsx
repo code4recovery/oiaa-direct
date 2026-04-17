@@ -6,6 +6,7 @@ import {
   FaGlobeAmericas,
   FaInfoCircle,
 } from "react-icons/fa"
+import { useTranslation } from "react-i18next"
 import { Link as RouterLink } from "react-router"
 
 import { Layout } from "@/components/Layout"
@@ -18,13 +19,9 @@ import {
   getMeeting,
   getRelatedDetails,
 } from "@/getData"
+import i18n from "@/i18n"
 import {
-  COMMUNITIES,
-  FEATURES,
-  FORMATS,
-  LANGUAGES,
   type Meeting,
-  TYPE,
 } from "@/meetingTypes"
 import {
   formatMeetingTimeInfo,
@@ -44,12 +41,12 @@ import {
 
 import type { Route } from "./+types/group-info"
 
-const DESCRIPTIONS: Record<string, string> = {
-  ...TYPE,
-  ...FORMATS,
-  ...FEATURES,
-  ...COMMUNITIES,
-  ...LANGUAGES,
+const CATEGORY_NAMESPACES: Record<string, string> = {
+  type: "types",
+  formats: "formats",
+  features: "features",
+  communities: "communities",
+  languages: "languages",
 }
 
 const CATEGORY_COLORS = {
@@ -77,22 +74,28 @@ const TimeDisplay = ({
 }
 
 const localDay = (timeStamp: string) =>
-  new Date(timeStamp).toLocaleString(undefined, {
+  new Date(timeStamp).toLocaleString(i18n.language, {
     weekday: "long",
   })
 
 
 const getCategoryFullName = (
-  category: string,
+  code: string,
+  categoryType: string,
 ): string => {
-   return DESCRIPTIONS[category] || category
+  const ns = CATEGORY_NAMESPACES[categoryType]
+  if (ns) {
+    return i18n.t(`${ns}.${code}`, { defaultValue: code })
+  }
+  return code
 }
 
-const MeetingTimeDisplay = ({ 
-  timeInfo 
-}: { 
+const MeetingTimeDisplay = ({
+  timeInfo
+}: {
   timeInfo: MeetingTimeInfo | undefined
 }) => {
+  const { t } = useTranslation()
   if (!timeInfo) {
     return (
       <Flex align="center" mt={2}>
@@ -104,7 +107,7 @@ const MeetingTimeDisplay = ({
           _dark={{ color: "gray.400" }}
           fontWeight="medium"
         >
-          Ongoing
+          {t("ongoing")}
         </Text>
       </Flex>
     )
@@ -121,7 +124,7 @@ const MeetingTimeDisplay = ({
           _dark={{ color: "gray.400" }}
           fontWeight="medium"
         >
-          {localDay(timeInfo.timeUTC)} at {timeInfo.originalTime} ({timeInfo.originalTimezone.replace("_", " ")})
+          {localDay(timeInfo.timeUTC)} {t("at")} {timeInfo.originalTime} ({timeInfo.originalTimezone.replace("_", " ")})
         </Text>
       </Flex>
       <Flex align="center" mt={1}>
@@ -129,7 +132,7 @@ const MeetingTimeDisplay = ({
           <FaGlobeAmericas />
         </Box>
         <Text color="gray.600" _dark={{ color: "gray.400" }}>
-          Your local time: <TimeDisplay timeInfo={timeInfo} type="user" />
+          {t("your_local_time_label")} <TimeDisplay timeInfo={timeInfo} type="user" />
         </Text>
       </Flex>
       {timeInfo.duration && (
@@ -138,7 +141,7 @@ const MeetingTimeDisplay = ({
             <FaClock />
           </Box>
           <Text color="gray.600" _dark={{ color: "gray.400" }}>
-            {timeInfo.duration} minutes
+            {t("minutes", { count: timeInfo.duration })}
           </Text>
         </Flex>
       )}
@@ -147,6 +150,7 @@ const MeetingTimeDisplay = ({
 }
 
 const MeetingHeader = ({ meeting }: { meeting: Meeting }) => {
+  const { t } = useTranslation()
   const timeInfo = isScheduledMeeting(meeting) ? formatMeetingTimeInfo(meeting) : undefined
   const websiteUrl = meeting.groupWebsite
 
@@ -199,7 +203,7 @@ const MeetingHeader = ({ meeting }: { meeting: Meeting }) => {
               size="md"
             >
               <FaGlobeAmericas style={{ marginRight: "8px" }} />
-              Website
+              {t("website")}
             </Button>
           </Link>
         )}
@@ -225,7 +229,7 @@ const MeetingHeader = ({ meeting }: { meeting: Meeting }) => {
               size="md"
             >
               <FaEnvelope style={{ marginRight: "8px" }} />
-              Email
+              {t("email")}
             </Button>
           </Link>
         )}
@@ -289,7 +293,7 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
                 borderRadius="full"
                 fontSize="xs"
               >
-                {DESCRIPTIONS[format] || format}
+                {getCategoryFullName(format, "formats")}
               </Badge>
             ))}
             {meeting.type && (
@@ -301,7 +305,7 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
                 borderRadius="full"
                 fontSize="xs"
               >
-                {DESCRIPTIONS[meeting.type] || meeting.type}
+                {getCategoryFullName(meeting.type, "type")}
               </Badge>
             )}
           </Flex>
@@ -322,10 +326,11 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
 }
 
 export default function GroupInfo({ loaderData }: Route.ComponentProps) {
+  const { t } = useTranslation()
   const { meeting, group } = loaderData
   const { groupMeetings, groupInfo } = group
 
-  const timeInfo = isScheduledMeeting(meeting) ? formatMeetingTimeInfo(meeting) : undefined 
+  const timeInfo = isScheduledMeeting(meeting) ? formatMeetingTimeInfo(meeting) : undefined
 
   const categories = [
     "features",
@@ -341,7 +346,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
         <RouterLink to="/">
           <Button size="sm" variant="outline" colorScheme="blue">
             <FaArrowLeft style={{ marginRight: "8px" }} />
-            Back to Meetings
+            {t("back_to_meetings")}
           </Button>
         </RouterLink>
       </Box>
@@ -377,7 +382,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
       >
         <Box p={4} bg="gray.50" _dark={{ bg: "gray.700" }}>
           <Heading size="sm" mb={0}>
-            Meeting Details
+            {t("meeting_details")}
           </Heading>
         </Box>
 
@@ -388,7 +393,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
               <Box as="span" mr={2}>
                 <FaInfoCircle />
               </Box>
-              Meeting Categories
+              {t("meeting_categories")}
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
               {categories.map((categoryType) => {
@@ -399,8 +404,8 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
 
                 return (
                   <Box key={categoryType}>
-                    <Text fontWeight="bold" mb={2} textTransform="capitalize">
-                      {categoryType}:
+                    <Text fontWeight="bold" mb={2}>
+                      {t(`filter_${categoryType === "type" ? "meeting_type" : categoryType}`)}:
                     </Text>
                     <Flex flexWrap="wrap" gap={2}>
                       {items
@@ -414,7 +419,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                             py={1}
                             borderRadius="full"
                           >
-                            {getCategoryFullName(item)}
+                            {getCategoryFullName(item, categoryType)}
                           </Badge>
                         ))}
                     </Flex>
@@ -426,13 +431,13 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
 
           <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={6}>
             <Box>
-              <Text fontWeight="bold">Meeting ID</Text>
+              <Text fontWeight="bold">{t("meeting_id")}</Text>
               <Text>{meeting.slug}</Text>
             </Box>
 
             {meeting.group_id && (
               <Box>
-                <Text fontWeight="bold">Group ID</Text>
+                <Text fontWeight="bold">{t("group_id")}</Text>
                 <Text>{meeting.group_id}</Text>
               </Box>
             )}
@@ -440,19 +445,19 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
             {timeInfo && (
               <>
                 <Box>
-                  <Text fontWeight="bold">Day</Text>
+                  <Text fontWeight="bold">{t("day")}</Text>
                   <Text>{localDay(timeInfo.timeUTC)}</Text>
                 </Box>
 
                 <Box>
-                  <Text fontWeight="bold">Meeting Time</Text>
+                  <Text fontWeight="bold">{t("meeting_time")}</Text>
                   <Text>
                     <TimeDisplay timeInfo={timeInfo} type="original" />
                   </Text>
                 </Box>
 
                 <Box>
-                  <Text fontWeight="bold">Your Local Time</Text>
+                  <Text fontWeight="bold">{t("your_local_time_heading")}</Text>
                   <Text>
                     <TimeDisplay timeInfo={timeInfo} type="user" />
                   </Text>
@@ -462,7 +467,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
 
             {meeting.conference_provider && (
               <Box>
-                <Text fontWeight="bold">Conference Provider</Text>
+                <Text fontWeight="bold">{t("conference_provider")}</Text>
                 <Text>{meeting.conference_provider}</Text>
               </Box>
             )}
@@ -471,7 +476,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
           {meeting.notes && (
             <Box mb={6}>
               <Heading size="sm" mb={3}>
-                About This Group
+                {t("about_this_group")}
               </Heading>
               <Box
                 p={4}
@@ -499,7 +504,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
           {groupInfo.notes && (
             <Box mt={4}>
               <Text fontWeight="bold" mb={2}>
-                Group Notes
+                {t("group_notes")}
               </Text>
               <Box
                 p={4}
@@ -532,7 +537,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
       >
         <Box bg="blue.50" _dark={{ bg: "blue.900" }} p={4}>
           <Heading size="md" color="blue.600" _dark={{ color: "blue.300" }}>
-            {groupInfo.name} - All Meetings
+            {t("all_meetings", { name: groupInfo.name })}
           </Heading>
           {groupInfo.email && (
             <Flex align="center" mt={2}>
