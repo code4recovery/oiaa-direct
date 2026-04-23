@@ -167,7 +167,7 @@ function oiaa_meetings_detect_language() {
     if (oiaa_meetings_has_wpml()) {
         $lang = apply_filters('wpml_current_language', null);
         if (is_string($lang) && $lang !== '') {
-            return $lang;
+            return strtolower(substr($lang, 0, 2));
         }
     }
     return null;
