@@ -22,6 +22,9 @@ wordpress-plugin/assets/
 !wordpress-plugin/assets/wordpress-overrides.css
 *.zip
 
+# Third-party WordPress theme (cloned locally for dev)
+JointsWP/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
