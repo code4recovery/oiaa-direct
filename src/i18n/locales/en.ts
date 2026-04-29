@@ -8,7 +8,7 @@ const en: TranslationResource = {
   // Search & Filters
   filters: "Filters",
   clear_filters: "Clear Filters",
-  search_placeholder: "Search",
+  search_placeholder: "Search meetings...",
   search_min_chars: "Enter at least 3 characters.",
   scheduled: "Scheduled",
   filters_unavailable:

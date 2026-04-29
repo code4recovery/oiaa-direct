@@ -8,7 +8,7 @@ const it: TranslationStrings = {
   // Search & Filters
   filters: "Filtri",
   clear_filters: "Cancella filtri",
-  search_placeholder: "Cerca",
+  search_placeholder: "Cerca riunioni...",
   search_min_chars: "Inserisci almeno 3 caratteri.",
   scheduled: "Programmata",
   filters_unavailable:

@@ -8,7 +8,7 @@ const ja: TranslationStrings = {
   // Search & Filters
   filters: "フィルター",
   clear_filters: "フィルターをクリア",
-  search_placeholder: "検索",
+  search_placeholder: "ミーティングを検索...",
   search_min_chars: "3文字以上入力してください。",
   scheduled: "予定あり",
   filters_unavailable:
