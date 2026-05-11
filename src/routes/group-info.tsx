@@ -556,29 +556,18 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
         </Box>
         
         <Box p={6}>
-          <Flex direction="column" gap={4}>
-            {groupMeetings.map((groupMeeting, index: number) => (
-              <Box
-                key={groupMeeting.slug}
-                p={4}
-                borderWidth="1px"
-                borderRadius="md"
-                borderColor="gray.200"
-                _dark={{ borderColor: "gray.700" }}
-                _hover={{ boxShadow: "sm" }}
-              >
-                <MeetingDisplay meeting={groupMeeting} />
-                {index < groupMeetings.length - 1 && (
-                  <Box
-                    borderBottom="1px"
-                    borderColor="gray.200"
-                    _dark={{ borderColor: "gray.700" }}
-                    mt={4}
-                  />
-                )}
-              </Box>
-            ))}
-          </Flex>
+          {groupMeetings.map((groupMeeting, index: number) => (
+            <Box
+              key={groupMeeting.slug}
+              pt={index === 0 ? 0 : 4}
+              mt={index === 0 ? 0 : 4}
+              borderTop={index === 0 ? "none" : "1px"}
+              borderColor="gray.200"
+              _dark={{ borderColor: "gray.700" }}
+            >
+              <MeetingDisplay meeting={groupMeeting} />
+            </Box>
+          ))}
         </Box>
       </Box>
     </Layout>
