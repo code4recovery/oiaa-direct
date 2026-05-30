@@ -88,7 +88,7 @@ const CategoryBadge = ({
   
   return (
     <Badge
-      colorScheme={CATEGORY_COLORS[item.category]}
+      colorPalette={CATEGORY_COLORS[item.category]}
       variant="subtle"
       size={size}
       px={size === 'sm' ? 2 : 3}
@@ -117,7 +117,7 @@ const OverflowIndicator = ({
         <Button
           size={size === 'sm' ? 'xs' : 'sm'}
           variant="ghost"
-          colorScheme="gray"
+          colorPalette="gray"
           px={2}
           py={1}
           h="auto"
