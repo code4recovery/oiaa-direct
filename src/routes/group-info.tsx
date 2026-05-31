@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next"
 import { Link as RouterLink } from "react-router"
 
 import { Layout } from "@/components/Layout"
+import { CATEGORY_KEYS } from "@/meetingTypes"
 import {
   CalendarActions,
   JoinMeetingButton,
@@ -332,14 +333,6 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
 
   const timeInfo = isScheduledMeeting(meeting) ? formatMeetingTimeInfo(meeting) : undefined
 
-  const categories = [
-    "features",
-    "formats",
-    "languages",
-    "communities",
-    "type",
-  ] as const
-
   return (
     <Layout>
       <Box mb={4}>
@@ -396,7 +389,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
               {t("meeting_categories")}
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
-              {categories.map((categoryType) => {
+              {CATEGORY_KEYS.map((categoryType) => {
                 const value = meeting[categoryType]
                 const items = Array.isArray(value) ? value : [value]
 

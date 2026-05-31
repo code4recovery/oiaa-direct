@@ -106,6 +106,16 @@ export interface CategoryMap {
   languages: Language[]
 }
 
+export const CATEGORY_KEYS = [
+  "type",
+  "formats",
+  "features",
+  "communities",
+  "languages",
+] as const satisfies readonly (keyof CategoryMap)[]
+
+export type CategoryKey = (typeof CATEGORY_KEYS)[number]
+
 export interface Meeting extends CategoryMap {
   slug: string
   name: string
