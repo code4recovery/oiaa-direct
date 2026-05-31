@@ -7,6 +7,7 @@ import {
   Button,
   Link,
 } from "@chakra-ui/react"
+import { useTranslation } from "react-i18next"
 
 import { getServiceProviderNameFromUrl } from "@/utils/videoServices"
 
@@ -15,8 +16,11 @@ interface JoinMeetingButtonProps{
 }
 
 const JoinMeetingButton = ({ joinUrl }: JoinMeetingButtonProps) => {
+  const { t } = useTranslation()
   const result = getServiceProviderNameFromUrl(joinUrl)
-  const label = result.isOk() ? `Join ${result.value} Meeting` : "Join Meeting"
+  const label = result.isOk()
+    ? t("join_service_meeting", { service: result.value })
+    : t("join_meeting")
   const Icon = result.isOk() && result.value === "Virtual Reality" ? FaGlasses : FaVideo
   
   return (

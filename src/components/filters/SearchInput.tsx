@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { FaSearch } from "react-icons/fa"
 
 import {
@@ -15,9 +16,10 @@ interface SearchInputProps {
 export const SearchInput = ({
   value,
   onChange,
-  placeholder = "Search meetings...",
+  placeholder,
   isInvalid = false,
 }: SearchInputProps) => {
+  const { t } = useTranslation()
   return (
     <Box position="relative">
       <Box
@@ -35,7 +37,7 @@ export const SearchInput = ({
         onChange={(e) => {
           onChange(e.target.value)
         }}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t("search_placeholder")}
         pl={10}
         variant="outline"
         bg={isInvalid ? "red.100" : "white"}

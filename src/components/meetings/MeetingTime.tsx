@@ -4,7 +4,9 @@ import {
   FaClock,
   FaGlobeAmericas,
 } from "react-icons/fa"
+import { useTranslation } from "react-i18next"
 
+import i18n from "@/i18n"
 import {
   Box,
   Flex,
@@ -35,7 +37,7 @@ const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
   // Format for meeting's original timezone
-  const originalTimeFormatter = new Intl.DateTimeFormat("en-US", {
+  const originalTimeFormatter = new Intl.DateTimeFormat(i18n.language, {
     hour: "numeric",
     minute: "numeric",
     timeZone: meetingTimezone,
@@ -43,7 +45,7 @@ const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
   })
 
   // Format for user's local timezone
-  const userTimeFormatter = new Intl.DateTimeFormat("en-US", {
+  const userTimeFormatter = new Intl.DateTimeFormat(i18n.language, {
     hour: "numeric",
     minute: "numeric",
     timeZone: userTimezone,
@@ -51,19 +53,19 @@ const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
   })
 
   // Day formatter for original timezone
-  const originalDayFormatter = new Intl.DateTimeFormat("en-US", {
+  const originalDayFormatter = new Intl.DateTimeFormat(i18n.language, {
     weekday: "long",
     timeZone: meetingTimezone,
   })
 
   // Day formatter for user's local timezone
-  const userDayFormatter = new Intl.DateTimeFormat("en-US", {
+  const userDayFormatter = new Intl.DateTimeFormat(i18n.language, {
     weekday: "long",
     timeZone: userTimezone,
   })
 
   // Date formatter for user's local timezone (for clarity)
-  const userDateFormatter = new Intl.DateTimeFormat("en-US", {
+  const userDateFormatter = new Intl.DateTimeFormat(i18n.language, {
     weekday: "long",
     month: "short",
     day: "numeric",
@@ -71,7 +73,7 @@ const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
   })
 
   // Date formatter for original timezone
-  const originalDateFormatter = new Intl.DateTimeFormat("en-US", {
+  const originalDateFormatter = new Intl.DateTimeFormat(i18n.language, {
     weekday: "long", 
     month: "short",
     day: "numeric",
@@ -103,18 +105,18 @@ const formatMeetingTime = (timeUTC: string, meetingTimezone: string) => {
 /**
  * Get relative time description (Today, Tomorrow, This Week, etc.)
  */
-const getRelativeTimeDescription = (timeUTC: string) => {
+const getRelativeTimeDescription = (timeUTC: string, t: (key: string, options?: Record<string, unknown>) => string) => {
   const meetingDate = DateTime.fromISO(timeUTC)
   const now = DateTime.now()
-  
+
   const diffDays = meetingDate.startOf('day').diff(now.startOf('day'), 'days').days
 
-  if (diffDays === 0) return "Today"
-  if (diffDays === 1) return "Tomorrow" 
-  if (diffDays === -1) return "Yesterday"
-  if (diffDays > 1 && diffDays <= 7) return `In ${Math.floor(diffDays).toString()} days`
-  if (diffDays < -1 && diffDays >= -7) return `${Math.abs(Math.floor(diffDays)).toString()} days ago`
-  
+  if (diffDays === 0) return t("today")
+  if (diffDays === 1) return t("tomorrow")
+  if (diffDays === -1) return t("yesterday")
+  if (diffDays > 1 && diffDays <= 7) return t("in_days", { count: Math.floor(diffDays) })
+  if (diffDays < -1 && diffDays >= -7) return t("days_ago", { count: Math.abs(Math.floor(diffDays)) })
+
   return meetingDate.toFormat('ccc, MMM d') // e.g., "Mon, Jan 15"
 }
 
@@ -126,6 +128,7 @@ export const MeetingTime = ({
   showIcons = true,
   size,
 }: MeetingTimeProps) => {
+  const { t } = useTranslation()
   // Responsive size handling
   const responsiveSize = useBreakpointValue({
     base: size ?? 'sm',
@@ -153,7 +156,7 @@ export const MeetingTime = ({
     if (format === 'compact') {
       return (
         <Text {...primaryTextProps}>
-          Ongoing
+          {t("ongoing")}
         </Text>
       )
     } else {
@@ -166,7 +169,7 @@ export const MeetingTime = ({
               </Box>
             )}
             <Text {...primaryTextProps}>
-              Ongoing
+              {t("ongoing")}
             </Text>
           </Flex>
         </Box>
@@ -176,7 +179,7 @@ export const MeetingTime = ({
 
   // For scheduled meetings, format the time info
   const timeInfo = formatMeetingTime(timeUTC, timezone)
-  const relativeTime = getRelativeTimeDescription(timeUTC)
+  const relativeTime = getRelativeTimeDescription(timeUTC, t)
 
   if (format === 'compact') {
     // Single line, minimal info for mobile lists - LOCAL TIME FIRST
@@ -187,7 +190,7 @@ export const MeetingTime = ({
             {timeInfo.userDay} {timeInfo.userTime}
             {!timeInfo.isSameDay && (
               <Text as="span" {...secondaryTextProps} ml={1}>
-                (originally {timeInfo.originalDay})
+                {t("originally", { day: timeInfo.originalDay })}
               </Text>
             )}
           </>
@@ -211,9 +214,9 @@ export const MeetingTime = ({
             </Box>
           )}
           <Text {...primaryTextProps}>
-            {!timeInfo.isSameTimezone && showLocal 
-              ? `${timeInfo.dayName} at ${timeInfo.userTime}`
-              : `${timeInfo.dayName} at ${timeInfo.originalTime}`
+            {!timeInfo.isSameTimezone && showLocal
+              ? `${timeInfo.dayName} ${t("at")} ${timeInfo.userTime}`
+              : `${timeInfo.dayName} ${t("at")} ${timeInfo.originalTime}`
             }
           </Text>
         </Flex>
@@ -225,7 +228,7 @@ export const MeetingTime = ({
               </Box>
             )}
             <Text {...secondaryTextProps}>
-              Meeting time: {timeInfo.originalDay} at {timeInfo.originalTime}
+              {t("meeting_time_label")} {timeInfo.originalDay} {t("at")} {timeInfo.originalTime}
               {timeInfo.originalTimezone !== 'UTC' && (
                 <Text as="span">
                   {' '}({timeInfo.originalTimezone.replace('_', ' ')})
@@ -253,7 +256,7 @@ export const MeetingTime = ({
           </Text>
         </Flex>
         <Text {...secondaryTextProps} mt={1}>
-          {timeInfo.dayName} at {timeInfo.originalTime} 
+          {timeInfo.dayName} {t("at")} {timeInfo.originalTime}
           {timeInfo.originalTimezone !== 'UTC' && (
             <Text as="span">
               {' '}({timeInfo.originalTimezone.replace('_', ' ')})
@@ -262,7 +265,7 @@ export const MeetingTime = ({
         </Text>
         {showLocal && !timeInfo.isSameTimezone && (
           <Text {...secondaryTextProps}>
-            Your time: {timeInfo.userTime}
+            {t("your_time", { time: timeInfo.userTime })}
           </Text>
         )}
       </Box>
@@ -280,18 +283,18 @@ export const MeetingTime = ({
             </Box>
           )}
           <Text {...primaryTextProps} fontWeight="medium">
-            {!timeInfo.isSameTimezone && showLocal 
-              ? `${timeInfo.userDate} at ${timeInfo.userTime}`
-              : `${timeInfo.dayName} at ${timeInfo.originalTime}`
+            {!timeInfo.isSameTimezone && showLocal
+              ? `${timeInfo.userDate} ${t("at")} ${timeInfo.userTime}`
+              : `${timeInfo.dayName} ${t("at")} ${timeInfo.originalTime}`
             }
             {(!timeInfo.isSameTimezone && showLocal) && (
               <Text as="span" {...secondaryTextProps} ml={1} fontWeight="normal">
-                (your local time)
+                {t("your_local_time")}
               </Text>
             )}
           </Text>
         </Flex>
-        
+
         {/* ORIGINAL TIME - Secondary Display */}
         {showLocal && !timeInfo.isSameTimezone && (
           <Flex align="center" gap={2} mb={2}>
@@ -301,7 +304,7 @@ export const MeetingTime = ({
               </Box>
             )}
             <Text {...secondaryTextProps}>
-              Meeting time: {timeInfo.originalDate} at {timeInfo.originalTime}
+              {t("meeting_time_label")} {timeInfo.originalDate} {t("at")} {timeInfo.originalTime}
               {timeInfo.originalTimezone !== 'UTC' && (
                 <Text as="span">
                   {' '}({timeInfo.originalTimezone.replace('_', ' ')})

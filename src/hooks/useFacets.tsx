@@ -25,7 +25,7 @@ interface FacetCodeDesc {
   desc: string
 }
 
-interface FacetsResponse {
+interface MeetingFacets {
   categories: {
     communities: FacetCodeDesc[]
     features: FacetCodeDesc[]
@@ -36,6 +36,11 @@ interface FacetsResponse {
     English: string
     alpha2: string
   }[]
+}
+
+interface FacetsResponse {
+  scheduled: MeetingFacets
+  unscheduled: MeetingFacets
 }
 
 const fallbackFacetOptions: FacetOptions = {
@@ -62,7 +67,7 @@ function sortFacetRecord(unsorted: Record<string, string>): Record<string, strin
   ) as Record<string, string>
 }
 
-const mapFacets = (raw: FacetsResponse): FacetOptions => {
+const mapFacets = (raw: MeetingFacets): FacetOptions => {
   const cats = raw.categories
   const fetchedLanguages = Object.fromEntries(
     (raw.languages)
@@ -80,23 +85,39 @@ const mapFacets = (raw: FacetsResponse): FacetOptions => {
 }
 
 export function useFacets(): {
-  facetOptions: FacetOptions
+  scheduledFacets: FacetOptions
+  unscheduledFacets: FacetOptions
   loading: boolean
   error?: Error
+  retry: () => void
 } {
-  const [facetOptions, setFacetOptions] =
+  const [scheduledFacets, setScheduledFacets] =
+    useState<FacetOptions>(fallbackFacetOptions)
+  const [unscheduledFacets, setUnscheduledFacets] =
     useState<FacetOptions>(fallbackFacetOptions)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | undefined>(undefined)
+  const [retryTick, setRetryTick] = useState(0)
+
+  const retry = () => setRetryTick((prev) => prev + 1)
 
   useEffect(() => {
     let cancelled = false
     async function fetchFacets() {
       try {
+        setLoading(true)
+        setError(undefined)
+
+        const forceError = import.meta.env.VITE_CQ_FORCE_ERROR === "true"
+        if (forceError) {
+          throw new Error("Forced facets error (config)")
+        } 
+
         const baseUrl = import.meta.env.VITE_CQ_URL as string
         if (!baseUrl) {
           throw new Error("App not configured correctly")
         }
+        
         const url = `${baseUrl}/facets`
         const raw = await fetchData<FacetsResponse>(url)
         // Treat empty array (from fetchData error) as an error
@@ -105,14 +126,14 @@ export function useFacets(): {
         }
 
         if (!cancelled) {
-          setFacetOptions(mapFacets(raw))
+          setScheduledFacets(mapFacets(raw.scheduled))
+          setUnscheduledFacets(mapFacets(raw.unscheduled))
           setLoading(false)
         }
       } catch (e) {
         console.error("Facet fetch error:", e)
         if (!cancelled) {
           setError(e instanceof Error ? e : new Error(String(e)))
-          setFacetOptions(fallbackFacetOptions)
           setLoading(false)
         }
       }
@@ -121,7 +142,7 @@ export function useFacets(): {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [retryTick])
 
-  return { facetOptions, loading, error }
+  return { scheduledFacets, unscheduledFacets, loading, error, retry }
 }

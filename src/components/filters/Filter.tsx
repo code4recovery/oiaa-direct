@@ -9,6 +9,7 @@ import {
   FaFilter,
   FaTimesCircle,
 } from "react-icons/fa"
+import { useTranslation } from "react-i18next"
 import type { SetURLSearchParams } from "react-router"
 
 import { useFacets } from "@/hooks/useFacets"
@@ -45,6 +46,36 @@ interface FilterProps {
   showClearButton?: boolean
 }
 
+interface FacetsErrorBoxProps {
+  onRetry: () => void
+}
+
+function FacetsErrorBox({ onRetry }: FacetsErrorBoxProps) {
+  const { t } = useTranslation()
+  return (
+    <Box
+      p={3}
+      borderRadius="md"
+      bg="orange.50"
+      color="orange.800"
+      _dark={{ bg: "orange.900", color: "orange.100" }}
+    >
+      <Text fontSize="sm">
+        {t("filters_unavailable")}
+      </Text>
+      <Button
+        mt={3}
+        size="sm"
+        variant="outline"
+        colorScheme="orange"
+        onClick={onRetry}
+      >
+        {t("retry")}
+      </Button>
+    </Box>
+  )
+}
+
 export function Filter({
   filterParams,
   sendFilterSelectionsToParent,
@@ -53,9 +84,15 @@ export function Filter({
   showTimeFilter = true,
   showClearButton = true,
 }: FilterProps) {
+  const { t } = useTranslation()
   const isMobile = variant === "mobile"
 
-  const { facetOptions } = useFacets()
+  const {
+    scheduledFacets,
+    unscheduledFacets,
+    error: facetsError,
+    retry: retryFacets,
+  } = useFacets()
   const defaultDay = getCurrentDay()
   const defaultTimeFrame = getCurrentTimeFrame()
 
@@ -65,6 +102,8 @@ export function Filter({
   const [showScheduled, setShowScheduled] = useState<boolean>(
     isScheduledMode(filterParams)
   )
+
+  const facetOptions = showScheduled ? scheduledFacets : unscheduledFacets
 
   const { open: filtersOpen, onToggle: onFiltersToggle } = useDisclosure({
     defaultOpen: false,
@@ -140,8 +179,10 @@ export function Filter({
 
   const handleScheduledChange = (isScheduled: boolean) => {
     setShowScheduled(isScheduled)
-    sendFilterSelectionsToParent((prev: URLSearchParams) =>
-      updateScheduledParam(prev, isScheduled)
+    setSelectedDay(defaultDay)
+    setSelectedTimeFrame(defaultTimeFrame)
+    sendFilterSelectionsToParent(
+      updateScheduledParam(new URLSearchParams(), isScheduled)
     )
   }
 
@@ -183,7 +224,7 @@ export function Filter({
           >
             <Flex align="center" gap={2}>
               <FaTimesCircle />
-              <Text>Clear Filters</Text>
+              <Text>{t("clear_filters")}</Text>
             </Flex>
           </Button>
         )}
@@ -200,7 +241,7 @@ export function Filter({
             >
               <Flex align="center" gap={2}>
                 <FaFilter />
-                <Text>Filters</Text>
+                <Text>{t("filters")}</Text>
                 <Badge colorScheme="blue" variant="solid" borderRadius="full">
                   {activeFilterCount}
                 </Badge>
@@ -213,37 +254,45 @@ export function Filter({
                   showScheduled={showScheduled}
                   onChange={handleScheduledChange}
                 />
-                {renderFilterGroups({
-                  filterParams,
-                  selectedDay,
-                  selectedTimeFrame,
-                  handleTimeChange,
-                  handleToggle,
-                  handleExclusiveToggle,
-                  showTimeFilter: showTimeFilter && showScheduled,
-                  isMobile,
-                  disclosureStates,
-                  facetOptions,
-                })}
+                {facetsError ? (
+                  <FacetsErrorBox onRetry={retryFacets} />
+                ) : (
+                  renderFilterGroups({
+                    filterParams,
+                    selectedDay,
+                    selectedTimeFrame,
+                    handleTimeChange,
+                    handleToggle,
+                    handleExclusiveToggle,
+                    showTimeFilter: showTimeFilter && showScheduled,
+                    isMobile,
+                    disclosureStates,
+                    facetOptions,
+                  })
+                )}
               </VStack>
             )}
           </>
         ) : (
           <>
             <Heading size="md" color="inherit">
-              Filters
+              {t("filters")}
             </Heading>
-            {renderFilterGroups({
-              filterParams,
-              selectedDay,
-              selectedTimeFrame,
-              handleTimeChange,
-              handleToggle,
-              handleExclusiveToggle,
-              showTimeFilter: showTimeFilter && showScheduled,
-              isMobile,
-              facetOptions,
-            })}
+            {facetsError ? (
+              <FacetsErrorBox onRetry={retryFacets} />
+            ) : (
+              renderFilterGroups({
+                filterParams,
+                selectedDay,
+                selectedTimeFrame,
+                handleTimeChange,
+                handleToggle,
+                handleExclusiveToggle,
+                showTimeFilter: showTimeFilter && showScheduled,
+                isMobile,
+                facetOptions,
+              })
+            )}
           </>
         )}
       </VStack>

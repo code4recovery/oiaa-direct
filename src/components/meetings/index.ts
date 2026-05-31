@@ -16,7 +16,11 @@ export type { CalendarActionsProps } from "./CalendarActions"
 export { default as MeetingItem } from "./MeetingItem"
 export type { MeetingItemProps } from "./MeetingItem"
 
+export { MeetingList } from "./MeetingList"
+export type { MeetingListProps } from "./MeetingList"
+
 export { MeetingsSummary } from "./MeetingsSummary"
+export type { MeetingsSummaryProps } from "./MeetingsSummary"
 
 export { default as JoinMeetingButton } from "./JoinMeetingButton"
 

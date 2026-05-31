@@ -21,33 +21,34 @@ OIAA Direct Meetings is a WordPress plugin that embeds a full-featured React app
 * Time-based filtering (day of week, time of day)
 * Dark mode support
 * Fully responsive design
-* Hash-based routing for bookmarkable URLs
+* Browser-router friendly URL routing
 * No external dependencies (React bundled within)
 
 **Usage:**
 
-Simply add the `[oiaa_meetings]` shortcode to any page or post where you want the meetings application to appear.
+Set a Base Path in Settings → OIAA Meetings (for example `/meetings`) and ensure a matching page exists. The plugin renders the app for that path and its sub-routes.
 
 == Installation ==
 
 1. Upload the plugin files to `/wp-content/plugins/oiaa-meetings/` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Navigate to Settings → OIAA Meetings to configure the API URL (a default is provided).
-4. Add the `[oiaa_meetings]` shortcode to any page or post.
+3. Navigate to Settings → OIAA Meetings to configure the API URL and Base Path.
+4. Ensure a page exists that matches your Base Path (for example page slug `meetings` for `/meetings`).
+5. Visit Settings → Permalinks and click "Save Changes" if you changed Base Path.
 
 == Frequently Asked Questions ==
 
 = How do I add the meetings application to my site? =
 
-Add the `[oiaa_meetings]` shortcode to any page or post content.
+Set the Base Path in Settings → OIAA Meetings and make sure a matching page exists.
 
 = Can I customize the API endpoint? =
 
 Yes. Go to Settings → OIAA Meetings and enter your custom API URL.
 
-= Can I use the shortcode multiple times on the same page? =
+= Can I render the app on multiple pages? =
 
-Currently, only one instance per page is supported.
+Use one Base Path per plugin instance. The app is intended to render for that configured path and its sub-routes.
 
 = What browsers are supported? =
 
@@ -55,7 +56,7 @@ Modern browsers including Chrome, Firefox, Safari, and Edge. IE11 is not support
 
 = Does this work with page builders? =
 
-Yes, as long as the page builder supports WordPress shortcodes.
+Yes, as long as the page permalink structure and configured Base Path resolve normally in WordPress.
 
 == Screenshots ==
 
@@ -68,9 +69,9 @@ Yes, as long as the page builder supports WordPress shortcodes.
 = 1.0.0 =
 * Initial release
 * Full meetings search and filtering
-* Hash-based routing
+* Browser-router routing with WordPress rewrites
 * Settings page for API configuration
-* Shortcode support
+* Template redirect rendering at configured base path
 
 == Upgrade Notice ==
 

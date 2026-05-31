@@ -4,6 +4,8 @@ import {
   useState,
 } from "react"
 
+import { useTranslation } from "react-i18next"
+
 import {
   Box,
   Text,
@@ -49,6 +51,8 @@ export function SearchFilter({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [searchQuery, showMinCharWarning])
   
+  const { t } = useTranslation()
+
   return (
     <Box>
       <SearchInput
@@ -58,7 +62,7 @@ export function SearchFilter({
       />
       {showWarning && (
         <Text fontSize="xs" color="red.500" mt={1}>
-          Enter at least 3 characters.
+          {t("search_min_chars")}
         </Text>
       )}
     </Box>

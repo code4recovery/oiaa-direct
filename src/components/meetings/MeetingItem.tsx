@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { Link as RRLink } from "react-router"
 
 import type { Meeting } from "@/meetingTypes"
@@ -307,6 +308,7 @@ const DetailedVariant = ({
   showCategories?: boolean
   showLink?: boolean
 }) => {
+  const { t } = useTranslation()
   const content = (
     <Box
       p={6}
@@ -349,7 +351,7 @@ const DetailedVariant = ({
               color="gray.800"
               _dark={{ color: "gray.200" }}
             >
-              Meeting Information
+              {t("meeting_information")}
             </Text>
             <VStack align="stretch" gap={2}>
               {(Array.isArray(meeting.notes)
@@ -389,7 +391,7 @@ const DetailedVariant = ({
               _dark={{ color: "gray.200" }}
               mb={3}
             >
-              Meeting Details
+              {t("meeting_details")}
             </Text>
             <MeetingCategories meeting={meeting} size="md" layout="wrap" />
           </Box>

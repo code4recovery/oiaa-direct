@@ -41,7 +41,7 @@ try {
 
 // Step 2: Copy built files to plugin assets directory
 console.log('📁 Step 2: Copying files to wordpress-plugin/assets/...');
-const distDir = path.join(rootDir, 'dist-wordpress');
+const distDir = path.join(rootDir, 'dist');
 const pluginAssetsDir = path.join(rootDir, 'wordpress-plugin', 'assets');
 
 // Clean assets directory
@@ -50,7 +50,7 @@ if (fs.existsSync(pluginAssetsDir)) {
 }
 fs.mkdirSync(pluginAssetsDir, { recursive: true });
 
-// Copy all files from dist-wordpress to plugin assets
+// Copy all files from dist to plugin assets
 function copyRecursive(src, dest) {
   const entries = fs.readdirSync(src, { withFileTypes: true });
 
@@ -109,4 +109,4 @@ console.log('📝 Next steps:');
 console.log('   1. Test the plugin in a WordPress installation');
 console.log('   2. Upload to WordPress: Plugins → Add New → Upload Plugin');
 console.log('   3. Activate and configure: Settings → OIAA Meetings');
-console.log('   4. Add shortcode to a page: [oiaa_meetings]\n');
+console.log('   4. Create or confirm a page matching the configured base path (e.g. /meetings)\n');

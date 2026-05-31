@@ -1,5 +1,7 @@
 import React from "react"
 
+import { useTranslation } from "react-i18next"
+
 import type { FacetOptions } from "@/hooks/useFacets"
 import type {
   Community,
@@ -38,14 +40,54 @@ export function renderFilterGroups({
   disclosureStates,
   facetOptions,
 }: RenderFilterGroupsProps) {
+  return (
+    <FilterGroupsInner
+      filterParams={filterParams}
+      selectedDay={selectedDay}
+      selectedTimeFrame={selectedTimeFrame}
+      handleTimeChange={handleTimeChange}
+      handleToggle={handleToggle}
+      handleExclusiveToggle={handleExclusiveToggle}
+      showTimeFilter={showTimeFilter}
+      isMobile={isMobile}
+      disclosureStates={disclosureStates}
+      facetOptions={facetOptions}
+    />
+  )
+}
+
+function FilterGroupsInner({
+  filterParams,
+  selectedDay,
+  selectedTimeFrame,
+  handleTimeChange,
+  handleToggle,
+  handleExclusiveToggle,
+  showTimeFilter,
+  isMobile,
+  disclosureStates,
+  facetOptions,
+}: RenderFilterGroupsProps) {
+  const { t } = useTranslation()
   const groups: React.ReactNode[] = []
+
+  const translateOptions = (
+    category: string,
+    options: Record<string, string>
+  ): Record<string, string> =>
+    Object.fromEntries(
+      Object.entries(options).map(([code, desc]) => [
+        code,
+        t(`${category}.${code}`, { defaultValue: desc }),
+      ])
+    )
 
   if (showTimeFilter) {
     groups.push(
       isMobile ? (
         <FilterSection
           key="time"
-          title="Day & Time"
+          title={t("filter_day_time")}
           isOpen={disclosureStates?.time.open ?? false}
           onToggle={
             disclosureStates?.time.onToggle ??
@@ -86,36 +128,36 @@ export function renderFilterGroups({
   const categories = [
     {
       key: "type",
-      title: "Meeting Type",
-      options: facetOptions.types,
+      title: t("filter_meeting_type"),
+      options: translateOptions("types", facetOptions.types),
       selected: filterParams.getAll("type") as Type[],
       onToggle: handleExclusiveToggle("type"),
     },
     {
       key: "formats",
-      title: "Formats",
-      options: facetOptions.formats,
+      title: t("filter_formats"),
+      options: translateOptions("formats", facetOptions.formats),
       selected: filterParams.getAll("formats") as Format[],
       onToggle: handleToggle("formats"),
     },
     {
       key: "features",
-      title: "Features",
-      options: facetOptions.features,
+      title: t("filter_features"),
+      options: translateOptions("features", facetOptions.features),
       selected: filterParams.getAll("features") as Feature[],
       onToggle: handleToggle("features"),
     },
     {
       key: "communities",
-      title: "Communities",
-      options: facetOptions.communities,
+      title: t("filter_communities"),
+      options: translateOptions("communities", facetOptions.communities),
       selected: filterParams.getAll("communities") as Community[],
       onToggle: handleToggle("communities"),
     },
     {
       key: "languages",
-      title: "Languages",
-      options: facetOptions.languages,
+      title: t("filter_languages"),
+      options: translateOptions("languages", facetOptions.languages),
       selected: filterParams.getAll("languages") as Language[],
       onToggle: handleToggle("languages"),
     },
