@@ -67,7 +67,7 @@ function FacetsErrorBox({ onRetry }: FacetsErrorBoxProps) {
         mt={3}
         size="sm"
         variant="outline"
-        colorScheme="orange"
+        colorPalette="orange"
         onClick={onRetry}
       >
         {t("retry")}
@@ -214,7 +214,7 @@ export function Filter({
           <Button
             size="sm"
             variant="ghost"
-            colorScheme="gray"
+            colorPalette="gray"
             onClick={clearAllFilters}
             color="gray.600"
             _dark={{
@@ -242,7 +242,7 @@ export function Filter({
               <Flex align="center" gap={2}>
                 <FaFilter />
                 <Text>{t("filters")}</Text>
-                <Badge colorScheme="blue" variant="solid" borderRadius="full">
+                <Badge colorPalette="blue" variant="solid" borderRadius="full">
                   {activeFilterCount}
                 </Badge>
                 {filtersOpen ? <FaChevronUp /> : <FaChevronDown />}

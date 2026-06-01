@@ -286,7 +286,7 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
             {meeting.formats.map((format: string) => (
               <Badge
                 key={format}
-                colorScheme="blue"
+                colorPalette="blue"
                 variant="subtle"
                 px={2}
                 py={1}
@@ -298,7 +298,7 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
             ))}
             {meeting.type && (
               <Badge
-                colorScheme="purple"
+                colorPalette="purple"
                 variant="subtle"
                 px={2}
                 py={1}
@@ -344,7 +344,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
     <Layout>
       <Box mb={4}>
         <RouterLink to="/">
-          <Button size="sm" variant="outline" colorScheme="blue">
+          <Button size="sm" variant="outline" colorPalette="blue">
             <FaArrowLeft style={{ marginRight: "8px" }} />
             {t("back_to_meetings")}
           </Button>
@@ -413,7 +413,7 @@ export default function GroupInfo({ loaderData }: Route.ComponentProps) {
                         .map((item) => (
                           <Badge
                             key={`${categoryType}-${item}`}
-                            colorScheme={CATEGORY_COLORS[categoryType]}
+                            colorPalette={CATEGORY_COLORS[categoryType]}
                             variant="subtle"
                             px={2}
                             py={1}
