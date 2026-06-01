@@ -145,6 +145,7 @@ const CalendarOption: React.FC<CalendarOptionProps> = ({
   calendarUrls,
   colorScheme,
 }) => {
+  const { t } = useTranslation()
   return (
     <Flex direction="column" gap={2}>
       <Text fontSize="xs" fontWeight="medium" color="gray.600" _dark={{ color: "gray.400" }}>
