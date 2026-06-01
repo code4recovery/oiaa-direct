@@ -49,7 +49,7 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
       <Flex align="center" gap={2}>
         <Text fontWeight="semibold">{title}</Text>
         {typeof badge === "number" && badge > 0 && (
-          <Badge colorScheme="blue" borderRadius="full">
+          <Badge colorPalette="blue" borderRadius="full">
             {badge}
           </Badge>
         )}
