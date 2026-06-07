@@ -1,4 +1,3 @@
-import { Tooltip } from "@/components/ui/tooltip"
 import { Box, Button, Flex, Heading } from "@chakra-ui/react"
 
 const CATEGORY_COLORS = {
@@ -39,38 +38,36 @@ export function CategoryFilter<T extends string>({
           const isSelected = selected.includes(code)
           return (
             <Box key={code}>
-              <Tooltip content={options[code]}>
-                <Button
-                  size="xs"
-                  variant="outline"
-                  colorScheme={isSelected ? colorScheme : "gray"}
-                  onClick={() => {
-                    onToggle(code)
-                  }}
-                  fontWeight="normal"
-                  px={3}
-                  height="24px"
-                  borderRadius="full"
-                  borderWidth="1px"
-                  color="inherit"
-                  bg={isSelected ? `${colorScheme}.100` : "transparent"}
-                  borderColor={isSelected ? `${colorScheme}.200` : "gray.200"}
-                  _dark={{
-                    borderColor: isSelected ? `${colorScheme}.800` : "gray.400",
-                    bg: isSelected ? `${colorScheme}.900` : "transparent",
-                    _hover: {
-                      bg: isSelected ? `${colorScheme}.800` : "whiteAlpha.100",
-                      borderColor: isSelected ? `${colorScheme}.300` : "whiteAlpha.500",
-                    },
-                  }}
-                  _hover={{
-                    bg: isSelected ? `${colorScheme}.200` : "gray.50",
-                    borderColor: isSelected ? `${colorScheme}.300` : "gray.300",
-                  }}
-                >
-                  {options[code]}
-                </Button>
-              </Tooltip>
+              <Button
+                size="xs"
+                variant="outline"
+                colorScheme={isSelected ? colorScheme : "gray"}
+                onClick={() => {
+                  onToggle(code)
+                }}
+                fontWeight="normal"
+                px={3}
+                height="24px"
+                borderRadius="full"
+                borderWidth="1px"
+                color="inherit"
+                bg={isSelected ? `${colorScheme}.100` : "transparent"}
+                borderColor={isSelected ? `${colorScheme}.200` : "gray.200"}
+                _dark={{
+                  borderColor: isSelected ? `${colorScheme}.800` : "gray.400",
+                  bg: isSelected ? `${colorScheme}.900` : "transparent",
+                  _hover: {
+                    bg: isSelected ? `${colorScheme}.800` : "whiteAlpha.100",
+                    borderColor: isSelected ? `${colorScheme}.300` : "whiteAlpha.500",
+                  },
+                }}
+                _hover={{
+                  bg: isSelected ? `${colorScheme}.200` : "gray.50",
+                  borderColor: isSelected ? `${colorScheme}.300` : "gray.300",
+                }}
+              >
+                {options[code]}
+              </Button>
             </Box>
           )
         })}
