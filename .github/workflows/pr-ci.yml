@@ -1,0 +1,37 @@
+name: PR CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate route types
+        run: npx react-router typegen
+
+      # Lint is non-blocking for now — pre-existing errors need a dedicated cleanup pass
+      # TODO: remove continue-on-error once lint errors are resolved
+      - name: Lint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test -- --run
+        env:
+          TZ: America/Los_Angeles
