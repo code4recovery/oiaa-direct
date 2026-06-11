@@ -1,9 +1,5 @@
-import React from "react"
-
-import { useTranslation } from "react-i18next"
-
-import type { FacetOptions } from "@/hooks/useFacets"
 import type {
+  CategoryKey,
   Community,
   Feature,
   Format,
@@ -12,8 +8,19 @@ import type {
 } from "@/meetingTypes"
 
 import { CategoryFilter } from "./CategoryFilter"
+import type { FacetOptions } from "@/hooks/useFacets"
 import { FilterSection } from "./FilterSection"
+import React from "react"
 import { TimeFilter } from "./TimeFilter"
+import { useTranslation } from "react-i18next"
+
+interface CategoryFilterEntry {
+  key: CategoryKey
+  title: string
+  options: Record<string, string>
+  selected: string[]
+  onToggle: (x: string) => void
+}
 
 interface RenderFilterGroupsProps {
   filterParams: URLSearchParams
@@ -125,7 +132,7 @@ function FilterGroupsInner({
     )
   }
 
-  const categories = [
+  const categories: CategoryFilterEntry[] = [
     {
       key: "type",
       title: t("filter_meeting_type"),
@@ -164,26 +171,6 @@ function FilterGroupsInner({
   ]
 
   categories.forEach(({ key, title, options, selected, onToggle }) => {
-    let typedOptions: Record<string, string | string[]>
-    switch (key) {
-      case "type":
-        typedOptions = options as Record<Type, string | string[]>
-        break
-      case "formats":
-        typedOptions = options as Record<Format, string | string[]>
-        break
-      case "features":
-        typedOptions = options as Record<Feature, string | string[]>
-        break
-      case "communities":
-        typedOptions = options as Record<Community, string | string[]>
-        break
-      case "languages":
-        typedOptions = options as Record<Language, string | string[]>
-        break
-      default:
-        typedOptions = options
-    }
     const selectedCount = selected.length
     groups.push(
       isMobile ? (
@@ -201,7 +188,7 @@ function FilterGroupsInner({
         >
           <CategoryFilter
             displayName=""
-            options={typedOptions}
+            options={options}
             selected={selected}
             onToggle={onToggle}
           />
@@ -210,7 +197,7 @@ function FilterGroupsInner({
         <CategoryFilter
           key={key}
           displayName={title}
-          options={typedOptions}
+          options={options}
           selected={selected}
           onToggle={onToggle}
         />

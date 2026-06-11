@@ -1,14 +1,3 @@
-import { FaPlus } from "react-icons/fa"
-import { useTranslation } from "react-i18next"
-
-import {
-  PopoverBody,
-  PopoverContent,
-  PopoverRoot,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import i18n from "@/i18n"
-import type { Meeting } from "@/meetingTypes"
 import {
   Badge,
   Box,
@@ -17,6 +6,18 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react"
+import {
+  PopoverBody,
+  PopoverContent,
+  PopoverRoot,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+import { CATEGORY_KEYS } from "@/meetingTypes"
+import { FaPlus } from "react-icons/fa"
+import type { Meeting } from "@/meetingTypes"
+import i18n from "@/i18n"
+import { useTranslation } from "react-i18next"
 
 const CATEGORY_NAMESPACES: Record<string, string> = {
   type: "types",
@@ -56,9 +57,7 @@ const getCategoryItems = (meeting: Meeting) => {
     fullName: string
   }[] = []
 
-  const categories = ["type", "formats", "features", "communities", "languages"] as const
-
-  categories.forEach((category) => {
+  CATEGORY_KEYS.forEach((category) => {
     const value = meeting[category]
     if (!value) return
 

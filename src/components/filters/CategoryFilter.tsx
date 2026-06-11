@@ -10,7 +10,7 @@ const CATEGORY_COLORS = {
 
 interface CategoryFilterProps<T extends string> {
   displayName: string
-  options: Record<T, string | string[]>
+  options: Record<T, string>
   selected: T[]
   onToggle: (x: string) => void
 }
