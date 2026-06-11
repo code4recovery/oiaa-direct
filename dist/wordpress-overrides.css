@@ -209,6 +209,19 @@
   color: white;
 }
 
+/* Restore horizontal padding on icon buttons (#94).
+   JointsWP/Foundation ships an unlayered `button { padding: 0 }` rule.
+   Chakra v3 emits its button padding inside a CSS @layer, and layered
+   styles always lose to unlayered ones regardless of specificity, so the
+   theme zeroes the padding on the Join/Email/Website action buttons. With
+   no inline padding the leading camera/link icon sits flush against the
+   button's rounded edge and its corner pokes out ("the button doesn't
+   fully cover the icon"). Re-inset the icon by restoring the padding. */
+#oiaa-meetings-root button:has(svg) {
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+}
+
 /* ============================================================
    LIST RESET
    ============================================================ */
