@@ -1,5 +1,5 @@
-import type { WeekdayNumbers } from "luxon"
 import { DateTime } from "luxon"
+import type { WeekdayNumbers } from "luxon"
 
 export const TIME_FRAMES = {
   morning: { start: "04:00", end: "10:59", hours: 7 },
@@ -10,6 +10,9 @@ export const TIME_FRAMES = {
 } as const
 
 export type TimeFrame = keyof typeof TIME_FRAMES
+
+/** Default query window (in hours) used when no named TimeFrame applies (e.g. a custom HH:MM time string). */
+export const DEFAULT_HOURS_WINDOW = 1
 
 export const WEEKDAY_MAP: Record<string, number> = {
   monday: 1,
@@ -75,7 +78,7 @@ export function calculateTargetDate(day: string, timeFrame: string): DateTime {
   return targetDate
 }
 
-export function createTimeFilterParams(day: string, timeFrame: string): { start?: string; hours: string } {
+export function createTimeFilterParams(day: string, timeFrame: string): { start?: string; hours: number } {
   const targetDate = calculateTargetDate(day, timeFrame)
   
   if (timeFrame in TIME_FRAMES) {
@@ -83,14 +86,13 @@ export function createTimeFilterParams(day: string, timeFrame: string): { start?
     const utcStart = targetDate.toUTC().toISO()
     return {
       start: utcStart ?? undefined,
-      hours: hours.toString(),
+      hours,
     }
   } else {
-
     const utcStart = targetDate.toUTC().toISO()
     return {
       start: utcStart ?? undefined,
-      hours: "1",
+      hours: DEFAULT_HOURS_WINDOW,
     }
   }
 }
@@ -122,7 +124,7 @@ export function updateTimeParams(
   if (timeParams.start) {
     next.set("start", timeParams.start)
   }
-  next.set("hours", timeParams.hours)
+  next.set("hours", String(timeParams.hours))
   
   return next
 }
