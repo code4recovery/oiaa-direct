@@ -81,7 +81,7 @@ const SelectField = ({
       >
         <select
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => { onChange(e.target.value) }}
           style={{
             ...selectStyles,
             border: "none",
@@ -116,21 +116,14 @@ const SelectField = ({
 }
 
 
-const TimeFilterFields = ({
+export function TimeFilter({
   selectedDay,
   selectedTimeFrame,
   onDayChange,
   onTimeFrameChange,
-  showLabels,
   variant,
-}: {
-  selectedDay: string
-  selectedTimeFrame: string
-  onDayChange: (day: string) => void
-  onTimeFrameChange: (timeFrame: string) => void
-  showLabels: boolean
-  variant: TimeFilterVariant
-}) => {
+  showLabels = true,
+}: TimeFilterProps) {
   const { t } = useTranslation()
   const gap = variant === "mobile" ? 3 : 4
 
@@ -153,29 +146,7 @@ const TimeFilterFields = ({
         onChange={onTimeFrameChange}
         options={timeFrameOptions}
         showLabel={showLabels}
-
       />
     </VStack>
-  )
-}
-
-
-export function TimeFilter({
-  selectedDay,
-  selectedTimeFrame,
-  onDayChange,
-  onTimeFrameChange,
-  variant,
-  showLabels = true,
-}: TimeFilterProps) {
-  return (
-    <TimeFilterFields
-      selectedDay={selectedDay}
-      selectedTimeFrame={selectedTimeFrame}
-      onDayChange={onDayChange}
-      onTimeFrameChange={onTimeFrameChange}
-      showLabels={showLabels}
-      variant={variant}
-    />
   )
 }
