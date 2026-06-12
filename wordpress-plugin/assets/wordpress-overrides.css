@@ -236,6 +236,8 @@
   /* Do NOT reset padding, background, border - these are set by components */
   font-family: inherit;
   box-sizing: border-box;
+  /* Foundation/theme styles often add margin-bottom to form controls */
+  margin: 0 !important;
 }
 
 /* ============================================================
