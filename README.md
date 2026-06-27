@@ -137,7 +137,11 @@ Currently, two official plugins are available:
 
 ## License
 
-[MIT](LICENSE)
+This project does not yet include an open source license file.
+
+To compare license options under consideration (`MIT` and `GNU GPL`), see:
+
+- `docs/license-options.md`
 
 ---
 
