@@ -137,7 +137,7 @@ Currently, two official plugins are available:
 
 ## License
 
-[MIT](LICENSE)
+License decision pending. This project does not yet include a top-level `LICENSE` file.
 
 ---
 
