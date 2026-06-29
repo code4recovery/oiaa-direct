@@ -137,7 +137,11 @@ Currently, two official plugins are available:
 
 ## License
 
-License decision pending. This project does not yet include a top-level `LICENSE` file.
+This project is licensed under the [MIT License](LICENSE).
+
+code4recovery encourages MIT licensing across its repositories to maximize adoption and reduce legal friction.
+
+Note: the TSML WP plugin project is a GNU-license outlier because GPL compatibility is required for inclusion in the WordPress plugin ecosystem.
 
 ---
 

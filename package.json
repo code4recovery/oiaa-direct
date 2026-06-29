@@ -2,6 +2,7 @@
   "name": "oiaa-direct",
   "private": true,
   "version": "1.3.2",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "react-router dev",
