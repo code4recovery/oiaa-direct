@@ -34,6 +34,18 @@ npm run dev
 VITE_CQ_URL="https://central-query.apps.code4recovery.org/api/v1/meetings"
 ```
 
+### Optional: Sentry Error Tracking
+
+Set `VITE_SENTRY_DSN` to enable error reporting. The app builds and runs without it. Sentry only activates in production builds, not during `npm run dev`.
+
+To enable locally, create a `.env.local` file (gitignored via `*.local`):
+
+```env
+VITE_SENTRY_DSN=your_sentry_dsn_here
+```
+
+For CI/CD, add `VITE_SENTRY_DSN` as a repository secret in GitHub (*Settings → Secrets and variables → Actions*). The WordPress plugin build workflow reads it automatically.
+
 ---
 
 ## WordPress Plugin Development

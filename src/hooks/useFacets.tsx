@@ -11,6 +11,7 @@ import {
   TYPE,
 } from "@/meetingTypes"
 import { fetchData } from "@/utils/meetings-utils"
+import { logError } from "@/utils/logger"
 
 export interface FacetOptions {
   types: Record<string, string>
@@ -131,7 +132,7 @@ export function useFacets(): {
           setLoading(false)
         }
       } catch (e) {
-        console.error("Facet fetch error:", e)
+        logError(e)
         if (!cancelled) {
           setError(e instanceof Error ? e : new Error(String(e)))
           setLoading(false)

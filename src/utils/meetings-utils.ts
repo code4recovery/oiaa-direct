@@ -1,4 +1,7 @@
 /** ToDo: Fix error handling */
+
+import { logError } from "@/utils/logger"
+
 export const fetchData = async <T>(url: string): Promise<T> => {
   try {
     const response = await fetch(url)
@@ -7,7 +10,7 @@ export const fetchData = async <T>(url: string): Promise<T> => {
     }
     return (await response.json()) as T
   } catch (error) {
-    console.error(error)
+    logError(error, url)
     return [] as T
   }
 }

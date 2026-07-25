@@ -7,11 +7,13 @@ import "./index.css"
 
 import React from "react"
 import ReactDOM from "react-dom/client"
+import * as Sentry from "@sentry/react"
 import { createBrowserRouter, RouterProvider, useLoaderData } from "react-router"
 
 import { Provider } from "@/components/ui/provider"
 import MeetingsFiltered, { clientLoader as meetingsClientLoader } from "@/routes/meetings-filtered"
 import GroupInfo, { clientLoader as groupInfoClientLoader } from "@/routes/group-info"
+import { logError } from "@/utils/logger"
 
 // WordPress provides configuration via global variable
 declare global {
@@ -80,9 +82,10 @@ function initWordPressMeetings() {
   const container = document.getElementById("oiaa-meetings-root")
 
   if (!container) {
-    console.error(
-      "OIAA Meetings: Container element #oiaa-meetings-root not found"
-    )
+    const errorMsg = "OIAA Meetings: Container element #oiaa-meetings-root not found"
+    
+    console.error(`❌ ${errorMsg}`)
+    logError(new Error(errorMsg))
     return
   }
 
@@ -97,6 +100,16 @@ function initWordPressMeetings() {
       </Provider>
     </React.StrictMode>
   )
+}
+
+if (import.meta.env.VITE_SENTRY_DSN) {
+  Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    environment: import.meta.env.MODE,
+    enabled: import.meta.env.PROD,
+    sendDefaultPii: false,
+    enableLogs: !import.meta.env.PROD,
+  })
 }
 
 // Auto-initialize when DOM is ready
