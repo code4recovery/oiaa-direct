@@ -14,6 +14,8 @@ const ru: TranslationStrings = {
   filters_unavailable:
     "Фильтры временно недоступны. Пожалуйста, повторите попытку через момент.",
   retry: "Повторить",
+  not_configured:
+    "Список встреч ещё не настроен: в настройках плагина не указан URL API.",
 
   // Filter section headings
   filter_day_time: "День и время",
@@ -45,6 +47,14 @@ const ru: TranslationStrings = {
   meetings: "Встречи",
   meetings_summary: "({{total}} всего результатов; загружено {{shown}}.)",
   no_results: "Встречи по вашим критериям не найдены.",
+  meetings_load_failed:
+    "Сейчас не удалось загрузить встречи. Пожалуйста, повторите попытку через момент.",
+  meeting_not_found: "Встреча не найдена",
+  meeting_not_found_text: "Возможно, эта встреча удалена или ссылка устарела.",
+  page_not_found: "Страница не найдена",
+  page_not_found_text: "По этому адресу нет страницы. Найдите встречу в списке.",
+  page_load_failed:
+    "При загрузке страницы произошла ошибка. Пожалуйста, повторите попытку через момент.",
 
   // Meeting time
   today: "Сегодня",

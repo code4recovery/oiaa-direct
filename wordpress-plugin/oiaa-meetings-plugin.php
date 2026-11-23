@@ -75,10 +75,7 @@ function oiaa_meetings_add_rewrite_rules() {
  * Activation hook
  */
 function oiaa_meetings_activate() {
-    // Set default options
-    if (get_option('oiaa_api_url') === false) {
-        add_option('oiaa_api_url', 'https://central-query.apps.code4recovery.org/api/v1/meetings');
-    }
+    // Set default options. The API URL has no default: the site admin enters it in the settings.
     if (get_option('oiaa_asset_version') === false) {
         add_option('oiaa_asset_version', 'latest');
     }

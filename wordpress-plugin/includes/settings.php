@@ -29,7 +29,7 @@ function oiaa_meetings_settings_init() {
     register_setting('oiaa_meetings', 'oiaa_api_url', array(
         'type' => 'string',
         'sanitize_callback' => 'esc_url_raw',
-        'default' => 'https://central-query.apps.code4recovery.org/api/v1/meetings'
+        'default' => ''
     ));
 
     register_setting('oiaa_meetings', 'oiaa_color_mode', array(
@@ -168,7 +168,7 @@ function oiaa_meetings_api_url_render() {
         required
     />
     <p class="description">
-        <?php _e('The base URL for the Central Query API (e.g., https://central-query.apps.code4recovery.org/api/v1/meetings)', 'oiaa-meetings'); ?>
+        <?php _e('The base URL for the Central Query API, ending in /api/v1/meetings (e.g., https://central-query.example.org/api/v1/meetings). Required. Until it is set, the meeting page shows a setup message and loads no meetings.', 'oiaa-meetings'); ?>
     </p>
     <?php
 }

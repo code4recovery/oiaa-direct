@@ -7,6 +7,7 @@ import { DateTime } from "luxon"
 import { useTranslation } from "react-i18next"
 import {
   Outlet,
+  useRevalidator,
   useSearchParams,
 } from "react-router"
 
@@ -20,8 +21,10 @@ import { getMeetings } from "@/getData"
 import type { Meeting } from "@/meetingTypes"
 import { shuffleWithinTimeSlots } from "@/utils/meetings-utils"
 import { DEFAULT_HOURS_WINDOW } from "@/utils/filter-utils"
+import { logError } from "@/utils/logger"
 import {
   Box,
+  Button,
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react"
@@ -48,10 +51,16 @@ function getCacheKey(searchParams: URLSearchParams): string {
   return !hasParams ? 'default' : searchParams.toString()
 }
 
-// Promise-based cache to deduplicate concurrent loader calls
-const loaderCache = new Map<string, Promise<{ meetings: Meeting[] }>>()
+interface MeetingsLoaderData {
+  meetings: Meeting[]
+  // The API call failed (server down, HTTP error): the page says so instead of "no meetings found"
+  loadFailed: boolean
+}
 
-export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise<{ meetings: Meeting[] }> {
+// Promise-based cache to deduplicate concurrent loader calls
+const loaderCache = new Map<string, Promise<MeetingsLoaderData>>()
+
+export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise<MeetingsLoaderData> {
   const { searchParams } = new URL(request.url)
   const qs = buildMeetingsQueryString(searchParams)
   const cacheKey = getCacheKey(searchParams)
@@ -64,9 +73,16 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise
   
   // Create and store promise immediately (before awaiting) to prevent race conditions
   const promise = (async () => {
-    const meetings = await getMeetings(qs)
-    const shuffled = shuffleWithinTimeSlots(meetings)
-    return { meetings: shuffled }
+    try {
+      const meetings = await getMeetings(qs)
+      if (!Array.isArray(meetings)) throw new Error("Meetings answer is not a list")
+      return { meetings: shuffleWithinTimeSlots(meetings), loadFailed: false }
+    } catch (error) {
+      logError(error, "meetings list")
+      // Don't cache a failure, so Retry calls the API again
+      loaderCache.delete(cacheKey)
+      return { meetings: [], loadFailed: true }
+    }
   })()
   
   // Store in cache IMMEDIATELY (synchronously) so concurrent calls can see it
@@ -75,7 +91,8 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise
   // Set up cache cleanup after promise resolves
   void promise.finally(() => {
     setTimeout(() => {
-      loaderCache.delete(cacheKey)
+      // Only remove this entry: after a failed load, Retry may have cached a newer one
+      if (loaderCache.get(cacheKey) === promise) loaderCache.delete(cacheKey)
     }, 60000) // 60 seconds
   })
   
@@ -85,7 +102,8 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs): Promise
 export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
   const { t } = useTranslation()
   const [filterParams, setFilterParams] = useSearchParams()
-  const { meetings } = loaderData
+  const { meetings, loadFailed } = loaderData
+  const revalidator = useRevalidator()
   const totalMeetings = meetings.length
   const [visibleMeetingsCount, setVisibleMeetingsCount] = useState(25)
 
@@ -132,7 +150,27 @@ export default function MeetingsFiltered({ loaderData }: Route.ComponentProps) {
       >
         {filterVariant === "mobile" && <Box mb={6}>{filterComponent}</Box>}
 
-        {meetings.length > 0 ? (
+        {loadFailed ? (
+          <Box
+            p={4}
+            borderRadius="md"
+            bg="orange.50"
+            color="orange.800"
+            _dark={{ bg: "orange.900", color: "orange.100" }}
+          >
+            <Text>{t("meetings_load_failed")}</Text>
+            <Button
+              mt={3}
+              size="sm"
+              variant="outline"
+              colorPalette="orange"
+              onClick={() => void revalidator.revalidate()}
+              loading={revalidator.state === "loading"}
+            >
+              {t("retry")}
+            </Button>
+          </Box>
+        ) : meetings.length > 0 ? (
           <>
             <MeetingsSummary
               shownCount={visibleMeetings.length}

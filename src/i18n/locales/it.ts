@@ -14,6 +14,8 @@ const it: TranslationStrings = {
   filters_unavailable:
     "I filtri sono temporaneamente non disponibili. Riprova tra un momento.",
   retry: "Riprova",
+  not_configured:
+    "L'elenco delle riunioni non è ancora configurato: manca l'URL dell'API nelle impostazioni del plugin.",
 
   // Filter section headings
   filter_day_time: "Giorno e ora",
@@ -45,6 +47,16 @@ const it: TranslationStrings = {
   meetings: "Riunioni",
   meetings_summary: "({{total}} risultati totali; {{shown}} caricati.)",
   no_results: "Nessuna riunione trovata corrispondente ai criteri.",
+  meetings_load_failed:
+    "Impossibile caricare le riunioni. Riprova tra un momento.",
+  meeting_not_found: "Riunione non trovata",
+  meeting_not_found_text:
+    "Questa riunione potrebbe essere stata rimossa, oppure il link non è più valido.",
+  page_not_found: "Pagina non trovata",
+  page_not_found_text:
+    "Non c'è nessuna pagina a questo indirizzo. Puoi cercare la riunione nell'elenco.",
+  page_load_failed:
+    "Si è verificato un errore durante il caricamento della pagina. Riprova tra un momento.",
 
   // Meeting time
   today: "Oggi",

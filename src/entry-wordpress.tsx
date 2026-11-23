@@ -10,7 +10,11 @@ import ReactDOM from "react-dom/client"
 import * as Sentry from "@sentry/react"
 import { createBrowserRouter, RouterProvider, useLoaderData } from "react-router"
 
+import { NotConfigured } from "@/components/NotConfigured"
+import { NotFound } from "@/components/NotFound"
+import { RouteError } from "@/components/RouteError"
 import { Provider } from "@/components/ui/provider"
+import { getApiUrl } from "@/getData"
 import MeetingsFiltered, { clientLoader as meetingsClientLoader } from "@/routes/meetings-filtered"
 import GroupInfo, { clientLoader as groupInfoClientLoader } from "@/routes/group-info"
 import { logError } from "@/utils/logger"
@@ -27,15 +31,7 @@ declare global {
   }
 }
 
-// Override API URL from WordPress config if provided
-if (window.OIAA_CONFIG?.apiUrl) {
-  // Store in import.meta.env for compatibility with existing code
-  // Note: This is a runtime override, not a build-time variable
-  Object.defineProperty(import.meta.env, "VITE_CQ_URL", {
-    value: window.OIAA_CONFIG.apiUrl,
-    writable: false,
-  })
-}
+// The API URL from WordPress (window.OIAA_CONFIG.apiUrl) is read at call time by getApiUrl() in getData.ts.
 
 // Wrapper components that properly handle loaderData
 function MeetingsFilteredWrapper() {
@@ -52,23 +48,35 @@ function GroupInfoWrapper() {
 
 const basePath = window.OIAA_CONFIG?.basePath || "/meetings"
 
-// Create browser-based router with basename support
-const router = createBrowserRouter([
+// Create browser-based router with basename support.
+// Only called when an API URL is set: creating the router starts the route loaders.
+const createRouter = () => createBrowserRouter([
   {
-    path: "/",
-    element: <MeetingsFilteredWrapper />,
-    loader: async ({ request }) => {
-      // Adapt clientLoader to work with browser router loader signature
-      return meetingsClientLoader({ request, params: {}, serverLoader: async () => undefined })
-    },
-  },
-  {
-    path: "/group-info/:slug",
-    element: <GroupInfoWrapper />,
-    loader: async ({ params, request }) => {
-      // Adapt clientLoader to work with browser router's loader signature
-      return groupInfoClientLoader({ request, params: params, serverLoader: async () => undefined })
-    },
+    // One error page for all routes: a loader that throws (API down) or a page that throws while rendering.
+    errorElement: <RouteError />,
+    children: [
+      {
+        path: "/",
+        element: <MeetingsFilteredWrapper />,
+        loader: async ({ request }) => {
+          // Adapt clientLoader to work with browser router loader signature
+          return meetingsClientLoader({ request, params: {}, serverLoader: async () => undefined })
+        },
+      },
+      {
+        path: "/group-info/:slug",
+        element: <GroupInfoWrapper />,
+        loader: async ({ params, request }) => {
+          // Adapt clientLoader to work with browser router's loader signature
+          return groupInfoClientLoader({ request, params: params, serverLoader: async () => undefined })
+        },
+      },
+      {
+        // Any other address under the meetings page, for example an old /meetings/<slug>/ link
+        path: "*",
+        element: <NotFound what="page" />,
+      },
+    ],
   },
 ], {
   basename: basePath,
@@ -92,11 +100,14 @@ function initWordPressMeetings() {
   // Get color mode from WordPress config
   const defaultColorMode = window.OIAA_CONFIG?.colorMode || "system"
 
+  // No API URL in the plugin settings: show a message and make no request.
+  const router = getApiUrl() ? createRouter() : undefined
+
   const root = ReactDOM.createRoot(container)
   root.render(
     <React.StrictMode>
       <Provider defaultTheme={defaultColorMode}>
-        <RouterProvider router={router} />
+        {router ? <RouterProvider router={router} /> : <NotConfigured />}
       </Provider>
     </React.StrictMode>
   )

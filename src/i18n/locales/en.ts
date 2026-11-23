@@ -14,6 +14,8 @@ const en: TranslationResource = {
   filters_unavailable:
     "Filters are temporarily unavailable. Please try again in a moment.",
   retry: "Retry",
+  not_configured:
+    "The meeting list isn't set up yet: no API URL in the plugin settings.",
 
   // Filter section headings
   filter_day_time: "Day & Time",
@@ -45,6 +47,13 @@ const en: TranslationResource = {
   meetings: "Meetings",
   meetings_summary: "({{total}} total results; {{shown}} loaded.)",
   no_results: "No meetings found matching your criteria.",
+  meetings_load_failed: "We couldn't load meetings right now. Please try again in a moment.",
+  meeting_not_found: "Meeting not found",
+  meeting_not_found_text: "This meeting may have been removed, or the link may be out of date.",
+  page_not_found: "Page not found",
+  page_not_found_text:
+    "There is no page at this address. You can look for the meeting in the list.",
+  page_load_failed: "Something went wrong loading this page. Please try again in a moment.",
 
   // Meeting time
   today: "Today",

@@ -10,6 +10,7 @@ import {
   LANGUAGES,
   TYPE,
 } from "@/meetingTypes"
+import { getApiUrl } from "@/getData"
 import { fetchData } from "@/utils/meetings-utils"
 import { logError } from "@/utils/logger"
 
@@ -114,17 +115,13 @@ export function useFacets(): {
           throw new Error("Forced facets error (config)")
         } 
 
-        const baseUrl = import.meta.env.VITE_CQ_URL as string
+        const baseUrl = getApiUrl()
         if (!baseUrl) {
           throw new Error("App not configured correctly")
         }
         
         const url = `${baseUrl}/facets`
         const raw = await fetchData<FacetsResponse>(url)
-        // Treat empty array (from fetchData error) as an error
-        if (Array.isArray(raw) && raw.length === 0) {
-          throw new Error("Facet response is empty (fetchData error)")
-        }
 
         if (!cancelled) {
           setScheduledFacets(mapFacets(raw.scheduled))

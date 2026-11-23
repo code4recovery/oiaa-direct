@@ -26,7 +26,8 @@ This is the same pattern used by [tsml-ui](https://github.com/code4recovery/tsml
 1. Download the latest `.zip` from [GitHub Releases](https://github.com/code4recovery/oiaa-direct/releases).
 2. In WordPress, go to **Plugins → Add New → Upload Plugin** and upload the zip.
 3. Activate the plugin.
-4. Configure **Base Path** (for example `/meetings`) and ensure a matching page exists.
+4. In **Settings → OIAA Meetings**, enter the **Central Query API URL**.
+5. Configure **Base Path** (for example `/meetings`) and ensure a matching page exists.
 
 ## Settings
 
@@ -34,7 +35,7 @@ Go to **Settings → OIAA Meetings** in the WordPress admin.
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| Central Query API URL | `https://central-query.apps.code4recovery.org/api/v1/meetings` | API endpoint the app fetches meeting data from |
+| Central Query API URL | none (required) | API endpoint the app fetches meeting data from. Until it is set, the page shows a "not set up yet" message and makes no request |
 | Color Mode | `system` | `light`, `dark`, or `system` (users can still toggle in the app UI) |
 | Asset Version | `latest` | Which release to load from the CDN (see below) |
 | Use Local Assets | off | Load JS/CSS from the plugin directory instead of the CDN |

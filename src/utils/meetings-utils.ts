@@ -1,17 +1,47 @@
-/** ToDo: Fix error handling */
+/**
+ * A failed call to Central-Query. `status` is the HTTP status, or undefined when no answer came back
+ * (network error, CORS, server down).
+ */
+export class ApiError extends Error {
+  readonly url: string
+  readonly status?: number
 
-import { logError } from "@/utils/logger"
+  constructor(message: string, url: string, status?: number) {
+    super(message)
+    this.name = "ApiError"
+    this.url = url
+    this.status = status
+  }
+}
 
+export const isNotFound = (error: unknown): boolean =>
+  error instanceof ApiError && error.status === 404
+
+/**
+ * Fetches JSON from Central-Query. Throws an ApiError on an HTTP error, a network error or a body that
+ * isn't JSON. The caller decides what the visitor sees and logs the error (a 404 for an unknown meeting
+ * is an answer, not a fault, so it isn't logged).
+ */
 export const fetchData = async <T>(url: string): Promise<T> => {
+  // The message leaves out the query string (search text, a timestamp), so Sentry groups the errors
+  const path = url.split("?")[0]
+  let response: Response
   try {
-    const response = await fetch(url)
-    if (!response.ok) {
-      throw new Error(`Failed to fetch data: ${response.statusText}`)
-    }
+    response = await fetch(url)
+  } catch (error) {
+    throw new ApiError(`Request failed: ${String(error)} (${path})`, url)
+  }
+  if (!response.ok) {
+    throw new ApiError(
+      `Central-Query answered ${String(response.status)} ${response.statusText} (${path})`,
+      url,
+      response.status
+    )
+  }
+  try {
     return (await response.json()) as T
   } catch (error) {
-    logError(error, url)
-    return [] as T
+    throw new ApiError(`Answer is not JSON: ${String(error)} (${path})`, url, response.status)
   }
 }
 

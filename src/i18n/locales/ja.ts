@@ -14,6 +14,8 @@ const ja: TranslationStrings = {
   filters_unavailable:
     "フィルターは一時的に利用できません。しばらくしてから再度お試しください。",
   retry: "再試行",
+  not_configured:
+    "ミーティング一覧はまだ設定されていません。プラグインの設定にAPI URLがありません。",
 
   // Filter section headings
   filter_day_time: "曜日・時間",
@@ -45,6 +47,12 @@ const ja: TranslationStrings = {
   meetings: "ミーティング",
   meetings_summary: "（合計{{total}}件；{{shown}}件表示中。）",
   no_results: "条件に一致するミーティングが見つかりませんでした。",
+  meetings_load_failed: "ミーティングを読み込めませんでした。しばらくしてから再度お試しください。",
+  meeting_not_found: "ミーティングが見つかりません",
+  meeting_not_found_text: "このミーティングは削除されたか、リンクが古くなっている可能性があります。",
+  page_not_found: "ページが見つかりません",
+  page_not_found_text: "このアドレスにはページがありません。一覧からミーティングを探してください。",
+  page_load_failed: "ページの読み込み中にエラーが発生しました。しばらくしてから再度お試しください。",
 
   // Meeting time
   today: "今日",
