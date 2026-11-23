@@ -14,6 +14,8 @@ const ru: TranslationStrings = {
   filters_unavailable:
     "Фильтры временно недоступны. Пожалуйста, повторите попытку через момент.",
   retry: "Повторить",
+  not_configured:
+    "Список встреч ещё не настроен: в настройках плагина не указан URL API.",
 
   // Filter section headings
   filter_day_time: "День и время",

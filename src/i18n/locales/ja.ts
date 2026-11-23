@@ -14,6 +14,8 @@ const ja: TranslationStrings = {
   filters_unavailable:
     "フィルターは一時的に利用できません。しばらくしてから再度お試しください。",
   retry: "再試行",
+  not_configured:
+    "ミーティング一覧はまだ設定されていません。プラグインの設定にAPI URLがありません。",
 
   // Filter section headings
   filter_day_time: "曜日・時間",

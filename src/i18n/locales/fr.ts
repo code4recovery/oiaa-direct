@@ -14,6 +14,8 @@ const fr: TranslationStrings = {
   filters_unavailable:
     "Les filtres sont temporairement indisponibles. Veuillez réessayer dans un moment.",
   retry: "Réessayer",
+  not_configured:
+    "La liste des réunions n'est pas encore configurée : aucune URL d'API dans les réglages de l'extension.",
 
   // Filter section headings
   filter_day_time: "Jour et heure",

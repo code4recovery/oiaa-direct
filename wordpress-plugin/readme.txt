@@ -132,11 +132,11 @@ Initial release.
 
 == Third-Party Services ==
 
-This plugin connects to a Central Query API to fetch meeting data. By default, it uses:
+This plugin connects to a Central Query API to fetch meeting data:
 
 * Service: Central Query API
-* URL: https://central-query.apps.code4recovery.org
+* URL: the API URL entered in Settings → OIAA Meetings (there is no default)
 * Purpose: Fetching online meeting data
 * Privacy Policy: [Link to privacy policy if available]
 
-You can configure a custom API endpoint in the plugin settings.
+The app makes no API request until an API URL is set.
