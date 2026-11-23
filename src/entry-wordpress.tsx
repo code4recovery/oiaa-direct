@@ -11,6 +11,8 @@ import * as Sentry from "@sentry/react"
 import { createBrowserRouter, RouterProvider, useLoaderData } from "react-router"
 
 import { NotConfigured } from "@/components/NotConfigured"
+import { NotFound } from "@/components/NotFound"
+import { RouteError } from "@/components/RouteError"
 import { Provider } from "@/components/ui/provider"
 import { getApiUrl } from "@/getData"
 import MeetingsFiltered, { clientLoader as meetingsClientLoader } from "@/routes/meetings-filtered"
@@ -50,20 +52,31 @@ const basePath = window.OIAA_CONFIG?.basePath || "/meetings"
 // Only called when an API URL is set: creating the router starts the route loaders.
 const createRouter = () => createBrowserRouter([
   {
-    path: "/",
-    element: <MeetingsFilteredWrapper />,
-    loader: async ({ request }) => {
-      // Adapt clientLoader to work with browser router loader signature
-      return meetingsClientLoader({ request, params: {}, serverLoader: async () => undefined })
-    },
-  },
-  {
-    path: "/group-info/:slug",
-    element: <GroupInfoWrapper />,
-    loader: async ({ params, request }) => {
-      // Adapt clientLoader to work with browser router's loader signature
-      return groupInfoClientLoader({ request, params: params, serverLoader: async () => undefined })
-    },
+    // One error page for all routes: a loader that throws (API down) or a page that throws while rendering.
+    errorElement: <RouteError />,
+    children: [
+      {
+        path: "/",
+        element: <MeetingsFilteredWrapper />,
+        loader: async ({ request }) => {
+          // Adapt clientLoader to work with browser router loader signature
+          return meetingsClientLoader({ request, params: {}, serverLoader: async () => undefined })
+        },
+      },
+      {
+        path: "/group-info/:slug",
+        element: <GroupInfoWrapper />,
+        loader: async ({ params, request }) => {
+          // Adapt clientLoader to work with browser router's loader signature
+          return groupInfoClientLoader({ request, params: params, serverLoader: async () => undefined })
+        },
+      },
+      {
+        // Any other address under the meetings page, for example an old /meetings/<slug>/ link
+        path: "*",
+        element: <NotFound what="page" />,
+      },
+    ],
   },
 ], {
   basename: basePath,

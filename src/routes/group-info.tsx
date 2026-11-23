@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next"
 import { Link as RouterLink } from "react-router"
 
 import { Layout } from "@/components/Layout"
+import { NotFound } from "@/components/NotFound"
 import { CATEGORY_KEYS } from "@/meetingTypes"
 import {
   CalendarActions,
@@ -26,6 +27,7 @@ import {
 } from "@/meetingTypes"
 import {
   formatMeetingTimeInfo,
+  isNotFound,
   isScheduledMeeting,
   type MeetingTimeInfo,
 } from "@/utils/meetings-utils"
@@ -240,11 +242,18 @@ const MeetingHeader = ({ meeting }: { meeting: Meeting }) => {
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  const [meeting, group] = await Promise.all([
-    getMeeting(params.slug),
-    getRelatedDetails(`${params.slug}/related-group-info`)
-  ])
-  return { meeting, group }
+  try {
+    const [meeting, group] = await Promise.all([
+      getMeeting(params.slug),
+      getRelatedDetails(`${params.slug}/related-group-info`)
+    ])
+    return { found: true as const, meeting, group }
+  } catch (error) {
+    // Central-Query answers 404 for a slug it doesn't have (deleted meeting, old or mistyped link).
+    // Anything else goes to the route's error page.
+    if (isNotFound(error)) return { found: false as const }
+    throw error
+  }
 }
 
 function MeetingDisplay({ meeting }: { meeting: Meeting }) {
@@ -328,6 +337,8 @@ function MeetingDisplay({ meeting }: { meeting: Meeting }) {
 
 export default function GroupInfo({ loaderData }: Route.ComponentProps) {
   const { t } = useTranslation()
+  if (!loaderData.found) return <NotFound what="meeting" />
+
   const { meeting, group } = loaderData
   const { groupMeetings, groupInfo } = group
 

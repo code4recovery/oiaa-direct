@@ -47,6 +47,15 @@ const fr: TranslationStrings = {
   meetings: "Réunions",
   meetings_summary: "({{total}} résultats au total ; {{shown}} chargés.)",
   no_results: "Aucune réunion ne correspond à vos critères.",
+  meetings_load_failed:
+    "Impossible de charger les réunions. Veuillez réessayer dans un moment.",
+  meeting_not_found: "Réunion introuvable",
+  meeting_not_found_text: "Cette réunion a peut-être été supprimée, ou le lien n'est plus à jour.",
+  page_not_found: "Page introuvable",
+  page_not_found_text:
+    "Il n'y a aucune page à cette adresse. Vous pouvez chercher la réunion dans la liste.",
+  page_load_failed:
+    "Une erreur s'est produite lors du chargement de cette page. Veuillez réessayer dans un moment.",
 
   // Meeting time
   today: "Aujourd'hui",

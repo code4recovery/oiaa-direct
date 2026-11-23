@@ -49,6 +49,13 @@ const fa: TranslationStrings = {
   meetings: "جلسات",
   meetings_summary: "(مجموع {{total}} نتیجه؛ {{shown}} بارگذاری شده.)",
   no_results: "جلسه‌ای با معیارهای شما یافت نشد.",
+  meetings_load_failed:
+    "در حال حاضر بارگذاری جلسات ممکن نیست. لطفاً لحظه‌ای دیگر دوباره امتحان کنید.",
+  meeting_not_found: "جلسه یافت نشد",
+  meeting_not_found_text: "ممکن است این جلسه حذف شده باشد یا لینک آن قدیمی باشد.",
+  page_not_found: "صفحه یافت نشد",
+  page_not_found_text: "در این نشانی صفحه‌ای وجود ندارد. می‌توانید جلسه را در فهرست پیدا کنید.",
+  page_load_failed: "هنگام بارگذاری این صفحه خطایی رخ داد. لطفاً لحظه‌ای دیگر دوباره امتحان کنید.",
 
   // Meeting time
   today: "امروز",

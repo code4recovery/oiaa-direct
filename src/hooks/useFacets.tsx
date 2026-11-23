@@ -122,10 +122,6 @@ export function useFacets(): {
         
         const url = `${baseUrl}/facets`
         const raw = await fetchData<FacetsResponse>(url)
-        // Treat empty array (from fetchData error) as an error
-        if (Array.isArray(raw) && raw.length === 0) {
-          throw new Error("Facet response is empty (fetchData error)")
-        }
 
         if (!cancelled) {
           setScheduledFacets(mapFacets(raw.scheduled))
