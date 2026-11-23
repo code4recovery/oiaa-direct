@@ -14,6 +14,8 @@ const es: TranslationStrings = {
   filters_unavailable:
     "Los filtros no están disponibles temporalmente. Por favor intente de nuevo en un momento.",
   retry: "Reintentar",
+  not_configured:
+    "La lista de reuniones aún no está configurada: falta la URL de la API en los ajustes del plugin.",
 
   // Filter section headings
   filter_day_time: "Día y hora",

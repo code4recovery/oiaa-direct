@@ -16,6 +16,8 @@ const fa: TranslationStrings = {
   filters_unavailable:
     "فیلترها موقتاً در دسترس نیستند. لطفاً لحظه‌ای دیگر دوباره امتحان کنید.",
   retry: "تلاش مجدد",
+  not_configured:
+    "فهرست جلسات هنوز راه‌اندازی نشده است: نشانی API در تنظیمات افزونه وارد نشده است.",
 
   // Filter section headings
   filter_day_time: "روز و زمان",

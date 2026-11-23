@@ -14,6 +14,8 @@ const en: TranslationResource = {
   filters_unavailable:
     "Filters are temporarily unavailable. Please try again in a moment.",
   retry: "Retry",
+  not_configured:
+    "The meeting list isn't set up yet: no API URL in the plugin settings.",
 
   // Filter section headings
   filter_day_time: "Day & Time",

@@ -19,7 +19,7 @@ function oiaa_meetings_template_redirect() {
     // Ensure assets are loaded for our custom output.
     oiaa_meetings_enqueue_scripts();
 
-    $api_url = get_option('oiaa_api_url', 'https://central-query.apps.code4recovery.org/api/v1/meetings');
+    $api_url = get_option('oiaa_api_url', '');
     $color_mode = get_option('oiaa_color_mode', 'system');
     $base_path = oiaa_meetings_get_base_url_resolution();
 
