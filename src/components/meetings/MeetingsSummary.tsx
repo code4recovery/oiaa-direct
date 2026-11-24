@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next"
 
+import { getMeetingsSummary } from "@/utils/meetings-utils"
 import {
   Box,
   Heading,
@@ -36,7 +37,7 @@ export function MeetingsSummary({
           ml={2}
           fontWeight="normal"
         >
-          {t("meetings_summary", { total: totalMeetings, shown: shownCount })}
+          {getMeetingsSummary(t, totalMeetings, shownCount)}
         </Text>
       </Heading>
     </Box>

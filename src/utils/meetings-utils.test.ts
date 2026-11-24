@@ -4,7 +4,11 @@ import {
   test,
 } from "vitest"
 
+import i18n from "@/i18n"
+
 import {
+  buildMeetingsQueryString,
+  getMeetingsSummary,
   shuffleWithinTimeSlots,
   toggleArrayElement,
 } from "./meetings-utils"
@@ -96,6 +100,39 @@ describe("shuffleWithinTimeSlots", () => {
     
     expect(() => shuffleWithinTimeSlots(unsortedMeetings)).toThrow(
       "Array must be sorted by timeUTC"
+    )
+  })
+})
+
+describe("buildMeetingsQueryString", () => {
+  const build = (qs: string) =>
+    new URLSearchParams(buildMeetingsQueryString(new URLSearchParams(qs)))
+
+  test("keeps the page's filters and adds the limit", () => {
+    const params = build("formats=B&start=2025-01-01T10:00:00Z&hours=7")
+    expect(params.get("formats")).toBe("B")
+    expect(params.get("start")).toBe("2025-01-01T10:00:00Z")
+    expect(params.get("hours")).toBe("7")
+    expect(params.get("limit")).toBe("1000")
+  })
+
+  test("asks for the next hour when the page has no filters", () => {
+    expect(build("").has("start")).toBe(true)
+    expect(build("").get("hours")).toBe("1")
+    expect(build("utm_source=newsletter").has("start")).toBe(true)
+  })
+})
+
+describe("getMeetingsSummary", () => {
+  const t = i18n.getFixedT("en")
+
+  test("shows the total below the limit", () => {
+    expect(getMeetingsSummary(t, 999, 25)).toBe("(999 total results; 25 loaded.)")
+  })
+
+  test("says it shows the first ones at the limit", () => {
+    expect(getMeetingsSummary(t, 1000, 25)).toBe(
+      "(Showing the first 1,000; 25 loaded. Narrow your filters to see more.)"
     )
   })
 })

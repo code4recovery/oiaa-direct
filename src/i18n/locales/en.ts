@@ -44,6 +44,8 @@ const en: TranslationResource = {
   // Meeting list
   meetings: "Meetings",
   meetings_summary: "({{total}} total results; {{shown}} loaded.)",
+  meetings_summary_at_limit:
+    "(Showing the first {{limit, number}}; {{shown, number}} loaded. Narrow your filters to see more.)",
   no_results: "No meetings found matching your criteria.",
 
   // Meeting time

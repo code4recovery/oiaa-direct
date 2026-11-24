@@ -44,6 +44,8 @@ const ja: TranslationStrings = {
   // Meeting list
   meetings: "ミーティング",
   meetings_summary: "（合計{{total}}件；{{shown}}件表示中。）",
+  meetings_summary_at_limit:
+    "（最初の{{limit, number}}件のみ；{{shown, number}}件表示中。すべて見るには条件を絞り込んでください。）",
   no_results: "条件に一致するミーティングが見つかりませんでした。",
 
   // Meeting time
