@@ -167,6 +167,7 @@ const ja: TranslationStrings = {
     G: "ゲイ",
     L: "レズビアン",
     T: "トランスジェンダー",
+    NB: "ノンバイナリー",
     SEN: "シニア",
     Y: "若者",
     POC: "有色人種",
