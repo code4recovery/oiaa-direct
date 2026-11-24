@@ -11,6 +11,7 @@
 
 import { execSync } from 'child_process';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -18,11 +19,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-// Read version from package.json
+// Version: PLUGIN_VERSION (the release workflow sets it from the tag),
+// otherwise package.json
 const packageJson = JSON.parse(
   fs.readFileSync(path.join(rootDir, 'package.json'), 'utf-8')
 );
-const version = packageJson.version;
+const version = process.env.PLUGIN_VERSION || packageJson.version;
+
+if (!/^\d+\.\d+\.\d+$/.test(version)) {
+  console.error(`❌ Version must look like 1.3.4, got "${version}"`);
+  process.exit(1);
+}
 
 console.log('🚀 Building OIAA Meetings WordPress Plugin...\n');
 
@@ -85,10 +92,39 @@ if (fs.existsSync(zipFilePath)) {
   fs.unlinkSync(zipFilePath);
 }
 
+// Write the version into a temporary copy of the plugin, so the files in git
+// stay as they are
+function stamp(file, pattern, replacement) {
+  const text = fs.readFileSync(file, 'utf-8');
+  if (!pattern.test(text)) {
+    console.error(`❌ Could not find the version line in ${file}`);
+    process.exit(1);
+  }
+  fs.writeFileSync(file, text.replace(pattern, replacement));
+}
+
+const stampDir = fs.mkdtempSync(path.join(os.tmpdir(), 'oiaa-plugin-'));
+fs.cpSync(path.join(rootDir, 'wordpress-plugin'), stampDir, { recursive: true });
+stamp(
+  path.join(stampDir, 'oiaa-meetings-plugin.php'),
+  /^( \* Version:).*$/m,
+  `$1 ${version}`
+);
+stamp(
+  path.join(stampDir, 'oiaa-meetings-plugin.php'),
+  /(define\('OIAA_MEETINGS_VERSION', ')[^']*('\))/,
+  `$1${version}$2`
+);
+stamp(
+  path.join(stampDir, 'readme.txt'),
+  /^(Stable tag:).*$/m,
+  `$1 ${version}`
+);
+
 // Create zip (using system zip command)
 try {
-  execSync(`cd wordpress-plugin && zip -r "../dist/${zipFileName}" . -x "*.DS_Store"`, {
-    cwd: rootDir,
+  execSync(`zip -r "${zipFilePath}" . -x "*.DS_Store"`, {
+    cwd: stampDir,
     stdio: 'inherit',
   });
   console.log('✅ Plugin zip created\n');
@@ -96,6 +132,8 @@ try {
   console.error('❌ Zip creation failed:', error.message);
   console.error('Note: This requires the zip command. On Windows, you may need to install it separately.');
   process.exit(1);
+} finally {
+  fs.rmSync(stampDir, { recursive: true, force: true });
 }
 
 // Step 4: Summary
