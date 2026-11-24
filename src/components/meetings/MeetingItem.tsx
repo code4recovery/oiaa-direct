@@ -11,6 +11,7 @@ import {
   VStack,
 } from "@chakra-ui/react"
 
+import JoinDetails from "./JoinDetails"
 import MeetingActions from "./MeetingActions"
 import MeetingCategories from "./MeetingCategories"
 import MeetingTime from "./MeetingTime"
@@ -166,6 +167,8 @@ const ListVariant = ({
           />
         </Box>
 
+        <JoinDetails meeting={meeting} />
+
         {showCategories && (
           <MeetingCategories
             meeting={meeting}
@@ -276,6 +279,8 @@ const CardVariant = ({
           </Box>
         )}
 
+        <JoinDetails meeting={meeting} />
+
         {showCategories && (
           <MeetingCategories
             meeting={meeting}
@@ -374,11 +379,7 @@ const DetailedVariant = ({
         {showActions && (
           <Box>
             <MeetingActions meeting={meeting} size="md" layout="horizontal" />
-            {meeting.conference_url_notes && (
-              <Text fontSize="sm" color="gray.500" mt={3}>
-                {meeting.conference_url_notes}
-              </Text>
-            )}
+            <JoinDetails meeting={meeting} mt={3} />
           </Box>
         )}
 

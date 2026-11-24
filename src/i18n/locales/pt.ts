@@ -110,6 +110,12 @@ const pt: TranslationStrings = {
   ics_website: "Site: {{url}}",
   ics_join_short: "Entrar: {{url}}",
 
+  // Join by phone
+  call: "Ligar",
+  join_by_phone: "Entrar por telefone",
+  call_phone: "Ligar para {{phone}}",
+  phone_label: "Telefone:",
+
   // Meeting types
   types: {
     O: "Aberta",

@@ -110,6 +110,12 @@ const ja: TranslationStrings = {
   ics_website: "ウェブサイト：{{url}}",
   ics_join_short: "参加：{{url}}",
 
+  // Join by phone
+  call: "電話する",
+  join_by_phone: "電話で参加",
+  call_phone: "{{phone}} に電話",
+  phone_label: "電話：",
+
   // Meeting types
   types: {
     O: "オープン",

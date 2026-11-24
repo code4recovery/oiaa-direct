@@ -24,4 +24,9 @@ export type { MeetingsSummaryProps } from "./MeetingsSummary"
 
 export { default as JoinMeetingButton } from "./JoinMeetingButton"
 
+export { default as JoinByPhoneButton } from "./JoinByPhoneButton"
+
+export { JoinDetails } from "./JoinDetails"
+export type { JoinDetailsProps } from "./JoinDetails"
+
 export { MeetingCard } from "./MeetingCard"

@@ -13,6 +13,8 @@ import { Layout } from "@/components/Layout"
 import { CATEGORY_KEYS } from "@/meetingTypes"
 import {
   CalendarActions,
+  JoinByPhoneButton,
+  JoinDetails,
   JoinMeetingButton,
   MeetingItem,
 } from "@/components/meetings"
@@ -180,6 +182,10 @@ const MeetingHeader = ({ meeting }: { meeting: Meeting }) => {
           </Box>
         )}
 
+        {meeting.conference_phone && (
+          <JoinByPhoneButton phone={meeting.conference_phone} />
+        )}
+
         {websiteUrl && (
           <Link
             href={websiteUrl}
@@ -234,6 +240,8 @@ const MeetingHeader = ({ meeting }: { meeting: Meeting }) => {
             </Button>
           </Link>
         )}
+
+        <JoinDetails meeting={meeting} size="md" mt={3} maxW="md" />
       </Box>
     </Flex>
   )

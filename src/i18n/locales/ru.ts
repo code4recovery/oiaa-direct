@@ -110,6 +110,12 @@ const ru: TranslationStrings = {
   ics_website: "Сайт: {{url}}",
   ics_join_short: "Войти: {{url}}",
 
+  // Join by phone
+  call: "Позвонить",
+  join_by_phone: "Подключиться по телефону",
+  call_phone: "Позвонить: {{phone}}",
+  phone_label: "Телефон:",
+
   // Meeting types
   types: {
     O: "Открытая",
