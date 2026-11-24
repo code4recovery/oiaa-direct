@@ -167,6 +167,7 @@ const it: TranslationStrings = {
     G: "Gay",
     L: "Lesbica",
     T: "Transgender",
+    NB: "Non binario",
     SEN: "Anziani",
     Y: "Giovani",
     POC: "Persone di colore",

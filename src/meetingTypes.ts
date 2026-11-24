@@ -55,6 +55,7 @@ export const COMMUNITIES = {
   G: "Gay",
   L: "Lesbian",
   T: "Transgender",
+  NB: "Non-Binary",
   SEN: "Seniors",
   Y: "Young People",
   POC: "People of Color",
