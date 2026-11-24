@@ -2,12 +2,14 @@ import {
   FaEnvelope,
   FaExternalLinkAlt,
   FaLink,
+  FaPhoneAlt,
   FaVideo,
 } from "react-icons/fa"
 import { useTranslation } from "react-i18next"
 
 import { Tooltip } from "@/components/ui/tooltip"
 import type { Meeting } from "@/meetingTypes"
+import { telHref } from "@/utils/phone"
 import { getServiceProviderNameFromUrl } from "@/utils/videoServices"
 import {
   Box,
@@ -115,6 +117,70 @@ const JoinButton = ({
   )
 }
 
+
+const CallButton = ({
+  phone,
+  href,
+  mode,
+  size = 'md',
+  variant = 'outline',
+}: {
+  phone: string
+  href: string
+  mode: 'full' | 'compact' | 'icon-only'
+  size?: 'xs' | 'sm' | 'md'
+  variant?: 'solid' | 'outline' | 'ghost'
+}) => {
+  const { t } = useTranslation()
+  const buttonProps = {
+    colorScheme: 'blue',
+    variant,
+    size,
+    minH: size === 'xs' ? '32px' : size === 'sm' ? '40px' : '44px',
+    // On the list the whole card is a link to the meeting page: don't follow it.
+    onClick: (event: React.MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      window.location.href = href
+    },
+    ...(variant === 'solid'
+      ? {
+          bg: 'blue.700',
+          color: 'white',
+          _hover: { bg: 'blue.800' },
+          _dark: { bg: 'blue.600', color: 'white', _hover: { bg: 'blue.700' } },
+        }
+      : {
+          color: 'blue.700',
+          _dark: { color: 'blue.300' },
+        }
+    ),
+  }
+
+  if (mode === 'icon-only') {
+    return (
+      <Tooltip content={t("call_phone", { phone })}>
+        <IconButton
+          {...buttonProps}
+          aria-label={t("call_phone", { phone })}
+        >
+          <FaPhoneAlt />
+        </IconButton>
+      </Tooltip>
+    )
+  }
+
+  const label = mode === 'compact' ? t("call") : t("join_by_phone")
+
+  return (
+    <Button {...buttonProps} title={t("call_phone", { phone })}>
+      <Box as="span" mr={mode === 'compact' ? 1 : 2} display="inline-flex">
+        <FaPhoneAlt />
+      </Box>
+      {label}
+    </Button>
+  )
+}
 
 const EmailButton = ({
   email,
@@ -245,11 +311,12 @@ export const MeetingActions = ({
 
 
   const hasJoin = Boolean(meeting.conference_url)
+  const phoneHref = telHref(meeting.conference_phone)
   const hasEmail = Boolean(meeting.groupEmail)
   const hasWebsite = Boolean(meeting.groupWebsite)
 
 
-  if (!hasJoin && !hasEmail && !hasWebsite) {
+  if (!hasJoin && !phoneHref && !hasEmail && !hasWebsite) {
     return null
   }
 
@@ -264,6 +331,20 @@ export const MeetingActions = ({
           mode={effectiveMode}
           size={size}
           variant={joinVariant}
+        />
+      )
+    }
+
+    if (phoneHref) {
+      actions.push(
+        <CallButton
+          key="call"
+          phone={meeting.conference_phone ?? ''}
+          href={phoneHref}
+          mode={effectiveMode}
+          size={size}
+          // Phone only: the call button takes the join button's place and look.
+          variant={hasJoin ? secondaryVariant : joinVariant}
         />
       )
     }

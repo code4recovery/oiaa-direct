@@ -110,6 +110,12 @@ const en: TranslationResource = {
   ics_website: "Website: {{url}}",
   ics_join_short: "Join: {{url}}",
 
+  // Join by phone
+  call: "Call",
+  join_by_phone: "Join by Phone",
+  call_phone: "Call {{phone}}",
+  phone_label: "Phone:",
+
   // Meeting types
   types: {
     O: "Open",

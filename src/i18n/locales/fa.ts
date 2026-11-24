@@ -112,6 +112,12 @@ const fa: TranslationStrings = {
   ics_website: "وب‌سایت: {{url}}",
   ics_join_short: "پیوستن: {{url}}",
 
+  // Join by phone
+  call: "تماس",
+  join_by_phone: "پیوستن با تلفن",
+  call_phone: "تماس با \u2066{{phone}}\u2069",
+  phone_label: "تلفن:",
+
   // Meeting types
   types: {
     O: "باز",

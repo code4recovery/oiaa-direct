@@ -9,6 +9,7 @@ import {
   VStack,
 } from "@chakra-ui/react"
 
+import JoinDetails from "./JoinDetails"
 import MeetingActions from "./MeetingActions"
 import MeetingCategories from "./MeetingCategories"
 import MeetingTime from "./MeetingTime"
@@ -80,11 +81,7 @@ export const MeetingCard = ({ meeting }: MeetingCardProps) => {
             joinVariant="solid"
             secondaryVariant="outline"
           />
-          {meeting.conference_url_notes && (
-            <Text fontSize="sm" color="gray.500" mt={2}>
-              {meeting.conference_url_notes}
-            </Text>
-          )}
+          <JoinDetails meeting={meeting} mt={2} />
         </Box>
 
         <MeetingCategories
