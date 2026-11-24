@@ -1,5 +1,9 @@
 /** ToDo: Fix error handling */
 
+import type { TFunction } from "i18next"
+import { DateTime } from "luxon"
+
+import { DEFAULT_HOURS_WINDOW } from "@/utils/filter-utils"
 import { logError } from "@/utils/logger"
 
 export const fetchData = async <T>(url: string): Promise<T> => {
@@ -75,6 +79,27 @@ export const shuffleWithinTimeSlots = <T extends Partial<TimeSlotted>>(
   
   return [...shuffledUnscheduled, ...shuffledScheduled]
 }
+
+/** Most meetings the list asks the API for. If this many come back, there may be more. */
+export const MEETINGS_LIMIT = 1000
+
+export const buildMeetingsQueryString = (searchParams: URLSearchParams): string => {
+  const params = new URLSearchParams(searchParams)
+  // A limit turns off the API's next-hour default when there are no filters, so send start (and hours) here.
+  if (!params.has("start")) {
+    params.set("start", DateTime.now().toUTC().toISO())
+  }
+  if (!searchParams.toString()) {
+    params.set("hours", String(DEFAULT_HOURS_WINDOW))
+  }
+  params.set("limit", String(MEETINGS_LIMIT))
+  return `?${params.toString()}`
+}
+
+export const getMeetingsSummary = (t: TFunction, total: number, shown: number): string =>
+  total >= MEETINGS_LIMIT
+    ? t("meetings_summary_at_limit", { limit: MEETINGS_LIMIT, shown })
+    : t("meetings_summary", { total, shown })
 
 export const isScheduledMeeting = <T extends { timeUTC?: string; timezone?: string }>(
   meeting: T

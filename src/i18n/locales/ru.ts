@@ -44,6 +44,8 @@ const ru: TranslationStrings = {
   // Meeting list
   meetings: "Встречи",
   meetings_summary: "({{total}} всего результатов; загружено {{shown}}.)",
+  meetings_summary_at_limit:
+    "(Показаны первые {{limit, number}}; загружено {{shown, number}}. Уточните фильтры, чтобы увидеть больше.)",
   no_results: "Встречи по вашим критериям не найдены.",
 
   // Meeting time

@@ -46,6 +46,8 @@ const fa: TranslationStrings = {
   // Meeting list
   meetings: "جلسات",
   meetings_summary: "(مجموع {{total}} نتیجه؛ {{shown}} بارگذاری شده.)",
+  meetings_summary_at_limit:
+    "(نمایش {{limit, number}} نتیجه اول؛ {{shown, number}} بارگذاری شده. برای دیدن بیشتر، فیلترها را محدودتر کنید.)",
   no_results: "جلسه‌ای با معیارهای شما یافت نشد.",
 
   // Meeting time

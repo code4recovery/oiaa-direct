@@ -3,7 +3,6 @@ import {
   useState,
 } from "react"
 
-import { DateTime } from "luxon"
 import { useTranslation } from "react-i18next"
 import {
   Outlet,
@@ -18,8 +17,10 @@ import {
 } from "@/components/meetings"
 import { getMeetings } from "@/getData"
 import type { Meeting } from "@/meetingTypes"
-import { shuffleWithinTimeSlots } from "@/utils/meetings-utils"
-import { DEFAULT_HOURS_WINDOW } from "@/utils/filter-utils"
+import {
+  buildMeetingsQueryString,
+  shuffleWithinTimeSlots,
+} from "@/utils/meetings-utils"
 import {
   Box,
   Text,
@@ -27,20 +28,6 @@ import {
 } from "@chakra-ui/react"
 
 import type { Route } from "./+types/meetings-filtered"
-
-function buildMeetingsQueryString(searchParams: URLSearchParams): string {
-  const paramCount = [...searchParams.entries()].length
-  
-  if (!paramCount) {
-    const now = DateTime.now().toUTC().toISO()
-    const params = new URLSearchParams({
-      start: now,
-      hours: String(DEFAULT_HOURS_WINDOW),
-    })
-    return `?${params.toString()}`
-  }
-  return `?${searchParams.toString()}`
-}
 
 // Generate cache key from search params
 function getCacheKey(searchParams: URLSearchParams): string {

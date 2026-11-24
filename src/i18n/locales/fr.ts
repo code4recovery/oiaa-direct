@@ -44,6 +44,8 @@ const fr: TranslationStrings = {
   // Meeting list
   meetings: "Réunions",
   meetings_summary: "({{total}} résultats au total ; {{shown}} chargés.)",
+  meetings_summary_at_limit:
+    "(Affichage des {{limit, number}} premiers résultats ; {{shown, number}} chargés. Affinez vos filtres pour en voir plus.)",
   no_results: "Aucune réunion ne correspond à vos critères.",
 
   // Meeting time
